@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}Executar Análise IEDI - Sistema IEDI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Executar Análise IEDI</h1>
+    <p>Extrair menções da Brandwatch e calcular IEDI</p>
+</div>
+
+<div id="status-alert" class="alert alert-info" style="display:none;"></div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Configuração da Brandwatch</h2>
+    </div>
+    <div class="card-body">
+        <div id="brandwatch-status">
+            <p class="text-muted">Verificando status...</p>
+        </div>
+        
+        <form id="config-form" style="display:none; margin-top:20px;">
+            <div class="form-group">
+                <label for="bw-email">Email Brandwatch *</label>
+                <input type="email" id="bw-email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="bw-password">Senha *</label>
+                <input type="password" id="bw-password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="bw-project">ID do Projeto *</label>
+                <input type="text" id="bw-project" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="bw-query">Nome da Query *</label>
+                <input type="text" id="bw-query" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Salvar Configuração</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Executar Nova Análise</h2>
+    </div>
+    <div class="card-body">
+        <form id="analise-form">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                <div class="form-group">
+                    <label for="data-inicio">Data Início *</label>
+                    <input type="date" id="data-inicio" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="data-fim">Data Fim *</label>
+                    <input type="date" id="data-fim" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="query-override">Nome da Query (opcional)</label>
+                <input type="text" id="query-override" placeholder="Deixe vazio para usar a configuração padrão">
+                <small class="form-text">Sobrescreve a query configurada acima</small>
+            </div>
+            
+            <div id="progress-info" style="display:none; margin:20px 0;">
+                <div class="alert alert-info">
+                    <strong>Processando...</strong><br>
+                    <span id="progress-text">Extraindo menções da Brandwatch...</span>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="btn-executar">
+                🚀 Executar Análise IEDI
+            </button>
+        </form>
+    </div>
+</div>
+
+<div id="resultado-card" class="card" style="display:none;">
+    <div class="card-header">
+        <h2>Resultado da Análise</h2>
+    </div>
+    <div class="card-body">
+        <div id="resultado-content"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let bwConfigured = false;
+
+async function checkBrandwatchStatus() {
+    try {
+        const response = await fetch('/api/brandwatch/status');
+        const status = await response.json();
+        
+        const statusDiv = document.getElementById('brandwatch-status');
+        const configForm = document.getElementById('config-form');
+        
+        if (!status.available) {
+            statusDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>⚠️ Brandwatch API não disponível</strong><br>
+                    A biblioteca bcr-api não está instalada. Instale com:<br>
+                    <code>pip install bcr-api</code>
+                </div>
+            `;
+            document.getElementById('analise-form').style.display = 'none';
+            return;
+        }
+        
+        if (status.configured) {
+            statusDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>✅ Brandwatch configurado</strong><br>
+                    Sistema pronto para extrair menções.
+                    <button onclick="showConfigForm()" class="btn btn-sm btn-secondary" style="margin-left:10px;">
+                        Alterar Configuração
+                    </button>
+                </div>
+            `;
+            bwConfigured = true;
+        } else {
+            statusDiv.innerHTML = `
+                <div class="alert alert-warning">
+                    <strong>⚠️ Configuração necessária</strong><br>
+                    Configure as credenciais da Brandwatch para continuar.
+                    <button onclick="showConfigForm()" class="btn btn-sm btn-primary" style="margin-left:10px;">
+                        Configurar Agora
+                    </button>
+                </div>
+            `;
+            bwConfigured = false;
+        }
+    } catch (error) {
+        console.error('Erro ao verificar status:', error);
+    }
+}
+
+function showConfigForm() {
+    document.getElementById('config-form').style.display = 'block';
+}
+
+document.getElementById('config-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const data = {
+        email: document.getElementById('bw-email').value,
+        password: document.getElementById('bw-password').value,
+        project: document.getElementById('bw-project').value,
+        query_name: document.getElementById('bw-query').value
+    };
+    
+    try {
+        const response = await fetch('/api/brandwatch-config', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Configuração salva com sucesso!');
+            document.getElementById('config-form').style.display = 'none';
+            checkBrandwatchStatus();
+        } else {
+            alert('Erro ao salvar configuração');
+        }
+    } catch (error) {
+        alert('Erro: ' + error.message);
+    }
+});
+
+document.getElementById('analise-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (!bwConfigured) {
+        alert('Configure a Brandwatch antes de executar a análise');
+        return;
+    }
+    
+    const dataInicio = document.getElementById('data-inicio').value;
+    const dataFim = document.getElementById('data-fim').value;
+    const queryOverride = document.getElementById('query-override').value;
+    
+    const data = {
+        data_inicio: dataInicio,
+        data_fim: dataFim
+    };
+    
+    if (queryOverride) {
+        data.query_name = queryOverride;
+    }
+    
+    // Mostrar progresso
+    document.getElementById('progress-info').style.display = 'block';
+    document.getElementById('btn-executar').disabled = true;
+    document.getElementById('resultado-card').style.display = 'none';
+    
+    try {
+        document.getElementById('progress-text').textContent = 'Extraindo menções da Brandwatch...';
+        
+        const response = await fetch('/api/brandwatch/extrair', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        document.getElementById('progress-info').style.display = 'none';
+        document.getElementById('btn-executar').disabled = false;
+        
+        if (result.success) {
+            // Mostrar resultado
+            const resultadoCard = document.getElementById('resultado-card');
+            const resultadoContent = document.getElementById('resultado-content');
+            
+            resultadoContent.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>✅ Análise concluída com sucesso!</strong>
+                </div>
+                
+                <div style="margin:20px 0;">
+                    <p><strong>ID da Análise:</strong> #${result.analise_id}</p>
+                    <p><strong>Total de Menções Extraídas:</strong> ${result.total_mencoes_brutas}</p>
+                    <p><strong>Menções de Imprensa:</strong> ${result.total_mencoes}</p>
+                </div>
+                
+                <h3>Ranking IEDI</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Banco</th>
+                            <th>IEDI Final</th>
+                            <th>IEDI Médio</th>
+                            <th>Volume</th>
+                            <th>Positividade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.resultados.map((r, i) => `
+                            <tr>
+                                <td><strong>${i+1}º</strong></td>
+                                <td>${r.banco}</td>
+                                <td><strong>${formatNumber(r.iedi_final)}</strong></td>
+                                <td>${formatNumber(r.iedi_medio)}</td>
+                                <td>${r.volume_total}</td>
+                                <td>${formatNumber(r.positividade)}%</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                
+                <div style="margin-top:20px;">
+                    <a href="/analise/${result.analise_id}" class="btn btn-primary">Ver Detalhes Completos</a>
+                    <a href="/analises" class="btn btn-secondary">Ir para Análises</a>
+                </div>
+            `;
+            
+            resultadoCard.style.display = 'block';
+            
+            // Scroll para o resultado
+            resultadoCard.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert('Erro na análise: ' + result.error);
+        }
+    } catch (error) {
+        document.getElementById('progress-info').style.display = 'none';
+        document.getElementById('btn-executar').disabled = false;
+        alert('Erro ao executar análise: ' + error.message);
+    }
+});
+
+// Definir data padrão (últimos 7 dias)
+const hoje = new Date();
+const seteDiasAtras = new Date(hoje);
+seteDiasAtras.setDate(hoje.getDate() - 7);
+
+document.getElementById('data-fim').valueAsDate = hoje;
+document.getElementById('data-inicio').valueAsDate = seteDiasAtras;
+
+// Verificar status ao carregar
+checkBrandwatchStatus();
+</script>
+{% endblock %}

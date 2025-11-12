@@ -4,13 +4,19 @@ Sistema IEDI - Aplicação Flask Principal
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from app.models import Database
 from app.iedi_calculator import CalculadoraIEDI
+from app.brandwatch_service import create_brandwatch_service, BRANDWATCH_AVAILABLE
 import json
 import os
+import logging
 from datetime import datetime
 
 app = Flask(__name__, 
             template_folder='templates',
             static_folder='static')
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Inicializar banco de dados
 db = Database()
@@ -43,6 +49,10 @@ def analises_page():
 @app.route('/analise/<int:analise_id>')
 def analise_detalhes_page(analise_id):
     return render_template('analise_detalhes.html', analise_id=analise_id)
+
+@app.route('/executar-analise')
+def executar_analise_page():
+    return render_template('executar_analise.html')
 
 # API - Bancos
 @app.route('/api/bancos', methods=['GET'])
@@ -329,6 +339,166 @@ def executar_analise():
     
     except Exception as e:
         # Atualizar status com erro
+        if 'analise_id' in locals():
+            db.update_analise_status(
+                analise_id=analise_id,
+                status='erro',
+                mensagem_erro=str(e)
+            )
+        
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# API - Brandwatch Integration
+@app.route('/api/brandwatch/status', methods=['GET'])
+def brandwatch_status():
+    """Verifica se a integração Brandwatch está disponível"""
+    config = db.get_brandwatch_config()
+    return jsonify({
+        'available': BRANDWATCH_AVAILABLE,
+        'configured': config is not None
+    })
+
+@app.route('/api/brandwatch/extrair', methods=['POST'])
+def brandwatch_extrair():
+    """Extrai menções da Brandwatch e executa análise IEDI"""
+    if not BRANDWATCH_AVAILABLE:
+        return jsonify({
+            'success': False,
+            'error': 'Brandwatch API não está disponível. Instale bcr-api.'
+        }), 400
+    
+    data = request.json
+    data_inicio = data.get('data_inicio')
+    data_fim = data.get('data_fim')
+    query_name = data.get('query_name')
+    
+    if not all([data_inicio, data_fim]):
+        return jsonify({
+            'success': False,
+            'error': 'data_inicio e data_fim são obrigatórios'
+        }), 400
+    
+    try:
+        # Buscar configuração Brandwatch
+        config = db.get_brandwatch_config()
+        if not config:
+            return jsonify({
+                'success': False,
+                'error': 'Configuração Brandwatch não encontrada'
+            }), 400
+        
+        # Usar query_name da request ou da config
+        query = query_name or config['query_name']
+        
+        logger.info(f"Iniciando extração Brandwatch: {data_inicio} a {data_fim}")
+        
+        # Criar serviço Brandwatch
+        bw_service = create_brandwatch_service(config)
+        if not bw_service:
+            return jsonify({
+                'success': False,
+                'error': 'Erro ao criar serviço Brandwatch'
+            }), 500
+        
+        # Extrair menções
+        mencoes = bw_service.extract_mentions_by_date_range(
+            query_name=query,
+            start_date_str=data_inicio,
+            end_date_str=data_fim
+        )
+        
+        logger.info(f"Extraídas {len(mencoes)} menções da Brandwatch")
+        
+        # Filtrar apenas imprensa
+        mencoes_imprensa = bw_service.filter_news_mentions(mencoes)
+        
+        logger.info(f"Filtradas {len(mencoes_imprensa)} menções de imprensa")
+        
+        if len(mencoes_imprensa) == 0:
+            return jsonify({
+                'success': False,
+                'error': 'Nenhuma menção de imprensa encontrada no período'
+            }), 400
+        
+        # Executar análise IEDI
+        analise_id = db.create_analise(data_inicio, data_fim)
+        
+        calculadora = CalculadoraIEDI(db)
+        
+        # Agrupar menções por banco
+        mencoes_por_banco = {}
+        bancos = db.get_bancos(ativo_only=True)
+        
+        for mencao in mencoes_imprensa:
+            texto = f"{mencao.get('title', '')} {mencao.get('snippet', '')}"
+            banco_identificado = calculadora.identificar_banco(texto)
+            
+            if banco_identificado:
+                if banco_identificado not in mencoes_por_banco:
+                    mencoes_por_banco[banco_identificado] = []
+                mencoes_por_banco[banco_identificado].append(mencao)
+        
+        # Calcular IEDI para cada banco
+        resultados_bancos = []
+        
+        for banco in bancos:
+            banco_nome = banco['nome']
+            banco_id = banco['id']
+            mencoes_banco = mencoes_por_banco.get(banco_nome, [])
+            
+            resultado = calculadora.calcular_iedi_banco(mencoes_banco, banco_nome, banco_id)
+            resultados_bancos.append(resultado)
+            
+            # Salvar menções no banco
+            for i, mencao_data in enumerate(resultado['resultados']):
+                mencao_original = mencoes_banco[i] if i < len(mencoes_banco) else {}
+                
+                db.save_mencao({
+                    'analise_id': analise_id,
+                    'banco_id': banco_id,
+                    'mention_id': mencao_original.get('id'),
+                    'titulo': mencao_original.get('title'),
+                    'snippet': mencao_original.get('snippet'),
+                    'url': mencao_original.get('url'),
+                    'domain': mencao_original.get('domain'),
+                    'sentiment': mencao_data['sentiment'],
+                    'monthly_visitors': mencao_original.get('monthlyVisitors', 0),
+                    'data_mencao': mencao_original.get('date'),
+                    'nota': mencao_data['nota'],
+                    'grupo_alcance': mencao_data['grupo_alcance'],
+                    'variaveis': mencao_data['variaveis']
+                })
+        
+        # Calcular IEDI final com balizamento
+        resultados_finais = calculadora.calcular_iedi_final_com_balizamento(resultados_bancos)
+        
+        # Salvar resultados
+        for resultado in resultados_finais:
+            db.save_resultado_iedi(analise_id, resultado['banco_id'], resultado)
+        
+        # Atualizar status da análise
+        db.update_analise_status(
+            analise_id=analise_id,
+            status='concluida',
+            total_mencoes=len(mencoes_imprensa)
+        )
+        
+        logger.info(f"Análise concluída. ID: {analise_id}")
+        
+        return jsonify({
+            'success': True,
+            'analise_id': analise_id,
+            'total_mencoes': len(mencoes_imprensa),
+            'total_mencoes_brutas': len(mencoes),
+            'resultados': resultados_finais
+        })
+    
+    except Exception as e:
+        logger.error(f"Erro na extração Brandwatch: {str(e)}")
+        
         if 'analise_id' in locals():
             db.update_analise_status(
                 analise_id=analise_id,
