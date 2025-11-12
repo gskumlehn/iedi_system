@@ -530,16 +530,48 @@ def seed_data():
             except:
                 pass  # Já existe
         
-        # Veículos relevantes (amostra)
+        # Veículos relevantes (lista completa)
         veiculos_relevantes = [
-            ('G1', 'g1.globo.com'),
-            ('Folha de S. Paulo', 'folha.uol.com.br'),
+            ('Agência Brasil', 'agenciabrasil.ebc.com.br'),
+            ('Band', 'band.uol.com.br'),
+            ('BandNews', 'bandnewstv.com.br'),
+            ('BBC Brasil', 'bbc.com/portuguese'),
+            ('Bloomberg', 'bloomberg.com.br'),
+            ('Bloomberg Línea', 'bloomberglinea.com.br'),
+            ('Brasil 247', 'brasil247.com'),
+            ('Carta Capital', 'cartacapital.com.br'),
+            ('CNN Brasil', 'cnnbrasil.com.br'),
+            ('Correio Braziliense', 'correiobraziliense.com.br'),
+            ('E-Investidor', 'einvestidor.estadao.com.br'),
+            ('Época Negócios', 'epocanegocios.globo.com'),
             ('Estadão', 'estadao.com.br'),
+            ('Exame', 'exame.com'),
+            ('Folha de S. Paulo', 'folha.uol.com.br'),
+            ('Forbes Brasil', 'forbes.com.br'),
+            ('G1', 'g1.globo.com'),
+            ('Globo News', 'globonews.globo.com'),
+            ('Globo Rural', 'globorural.globo.com'),
+            ('InfoMoney', 'infomoney.com.br'),
+            ('IstoÉ', 'istoe.com.br'),
+            ('IstoÉ Dinheiro', 'istoedinheiro.com.br'),
+            ('Jovem Pan', 'jovempan.com.br'),
+            ('Metrópoles', 'metropoles.com'),
+            ('Money Times', 'moneytimes.com.br'),
+            ('O Antagonista', 'oantagonista.com'),
             ('O Globo', 'oglobo.globo.com'),
+            ('Poder 360', 'poder360.com.br'),
+            ('R7', 'r7.com'),
+            ('Reuters', 'reuters.com'),
+            ('Revista Piauí', 'revistapiaui.com.br'),
+            ('Safras & Mercado', 'safras.com.br'),
+            ('Seu Dinheiro', 'seudinheiro.com'),
+            ('Terra', 'terra.com.br'),
+            ('CNBC', 'cnbc.com'),
+            ('TV Globo', 'globo.com'),
             ('UOL', 'uol.com.br'),
             ('Valor Econômico', 'valor.globo.com'),
-            ('Exame', 'exame.com'),
-            ('InfoMoney', 'infomoney.com.br'),
+            ('Valor Investe', 'valorinveste.globo.com'),
+            ('Veja', 'veja.abril.com.br'),
         ]
         
         for nome, dominio in veiculos_relevantes:
