@@ -3,7 +3,7 @@ Sistema IEDI - Aplicação Flask Principal
 """
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from app.models import Database
-from app.iedi_calculator import CalculadoraIEDI
+from app.iedi_calculator_brandwatch import criar_calculadora_brandwatch
 from app.brandwatch_service import create_brandwatch_service, BRANDWATCH_AVAILABLE
 import json
 import os
@@ -274,7 +274,7 @@ def executar_analise():
         ]
         
         # Calcular IEDI
-        calculadora = CalculadoraIEDI(db)
+        calculadora = criar_calculadora_brandwatch(db)
         
         # Agrupar menções por banco
         mencoes_por_banco = {}
@@ -282,7 +282,7 @@ def executar_analise():
         
         for mencao in mencoes_imprensa:
             texto = f"{mencao.get('title', '')} {mencao.get('snippet', '')}"
-            banco_identificado = calculadora.identificar_banco(texto)
+            # Banco identificado via categoryDetail da Brandwatch
             
             if banco_identificado:
                 if banco_identificado not in mencoes_por_banco:
@@ -297,7 +297,7 @@ def executar_analise():
             banco_id = banco['id']
             mencoes_banco = mencoes_por_banco.get(banco_nome, [])
             
-            resultado = calculadora.calcular_iedi_banco(mencoes_banco, banco_nome, banco_id)
+            resultado = calculadora.calcular_iedi_banco(mencoes_banco, banco_nome, banco.get("variacoes", []))
             resultados_bancos.append(resultado)
             
             # Salvar menções no banco
@@ -321,7 +321,8 @@ def executar_analise():
                 })
         
         # Calcular IEDI final com balizamento
-        resultados_finais = calculadora.calcular_iedi_final_com_balizamento(resultados_bancos)
+        # Balizamento já aplicado na nova calculadora
+        resultados_finais = calculadora.calcular_iedi_comparativo([r["resultado"] for r in resultados_bancos])
         
         # Salvar resultados
         for resultado in resultados_finais:
@@ -430,7 +431,7 @@ def brandwatch_extrair():
         # Executar análise IEDI
         analise_id = db.create_analise(data_inicio, data_fim)
         
-        calculadora = CalculadoraIEDI(db)
+        calculadora = criar_calculadora_brandwatch(db)
         
         # Agrupar menções por banco
         mencoes_por_banco = {}
@@ -438,7 +439,7 @@ def brandwatch_extrair():
         
         for mencao in mencoes_imprensa:
             texto = f"{mencao.get('title', '')} {mencao.get('snippet', '')}"
-            banco_identificado = calculadora.identificar_banco(texto)
+            # Banco identificado via categoryDetail da Brandwatch
             
             if banco_identificado:
                 if banco_identificado not in mencoes_por_banco:
@@ -453,7 +454,7 @@ def brandwatch_extrair():
             banco_id = banco['id']
             mencoes_banco = mencoes_por_banco.get(banco_nome, [])
             
-            resultado = calculadora.calcular_iedi_banco(mencoes_banco, banco_nome, banco_id)
+            resultado = calculadora.calcular_iedi_banco(mencoes_banco, banco_nome, banco.get("variacoes", []))
             resultados_bancos.append(resultado)
             
             # Salvar menções no banco
@@ -477,7 +478,8 @@ def brandwatch_extrair():
                 })
         
         # Calcular IEDI final com balizamento
-        resultados_finais = calculadora.calcular_iedi_final_com_balizamento(resultados_bancos)
+        # Balizamento já aplicado na nova calculadora
+        resultados_finais = calculadora.calcular_iedi_comparativo([r["resultado"] for r in resultados_bancos])
         
         # Salvar resultados
         for resultado in resultados_finais:
@@ -572,7 +574,7 @@ def executar_analise_resultados():
                 'error': 'Erro ao criar serviço Brandwatch'
             }), 500
         
-        calculadora = CalculadoraIEDI(db)
+        calculadora = criar_calculadora_brandwatch(db)
         
         # Processar cada banco
         total_mencoes_geral = 0
