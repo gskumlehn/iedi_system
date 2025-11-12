@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Detalhes da Análise - Sistema IEDI{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Análise #{{ analise_id }}</h1>
+    <a href="/analises" class="btn btn-secondary">← Voltar</a>
+</div>
+<div id="analise-info"></div>
+<div class="card">
+    <div class="card-header"><h2>Ranking IEDI</h2></div>
+    <div class="card-body">
+        <table class="table">
+            <thead><tr><th>Posição</th><th>Banco</th><th>IEDI Final</th><th>IEDI Médio</th><th>Volume</th><th>Positividade</th></tr></thead>
+            <tbody id="ranking-tbody"></tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script>
+const analiseId = {{ analise_id }};
+async function loadAnalise() {
+    const analise = await fetch(`/api/analises/${analiseId}`).then(r => r.json());
+    document.getElementById('analise-info').innerHTML = `
+        <div class="card">
+            <div class="card-body">
+                <p><strong>Período:</strong> ${formatDate(analise.data_inicio)} - ${formatDate(analise.data_fim)}</p>
+                <p><strong>Total de Menções:</strong> ${analise.total_mencoes||0}</p>
+                <p><strong>Status:</strong> <span class="badge badge-${analise.status}">${analise.status}</span></p>
+            </div>
+        </div>
+    `;
+    if (analise.resultados && analise.resultados.length) {
+        document.getElementById('ranking-tbody').innerHTML = analise.resultados.map((r, i) => `
+            <tr>
+                <td><strong>${i+1}º</strong></td>
+                <td>${r.banco_nome}</td>
+                <td><strong>${formatNumber(r.iedi_final)}</strong></td>
+                <td>${formatNumber(r.iedi_medio)}</td>
+                <td>${r.volume_total}</td>
+                <td>${formatNumber(r.positividade)}%</td>
+            </tr>
+        `).join('');
+    }
+}
+loadAnalise();
+</script>{% endblock %}

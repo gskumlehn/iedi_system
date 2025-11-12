@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Porta-vozes - Sistema IEDI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Gerenciamento de Porta-vozes</h1>
+    <button onclick="showAddModal()" class="btn btn-primary">+ Adicionar Porta-voz</button>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table" id="porta-vozes-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Banco</th>
+                    <th>Cargo</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="porta-vozes-tbody">
+                <tr>
+                    <td colspan="5" class="text-center">Carregando...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="pv-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">Adicionar Porta-voz</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="pv-form">
+                <input type="hidden" id="pv-id">
+                
+                <div class="form-group">
+                    <label for="pv-banco">Banco *</label>
+                    <select id="pv-banco" required></select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pv-nome">Nome *</label>
+                    <input type="text" id="pv-nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pv-cargo">Cargo</label>
+                    <input type="text" id="pv-cargo">
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="pv-ativo" checked>
+                        Ativo
+                    </label>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let editingId = null;
+let bancos = [];
+
+async function loadBancos() {
+    const response = await fetch('/api/bancos');
+    bancos = await response.json();
+    
+    const select = document.getElementById('pv-banco');
+    select.innerHTML = '<option value="">Selecione um banco</option>' +
+        bancos.map(b => `<option value="${b.id}">${b.nome}</option>`).join('');
+}
+
+async function loadPortaVozes() {
+    try {
+        const response = await fetch('/api/porta-vozes');
+        const portaVozes = await response.json();
+        
+        const tbody = document.getElementById('porta-vozes-tbody');
+        
+        if (portaVozes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum porta-voz cadastrado</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = portaVozes.map(pv => `
+            <tr>
+                <td><strong>${pv.nome}</strong></td>
+                <td>${pv.banco_nome}</td>
+                <td>${pv.cargo || '-'}</td>
+                <td><span class="badge badge-${pv.ativo ? 'success' : 'secondary'}">${pv.ativo ? 'Ativo' : 'Inativo'}</span></td>
+                <td>
+                    <button onclick="editPortaVoz(${pv.id})" class="btn btn-sm btn-secondary">Editar</button>
+                    <button onclick="deletePortaVoz(${pv.id}, '${pv.nome}')" class="btn btn-sm btn-danger">Excluir</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Erro ao carregar porta-vozes:', error);
+    }
+}
+
+function showAddModal() {
+    editingId = null;
+    document.getElementById('modal-title').textContent = 'Adicionar Porta-voz';
+    document.getElementById('pv-form').reset();
+    document.getElementById('pv-id').value = '';
+    document.getElementById('pv-ativo').checked = true;
+    document.getElementById('pv-modal').style.display = 'block';
+}
+
+async function editPortaVoz(id) {
+    try {
+        const response = await fetch('/api/porta-vozes');
+        const portaVozes = await response.json();
+        const pv = portaVozes.find(p => p.id === id);
+        
+        if (!pv) return;
+        
+        editingId = id;
+        document.getElementById('modal-title').textContent = 'Editar Porta-voz';
+        document.getElementById('pv-id').value = pv.id;
+        document.getElementById('pv-banco').value = pv.banco_id;
+        document.getElementById('pv-nome').value = pv.nome;
+        document.getElementById('pv-cargo').value = pv.cargo || '';
+        document.getElementById('pv-ativo').checked = pv.ativo;
+        document.getElementById('pv-modal').style.display = 'block';
+    } catch (error) {
+        alert('Erro ao carregar porta-voz: ' + error.message);
+    }
+}
+
+async function deletePortaVoz(id, nome) {
+    if (!confirm(`Deseja realmente excluir "${nome}"?`)) return;
+    
+    try {
+        const response = await fetch(`/api/porta-vozes/${id}`, { method: 'DELETE' });
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Porta-voz excluído com sucesso!');
+            loadPortaVozes();
+        }
+    } catch (error) {
+        alert('Erro: ' + error.message);
+    }
+}
+
+function closeModal() {
+    document.getElementById('pv-modal').style.display = 'none';
+}
+
+document.getElementById('pv-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const data = {
+        banco_id: parseInt(document.getElementById('pv-banco').value),
+        nome: document.getElementById('pv-nome').value,
+        cargo: document.getElementById('pv-cargo').value,
+        ativo: document.getElementById('pv-ativo').checked
+    };
+    
+    try {
+        let response;
+        if (editingId) {
+            response = await fetch(`/api/porta-vozes/${editingId}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+        } else {
+            response = await fetch('/api/porta-vozes', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+        }
+        
+        const result = await response.json();
+        if (result.success) {
+            alert('Porta-voz salvo com sucesso!');
+            closeModal();
+            loadPortaVozes();
+        }
+    } catch (error) {
+        alert('Erro: ' + error.message);
+    }
+});
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('pv-modal')) closeModal();
+}
+
+loadBancos().then(loadPortaVozes);
+</script>
+{% endblock %}

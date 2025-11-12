@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema IEDI{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">
+            <h2>IEDI</h2>
+            <p>Sistema de Gestão</p>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="/" class="nav-link">
+                <span class="icon">📊</span>
+                <span>Dashboard</span>
+            </a></li>
+            <li><a href="/analises" class="nav-link">
+                <span class="icon">📈</span>
+                <span>Análises</span>
+            </a></li>
+            <li><a href="/bancos" class="nav-link">
+                <span class="icon">🏦</span>
+                <span>Bancos</span>
+            </a></li>
+            <li><a href="/porta-vozes" class="nav-link">
+                <span class="icon">👤</span>
+                <span>Porta-vozes</span>
+            </a></li>
+            <li><a href="/veiculos" class="nav-link">
+                <span class="icon">📰</span>
+                <span>Veículos</span>
+            </a></li>
+            <li><a href="/configuracoes" class="nav-link">
+                <span class="icon">⚙️</span>
+                <span>Configurações</span>
+            </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script src="/static/js/main.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

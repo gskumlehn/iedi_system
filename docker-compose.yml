@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  iedi-web:
+    build: .
+    container_name: iedi-system
+    ports:
+      - "5000:5000"
+    volumes:
+      # Volume persistente para o banco de dados SQLite
+      - ./data:/app/data
+      # Volume para logs (opcional)
+      - ./logs:/app/logs
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  # Volume nomeado como alternativa (comentado por padrão)
+   iedi-data:
+     driver: local
