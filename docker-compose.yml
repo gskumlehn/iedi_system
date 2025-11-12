@@ -7,10 +7,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      # Volume persistente para o banco de dados SQLite
       - ./data:/app/data
-      # Volume para logs (opcional)
-      - ./logs:/app/logs
     environment:
       - FLASK_ENV=production
       - PYTHONUNBUFFERED=1
@@ -24,5 +21,5 @@ services:
 
 volumes:
   # Volume nomeado como alternativa (comentado por padrão)
-   iedi-data:
-     driver: local
+  iedi-data:
+    driver: local
