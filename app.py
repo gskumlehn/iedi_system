@@ -46,6 +46,10 @@ def configuracoes_page():
 def analises_page():
     return render_template('analises.html')
 
+@app.route('/analise-resultados')
+def analise_resultados_page():
+    return render_template('analise_resultados.html')
+
 @app.route('/analise/<int:analise_id>')
 def analise_detalhes_page(analise_id):
     return render_template('analise_detalhes.html', analise_id=analise_id)
@@ -510,6 +514,223 @@ def brandwatch_extrair():
             'success': False,
             'error': str(e)
         }), 500
+
+
+
+
+@app.route('/api/analises/executar-resultados', methods=['POST'])
+def executar_analise_resultados():
+    Executa análise IEDI de resultados com períodos diferentes por banco
+    if not BRANDWATCH_AVAILABLE:
+        return jsonify({
+            'success': False,
+            'error': 'Brandwatch API não está disponível. Instale bcr-api.'
+        }), 400
+    
+    data = request.json
+    periodo_referencia = data.get('periodo_referencia')
+    bancos_periodos = data.get('bancos', [])
+    query_name = data.get('query_name')
+    
+    if not periodo_referencia:
+        return jsonify({
+            'success': False,
+            'error': 'periodo_referencia é obrigatório'
+        }), 400
+    
+    if not bancos_periodos or len(bancos_periodos) == 0:
+        return jsonify({
+            'success': False,
+            'error': 'Defina períodos para pelo menos um banco'
+        }), 400
+    
+    try:
+        # Buscar configuração Brandwatch
+        config = db.get_brandwatch_config()
+        if not config:
+            return jsonify({
+                'success': False,
+                'error': 'Configuração Brandwatch não encontrada'
+            }), 400
+        
+        # Usar query_name da request ou da config
+        query = query_name or config['query_name']
+        
+        logger.info(f"Iniciando análise de resultados: {periodo_referencia}")
+        
+        # Criar análise
+        analise_id = db.create_analise(
+            periodo_referencia=periodo_referencia,
+            tipo='resultados'
+        )
+        
+        # Criar serviço Brandwatch
+        bw_service = create_brandwatch_service(config)
+        if not bw_service:
+            return jsonify({
+                'success': False,
+                'error': 'Erro ao criar serviço Brandwatch'
+            }), 500
+        
+        calculadora = CalculadoraIEDI(db)
+        
+        # Processar cada banco
+        total_mencoes_geral = 0
+        periodos_info = []
+        mencoes_por_banco = {}
+        
+        for banco_periodo in bancos_periodos:
+            banco_id = banco_periodo['banco_id']
+            banco_nome = banco_periodo['banco_nome']
+            data_divulgacao = banco_periodo['data_divulgacao']
+            dias_coleta = banco_periodo['dias_coleta']
+            
+            # Calcular data_fim
+            from datetime import datetime, timedelta
+            data_div_obj = datetime.strptime(data_divulgacao, '%Y-%m-%d')
+            data_fim_obj = data_div_obj + timedelta(days=dias_coleta)
+            data_fim = data_fim_obj.strftime('%Y-%m-%d')
+            
+            logger.info(f"Processando {banco_nome}: {data_divulgacao} a {data_fim}")
+            
+            # Extrair menções para este período
+            mencoes = bw_service.extract_mentions_by_date_range(
+                query_name=query,
+                start_date_str=data_divulgacao,
+                end_date_str=data_fim
+            )
+            
+            logger.info(f"Extraídas {len(mencoes)} menções para {banco_nome}")
+            
+            # Filtrar apenas imprensa
+            mencoes_imprensa = bw_service.filter_news_mentions(mencoes)
+            
+            # Filtrar por categoryDetail (nome do banco)
+            mencoes_banco = bw_service.filter_by_category_detail(mencoes_imprensa, banco_nome)
+            
+            logger.info(f"Filtradas {len(mencoes_banco)} menções de {banco_nome}")
+            
+            # Salvar período no banco
+            periodo_id = db.create_periodo_banco(
+                analise_id=analise_id,
+                banco_id=banco_id,
+                data_divulgacao=data_divulgacao,
+                data_inicio=data_divulgacao,
+                data_fim=data_fim,
+                dias_coleta=dias_coleta
+            )
+            
+            # Atualizar total de menções do período
+            db.update_periodo_banco_mencoes(periodo_id, len(mencoes_banco))
+            
+            # Armazenar menções para cálculo posterior
+            mencoes_por_banco[banco_id] = mencoes_banco
+            total_mencoes_geral += len(mencoes_banco)
+            
+            periodos_info.append({
+                'banco_id': banco_id,
+                'banco_nome': banco_nome,
+                'data_divulgacao': data_divulgacao,
+                'data_inicio': data_divulgacao,
+                'data_fim': data_fim,
+                'total_mencoes': len(mencoes_banco)
+            })
+        
+        logger.info(f"Total de menções coletadas: {total_mencoes_geral}")
+        
+        # Calcular IEDI para cada banco
+        resultados_bancos = []
+        
+        for banco_id, mencoes_banco in mencoes_por_banco.items():
+            if len(mencoes_banco) == 0:
+                continue
+            
+            banco = db.get_banco(banco_id)
+            
+            # Calcular IEDI
+            resultado = calculadora.calcular_iedi_banco(
+                banco_id=banco_id,
+                mencoes=mencoes_banco
+            )
+            
+            # Salvar menções no banco
+            for mencao_calc in resultado['mencoes_detalhadas']:
+                mencao_dict = {
+                    'analise_id': analise_id,
+                    'banco_id': banco_id,
+                    'mention_id': mencao_calc.get('mention_id'),
+                    'titulo': mencao_calc.get('titulo'),
+                    'snippet': mencao_calc.get('snippet'),
+                    'url': mencao_calc.get('url'),
+                    'domain': mencao_calc.get('domain'),
+                    'sentiment': mencao_calc.get('sentiment'),
+                    'category_detail': mencao_calc.get('category_detail'),
+                    'monthly_visitors': mencao_calc.get('monthly_visitors', 0),
+                    'data_mencao': mencao_calc.get('data_mencao'),
+                    'nota': mencao_calc.get('nota', 0),
+                    'grupo_alcance': mencao_calc.get('grupo_alcance'),
+                    'variaveis': mencao_calc.get('variaveis', {})
+                }
+                db.save_mencao(mencao_dict)
+            
+            resultados_bancos.append({
+                'banco_id': banco_id,
+                'banco': banco['nome'],
+                'resultado': resultado
+            })
+        
+        # Aplicar balizamento final
+        resultados_finais = calculadora.calcular_iedi_final_com_balizamento(
+            [r['resultado'] for r in resultados_bancos]
+        )
+        
+        # Salvar resultados
+        for i, resultado_final in enumerate(resultados_finais):
+            banco_id = resultados_bancos[i]['banco_id']
+            db.save_resultado_iedi(analise_id, banco_id, resultado_final)
+        
+        # Atualizar status da análise
+        db.update_analise_status(
+            analise_id=analise_id,
+            status='concluida',
+            total_mencoes=total_mencoes_geral
+        )
+        
+        # Preparar resposta
+        resultados_response = []
+        for resultado in resultados_finais:
+            resultados_response.append({
+                'banco': resultado['banco'],
+                'iedi_final': resultado['iedi_final'],
+                'iedi_medio': resultado['iedi_medio'],
+                'volume_total': resultado['volume_total'],
+                'positividade': resultado['positividade']
+            })
+        
+        return jsonify({
+            'success': True,
+            'analise_id': analise_id,
+            'periodo_referencia': periodo_referencia,
+            'total_mencoes': total_mencoes_geral,
+            'periodos': periodos_info,
+            'resultados': resultados_response
+        })
+    
+    except Exception as e:
+        logger.error(f"Erro na análise de resultados: {str(e)}")
+        
+        if 'analise_id' in locals():
+            db.update_analise_status(
+                analise_id=analise_id,
+                status='erro',
+                mensagem_erro=str(e)
+            )
+        
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 
 # API - Seed inicial de dados
 @app.route('/api/seed', methods=['POST'])

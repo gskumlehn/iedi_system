@@ -165,6 +165,46 @@ class BrandwatchService:
         logger.info(f"Filtradas {len(news_mentions)} menções de imprensa de {len(mentions)} totais")
         
         return news_mentions
+    
+    @staticmethod
+    def filter_by_category_detail(mentions: List[Dict], category_value: str) -> List[Dict]:
+        """
+        Filtra menções por categoryDetail
+        
+        Args:
+            mentions: Lista de menções
+            category_value: Valor do categoryDetail para filtrar (ex: nome do banco)
+        
+        Returns:
+            Lista filtrada com menções do banco específico
+        """
+        filtered = [
+            m for m in mentions
+            if m.get('categoryDetail', '').lower() == category_value.lower()
+        ]
+        
+        logger.info(f"Filtradas {len(filtered)} menções com categoryDetail='{category_value}' de {len(mentions)} totais")
+        
+        return filtered
+    
+    @staticmethod
+    def get_unique_category_details(mentions: List[Dict]) -> List[str]:
+        """
+        Retorna lista de valores únicos de categoryDetail nas menções
+        
+        Args:
+            mentions: Lista de menções
+        
+        Returns:
+            Lista de valores únicos de categoryDetail
+        """
+        categories = set()
+        for m in mentions:
+            cat = m.get('categoryDetail')
+            if cat:
+                categories.add(cat)
+        
+        return sorted(list(categories))
 
 
 def create_brandwatch_service(config: Dict) -> Optional[BrandwatchService]:

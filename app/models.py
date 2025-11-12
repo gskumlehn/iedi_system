@@ -103,13 +103,32 @@ class Database:
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS analises (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                data_inicio TIMESTAMP NOT NULL,
-                data_fim TIMESTAMP NOT NULL,
+                periodo_referencia TEXT,
+                tipo TEXT DEFAULT 'mensal',
+                data_inicio TIMESTAMP,
+                data_fim TIMESTAMP,
                 status TEXT DEFAULT 'processando',
                 total_mencoes INTEGER DEFAULT 0,
                 mensagem_erro TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Tabela de períodos por banco
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS periodos_banco (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                analise_id INTEGER NOT NULL,
+                banco_id INTEGER NOT NULL,
+                data_divulgacao DATE NOT NULL,
+                data_inicio DATE NOT NULL,
+                data_fim DATE NOT NULL,
+                dias_coleta INTEGER DEFAULT 2,
+                total_mencoes INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (analise_id) REFERENCES analises(id),
+                FOREIGN KEY (banco_id) REFERENCES bancos(id)
             )
         ''')
         
@@ -146,6 +165,7 @@ class Database:
                 url TEXT,
                 domain TEXT,
                 sentiment TEXT,
+                category_detail TEXT,
                 monthly_visitors INTEGER DEFAULT 0,
                 data_mencao TIMESTAMP,
                 nota INTEGER DEFAULT 0,
@@ -447,13 +467,14 @@ class Database:
         conn.close()
     
     # Análises
-    def create_analise(self, data_inicio: str, data_fim: str) -> int:
+    def create_analise(self, data_inicio: str = None, data_fim: str = None, 
+                       periodo_referencia: str = None, tipo: str = 'mensal') -> int:
         conn = self.get_connection()
         cursor = conn.cursor()
         cursor.execute('''
-            INSERT INTO analises (data_inicio, data_fim, status)
-            VALUES (?, ?, 'processando')
-        ''', (data_inicio, data_fim))
+            INSERT INTO analises (data_inicio, data_fim, periodo_referencia, tipo, status)
+            VALUES (?, ?, ?, ?, 'processando')
+        ''', (data_inicio, data_fim, periodo_referencia, tipo))
         analise_id = cursor.lastrowid
         conn.commit()
         conn.close()
@@ -557,12 +578,13 @@ class Database:
         cursor.execute('''
             INSERT INTO mencoes (
                 analise_id, banco_id, mention_id, titulo, snippet, url, domain,
-                sentiment, monthly_visitors, data_mencao, nota, grupo_alcance, variaveis
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                sentiment, category_detail, monthly_visitors, data_mencao, nota, grupo_alcance, variaveis
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             mencao['analise_id'], mencao['banco_id'], mencao.get('mention_id'),
             mencao.get('titulo'), mencao.get('snippet'), mencao.get('url'), mencao.get('domain'),
-            mencao.get('sentiment'), mencao.get('monthly_visitors', 0),
+            mencao.get('sentiment'), mencao.get('category_detail'),
+            mencao.get('monthly_visitors', 0),
             mencao.get('data_mencao'), int(mencao.get('nota', 0) * 100),
             mencao.get('grupo_alcance'), json.dumps(mencao.get('variaveis', {}))
         ))
@@ -599,3 +621,56 @@ class Database:
             mencoes.append(mencao)
         
         return mencoes
+    def create_periodo_banco(self, analise_id: int, banco_id: int, data_divulgacao: str, 
+                             data_inicio: str, data_fim: str, dias_coleta: int = 2) -> int:
+        """Cria um período de coleta para um banco específico"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO periodos_banco (
+                analise_id, banco_id, data_divulgacao, data_inicio, data_fim, dias_coleta
+            ) VALUES (?, ?, ?, ?, ?, ?)
+        ''', (analise_id, banco_id, data_divulgacao, data_inicio, data_fim, dias_coleta))
+        periodo_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        return periodo_id
+    
+    def get_periodos_banco(self, analise_id: int) -> List[Dict]:
+        """Retorna todos os períodos de uma análise"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT pb.*, b.nome as banco_nome
+            FROM periodos_banco pb
+            JOIN bancos b ON pb.banco_id = b.id
+            WHERE pb.analise_id = ?
+            ORDER BY pb.data_divulgacao
+        ''', (analise_id,))
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+    
+    def update_periodo_banco_mencoes(self, periodo_id: int, total_mencoes: int):
+        """Atualiza o total de menções de um período"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            UPDATE periodos_banco
+            SET total_mencoes = ?
+            WHERE id = ?
+        ''', (total_mencoes, periodo_id))
+        conn.commit()
+        conn.close()
+    
+    def get_periodo_banco(self, analise_id: int, banco_id: int) -> Optional[Dict]:
+        """Retorna o período de um banco específico em uma análise"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT * FROM periodos_banco
+            WHERE analise_id = ? AND banco_id = ?
+        ''', (analise_id, banco_id))
+        row = cursor.fetchone()
+        conn.close()
+        return dict(row) if row else None
