@@ -522,7 +522,7 @@ def brandwatch_extrair():
 
 @app.route('/api/analises/executar-resultados', methods=['POST'])
 def executar_analise_resultados():
-    Executa análise IEDI de resultados com períodos diferentes por banco
+    """Executa análise IEDI de resultados com períodos diferentes por banco"""
     if not BRANDWATCH_AVAILABLE:
         return jsonify({
             'success': False,
@@ -803,16 +803,44 @@ def seed_data():
             except:
                 pass
         
-        # Veículos de nicho
+        # Veículos de nicho (lista completa com acessos mensais)
         veiculos_nicho = [
-            ('InfoMoney', 'infomoney.com.br', 'Finanças'),
-            ('Money Times', 'moneytimes.com.br', 'Finanças'),
-            ('Valor Investe', 'valorinveste.globo.com', 'Investimentos'),
-            ('E-Investidor', 'einvestidor.estadao.com.br', 'Investimentos'),
+            ('Agência Pública', 'apublica.org', 420000),
+            ('Agência Spotlight', 'agenciaspotlight.com.br', 50000),
+            ('AzMina', 'azmina.com.br', 50000),
+            ('Capital Digital', 'capitaldigital.com.br', 50000),
+            ('Congresso em Foco', 'congressoemfoco.uol.com.br', 3000000),
+            ('Época Negócios', 'epocanegocios.globo.com', 6000000),
+            ('Forbes Brasil', 'forbes.com.br', 2000000),
+            ('Globo News', 'globonews.globo.com', 313000000),
+            ('Globo Rural', 'globorural.globo.com', 150000),
+            ('InfoMoney', 'infomoney.com.br', 23000000),
+            ('Investing.com', 'br.investing.com', 159000000),
+            ('IstoÉ Dinheiro', 'istoedinheiro.com.br', 3000000),
+            ('Le Monde Diplomatique Brasil', 'diplomatique.org.br', 260000000),
+            ('MoneyTimes', 'moneytimes.com.br', 8000000),
+            ('Pequenas Empresas, Grandes Negócios', 'revistapegn.globo.com', 2000000),
+            ('Poder 360', 'poder360.com.br', 23000000),
+            ('Repórter Brasil', 'reporterbrasil.org.br', 190000),
+            ('Seu Dinheiro', 'seudinheiro.com', 3000000),
+            ('The Brazilian Report', 'brazilian.report', 210000),
+            ('The Intercept', 'theintercept.com/brasil', 5000000),
+            ('Valor Econômico', 'valor.globo.com', 14000000),
+            ('Valor Investe', 'valorinveste.globo.com', 6000000),
         ]
         
-        for nome, dominio, categoria in veiculos_nicho:
+        for nome, dominio, monthly_visitors in veiculos_nicho:
             try:
+                # Determinar categoria baseado no grupo de alcance
+                if monthly_visitors >= 29000001:
+                    categoria = 'Grupo A'
+                elif 11000001 <= monthly_visitors <= 29000000:
+                    categoria = 'Grupo B'
+                elif 500000 <= monthly_visitors <= 11000000:
+                    categoria = 'Grupo C'
+                else:
+                    categoria = 'Grupo D'
+                
                 db.create_veiculo_nicho(nome, dominio, categoria)
             except:
                 pass
