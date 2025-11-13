@@ -1,0 +1,18 @@
+TITLE_WEIGHT = 100
+SUBTITLE_WEIGHT = 80
+RELEVANT_OUTLET_WEIGHT = 95
+NICHE_OUTLET_WEIGHT = 54
+
+REACH_GROUP_WEIGHTS = {
+    "A": 91,
+    "B": 85,
+    "C": 24,
+    "D": 20
+}
+
+REACH_GROUP_THRESHOLDS = {
+    "A": 29_000_000,
+    "B": 11_000_000,
+    "C": 500_000,
+    "D": 0
+}
