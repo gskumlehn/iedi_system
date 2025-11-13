@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Nova Análise IEDI</h1>
+    <p>Criar uma nova análise de exposição digital na imprensa</p>
+</div>
+
+<form id="analysisForm" class="form-card">
+    <div class="form-group">
+        <label for="name">Nome da Análise *</label>
+        <input type="text" id="name" name="name" required placeholder="Ex: Análise 1T2025">
+    </div>
+
+    <div class="form-group">
+        <label for="query">Query Brandwatch *</label>
+        <textarea id="query" name="query" required rows="4" placeholder="Query geral que captura todos os bancos"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>
+            <input type="checkbox" id="customPeriod" name="customPeriod">
+            Período personalizado por banco
+        </label>
+    </div>
+
+    <div id="banksContainer"></div>
+
+    <div class="form-actions">
+        <button type="button" onclick="window.location.href='/analises'" class="btn-secondary">Cancelar</button>
+        <button type="submit" class="btn-primary">Criar Análise</button>
+    </div>
+</form>
+
+<script>
+let banks = [];
+
+async function loadBanks() {
+    try {
+        const response = await fetch('/api/analysis/banks');
+        const data = await response.json();
+        if (data.success) {
+            banks = data.data;
+            renderBanks();
+        }
+    } catch (error) {
+        console.error('Erro ao carregar bancos:', error);
+        alert('Erro ao carregar bancos');
+    }
+}
+
+function renderBanks() {
+    const container = document.getElementById('banksContainer');
+    const customPeriod = document.getElementById('customPeriod').checked;
+    
+    container.innerHTML = '<h3>Bancos e Períodos</h3>';
+    
+    banks.forEach(bank => {
+        const bankDiv = document.createElement('div');
+        bankDiv.className = 'bank-period-group';
+        bankDiv.innerHTML = `
+            <h4>${bank.name}</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Categoria (categoryDetail) *</label>
+                    <input type="text" name="category_${bank.id}" required value="${bank.name}">
+                </div>
+                ${customPeriod ? `
+                    <div class="form-group">
+                        <label>Data Início *</label>
+                        <input type="datetime-local" name="start_${bank.id}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Data Fim *</label>
+                        <input type="datetime-local" name="end_${bank.id}" required>
+                    </div>
+                ` : `
+                    <div class="form-group">
+                        <label>Data Início *</label>
+                        <input type="datetime-local" id="globalStart" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Data Fim *</label>
+                        <input type="datetime-local" id="globalEnd" required>
+                    </div>
+                `}
+            </div>
+        `;
+        container.appendChild(bankDiv);
+    });
+}
+
+document.getElementById('customPeriod').addEventListener('change', renderBanks);
+
+document.getElementById('analysisForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const customPeriod = document.getElementById('customPeriod').checked;
+    const globalStart = document.getElementById('globalStart')?.value;
+    const globalEnd = document.getElementById('globalEnd')?.value;
+    
+    const bankPeriods = banks.map(bank => ({
+        bank_id: bank.id,
+        category_detail: formData.get(`category_${bank.id}`),
+        start_date: customPeriod ? formData.get(`start_${bank.id}`) : globalStart,
+        end_date: customPeriod ? formData.get(`end_${bank.id}`) : globalEnd
+    }));
+    
+    const payload = {
+        name: formData.get('name'),
+        query: formData.get('query'),
+        custom_period: customPeriod,
+        bank_periods: bankPeriods
+    };
+    
+    try {
+        const response = await fetch('/api/analysis/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Análise criada com sucesso!');
+            window.location.href = '/analises';
+        } else {
+            alert(data.message || 'Erro ao criar análise');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao criar análise');
+    }
+});
+
+loadBanks();
+</script>
+{% endblock %}
