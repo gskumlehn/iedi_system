@@ -1,6 +1,9 @@
 from datetime import datetime
-from sqlalchemy import Column, DateTime, Float, Integer
+from sqlalchemy import Column, Float, Integer
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy_bigquery import TIMESTAMP
+from zoneinfo import ZoneInfo
 
 Base = declarative_base()
 
@@ -11,12 +14,34 @@ class IEDIResult(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     analysis_id = Column(Integer, nullable=False)
     bank_id = Column(Integer, nullable=False)
-    total_volume = Column(Integer, default=0)
-    positive_volume = Column(Integer, default=0)
-    negative_volume = Column(Integer, default=0)
-    neutral_volume = Column(Integer, default=0)
-    average_iedi = Column(Float, default=0.0)
-    final_iedi = Column(Float, default=0.0)
-    positivity_rate = Column(Float, default=0.0)
-    negativity_rate = Column(Float, default=0.0)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    total_volume = Column(Integer, default=0, nullable=False)
+    positive_volume = Column(Integer, default=0, nullable=False)
+    negative_volume = Column(Integer, default=0, nullable=False)
+    neutral_volume = Column(Integer, default=0, nullable=False)
+    average_iedi = Column(Float, default=0.0, nullable=False)
+    final_iedi = Column(Float, default=0.0, nullable=False)
+    positivity_rate = Column(Float, default=0.0, nullable=False)
+    negativity_rate = Column(Float, default=0.0, nullable=False)
+    _created_at = Column("created_at", TIMESTAMP, nullable=False)
+
+    UTC_TZ = ZoneInfo("UTC")
+    BR_TZ = ZoneInfo("America/Sao_Paulo")
+
+    @hybrid_property
+    def created_at(self) -> datetime:
+        if self._created_at is None:
+            return None
+        return self._created_at.astimezone(self.BR_TZ)
+
+    @created_at.setter
+    def created_at(self, value: datetime):
+        if value is None:
+            self._created_at = None
+            return
+        if not isinstance(value, datetime):
+            raise TypeError("created_at must be a datetime instance")
+        self._created_at = value
+
+    @created_at.expression
+    def created_at(cls):
+        return cls._created_at
