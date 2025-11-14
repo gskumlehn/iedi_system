@@ -18,7 +18,8 @@ COPY . .
 RUN mkdir -p /app/data
 
 # Expor porta
-EXPOSE 5000
+ENV PORT=8080
+EXPOSE 8080
 
 # Comando para iniciar
 CMD ["python", "app.py"]
