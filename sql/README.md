@@ -6,6 +6,8 @@ Scripts SQL para criação do schema e tabelas do sistema IEDI no Google BigQuer
 
 Execute os scripts na ordem numérica:
 
+**Criação do Schema e Tabelas:**
+
 1. `01_create_schema.sql` - Cria o schema `iedi`
 2. `02_create_table_banks.sql` - Cria tabela de bancos
 3. `03_create_table_relevant_media_outlets.sql` - Cria tabela de veículos relevantes
@@ -14,6 +16,12 @@ Execute os scripts na ordem numérica:
 6. `06_create_table_bank_periods.sql` - Cria tabela de períodos por banco
 7. `07_create_table_mentions.sql` - Cria tabela de menções
 8. `08_create_table_iedi_results.sql` - Cria tabela de resultados IEDI
+
+**Inserção de Dados Iniciais:**
+
+9. `09_insert_banks.sql` - Insere 4 bancos (BB, Bradesco, Itaú, Santander)
+10. `10_insert_relevant_media_outlets.sql` - Insere 40 veículos relevantes
+11. `11_insert_niche_media_outlets.sql` - Insere 22 veículos de nicho
 
 ## Como Executar
 
@@ -32,6 +40,7 @@ Execute os scripts na ordem numérica:
 export PROJECT_ID=your-gcp-project-id
 
 # Executar scripts
+# Criar schema e tabelas
 bq query --project_id=$PROJECT_ID < 01_create_schema.sql
 bq query --project_id=$PROJECT_ID < 02_create_table_banks.sql
 bq query --project_id=$PROJECT_ID < 03_create_table_relevant_media_outlets.sql
@@ -40,6 +49,11 @@ bq query --project_id=$PROJECT_ID < 05_create_table_analyses.sql
 bq query --project_id=$PROJECT_ID < 06_create_table_bank_periods.sql
 bq query --project_id=$PROJECT_ID < 07_create_table_mentions.sql
 bq query --project_id=$PROJECT_ID < 08_create_table_iedi_results.sql
+
+# Inserir dados iniciais
+bq query --project_id=$PROJECT_ID < 09_insert_banks.sql
+bq query --project_id=$PROJECT_ID < 10_insert_relevant_media_outlets.sql
+bq query --project_id=$PROJECT_ID < 11_insert_niche_media_outlets.sql
 ```
 
 ### Opção 3: Python (SQLAlchemy)
