@@ -17,31 +17,15 @@ This documentation follows a **clean architecture pattern** inspired by industry
 
 ### Core Architecture
 
-**[ARCHITECTURE_OVERVIEW.md](./ARCHITECTURE_OVERVIEW.md)** - Complete overview of clean architecture layers, design patterns (Factory, Repository, Blueprint, Context Manager), request flow, and core principles.
+1. **[ARCHITECTURE_OVERVIEW.md](./ARCHITECTURE_OVERVIEW.md)** - Complete overview of clean architecture layers, design patterns (Factory, Repository, Blueprint, Context Manager), request flow, and core principles.
 
-**[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Standard project structure template with folder organization, file responsibilities, and layer definitions (controllers, services, repositories, models, infrastructure).
+2. **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Standard project structure template with folder organization, file responsibilities, and layer definitions (controllers, services, repositories, models, infrastructure).
 
-**[BLUEPRINT_PATTERN.md](./BLUEPRINT_PATTERN.md)** - Flask blueprints for modular routing, URL prefix strategies, error handling, and best practices for organizing controllers.
+3. **[BLUEPRINT_PATTERN.md](./BLUEPRINT_PATTERN.md)** - Flask blueprints for modular routing, URL prefix strategies, error handling, and best practices for organizing controllers.
 
-**[REPOSITORY_PATTERN.md](./REPOSITORY_PATTERN.md)** - Data access layer abstraction, session management, CRUD operations, query patterns, and testing strategies.
+4. **[REPOSITORY_PATTERN.md](./REPOSITORY_PATTERN.md)** - Data access layer abstraction, session management, CRUD operations, query patterns, and testing strategies.
 
-**[DATABASE_SETUP.md](./DATABASE_SETUP.md)** - SQLAlchemy configuration, connection pooling, transaction management, migrations, performance optimization, and security best practices.
-
-### Setup and Configuration
-
-**[INSTALLATION.md](./INSTALLATION.md)** - Step-by-step installation guide for setting up the development environment, dependencies, and initial configuration.
-
-**[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - Implementation guide covering the complete development workflow from project initialization to deployment.
-
-**[NAMING_CONVENTIONS.md](./NAMING_CONVENTIONS.md)** - Comprehensive naming standards for Python (backend) and JavaScript/TypeScript (frontend) including variables, functions, classes, files, and database entities.
-
-### Integration Patterns
-
-**[API_INTEGRATION.md](./API_INTEGRATION.md)** - Guidelines for integrating external REST APIs, handling authentication, error management, retry logic, and data transformation patterns.
-
-**[BIGQUERY_INTEGRATION.md](./BIGQUERY_INTEGRATION.md)** - Specific patterns for integrating Google BigQuery as data warehouse, including schema design and query optimization.
-
-**[SYSTEM_FLOW.md](./SYSTEM_FLOW.md)** - System flowcharts and architecture diagrams illustrating data flow, component interactions, and process sequences.
+5. **[DATABASE_SETUP.md](./DATABASE_SETUP.md)** - SQLAlchemy configuration, connection pooling, transaction management, migrations, performance optimization, and security best practices.
 
 ## Architecture Layers
 
@@ -184,10 +168,26 @@ class FeatureRepository:
 - ✅ Password hashing (never store plain text)
 - ✅ HTTPS in production (ProxyFix middleware)
 
+## Purpose
+
+These documents provide **reusable architectural patterns** that can be applied to any Python web application project.
+
+### What This Is
+- ✅ Generic architectural guidelines
+- ✅ Design patterns and best practices
+- ✅ Code structure templates
+- ✅ Technology stack recommendations
+
+### What This Is NOT
+- ❌ Project-specific business logic
+- ❌ Domain-specific calculations
+- ❌ API integration details for specific services
+- ❌ Implementation of specific features
+
 ## Navigation
 
 - [← Back to root](../../README.md)
-- [→ Business Documentation](../business/README.md)
+- [→ Business Documentation](../business/README.md) - Project-specific logic and integrations
 
 ## References
 

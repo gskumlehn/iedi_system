@@ -1,45 +1,127 @@
-# Business Documentation
+# Business Documentation - Sistema IEDI
 
-This folder contains business rules, calculation methodologies, and data mapping for the IEDI (Digital Exposure Index in the Press) system.
+Esta pasta contém documentação **específica do negócio** do Sistema IEDI (Índice de Exposição Digital na Imprensa), incluindo metodologia de cálculo, integração com Brandwatch e mapeamento de dados.
 
-## Documentation Index
+## Documentos
 
-### IEDI Methodology
+### Metodologia e Cálculos
 
-**[METODOLOGIA_IEDI.md](./METODOLOGIA_IEDI.md)** - Complete IEDI methodology including calculation formulas, weighting system, reach group classification, sentiment analysis, and balancing mechanisms. This is the final adapted version without spokesperson and image variables.
+1. **[METODOLOGIA_IEDI.md](./METODOLOGIA_IEDI.md)** - Metodologia completa do cálculo IEDI (versão final adaptada):
+   - Fórmulas de cálculo
+   - Pesos por grupo de alcance (A, B, C, D)
+   - Bônus e verificações (título, subtítulo, veículo relevante, veículo de nicho)
+   - Balizamento por positividade
+   - Exemplos práticos
 
-### Data Integration
+### Integração Brandwatch
 
-**[MAPEAMENTO_BRANDWATCH.md](./MAPEAMENTO_BRANDWATCH.md)** - Complete mapping between Brandwatch API data and IEDI system entities, including field transformations, data extraction patterns, and integration workflows.
+2. **[MAPEAMENTO_BRANDWATCH.md](./MAPEAMENTO_BRANDWATCH.md)** - Mapeamento completo de campos da API Brandwatch:
+   - Campos extraídos da API
+   - Transformações necessárias
+   - Filtros aplicados (mediaType: News)
+   - Classificação de veículos por alcance
 
-### Visualization
+3. **[BRANDWATCH_INTEGRATION.md](./BRANDWATCH_INTEGRATION.md)** - Guia técnico de integração com a API Brandwatch:
+   - Configuração de credenciais
+   - Endpoints utilizados
+   - Fluxo de extração de menções
+   - Tratamento de erros e retry logic
+   - Exemplos de código
 
-**[FORMULAS_POWERBI.md](./FORMULAS_POWERBI.md)** - DAX formulas and calculated measures for Power BI dashboards, enabling IEDI metrics visualization and analysis.
+4. **[BIGQUERY_INTEGRATION.md](./BIGQUERY_INTEGRATION.md)** - Integração com BigQuery como data warehouse:
+   - Schema de tabelas
+   - Queries de análise
+   - Otimizações de performance
 
-## Key Concepts
+### Visualização e Análise
 
-### IEDI Calculation
+5. **[FORMULAS_POWERBI.md](./FORMULAS_POWERBI.md)** - Fórmulas DAX para Power BI:
+   - Medidas calculadas (IEDI médio, positividade, etc.)
+   - Colunas customizadas
+   - Tabelas de apoio para visualizações
 
-The IEDI (Digital Exposure Index in the Press) measures bank presence in Brazilian digital media through:
+### Fluxos do Sistema
 
-- **Presence variables**: Title, Subtitle (conditional), Relevant Media Outlet, Niche Media Outlet
-- **Reach classification**: Groups A, B, C, D based on monthly traffic
-- **Sentiment adjustment**: Positive, Neutral, Negative
-- **Balancing**: Proportion of positive mentions across banks
-- **Dynamic denominators**: 286/366 for Group A, 280/360 for other groups
+6. **[SYSTEM_FLOW.md](./SYSTEM_FLOW.md)** - Fluxogramas detalhados (Mermaid):
+   - Fluxo principal de análise
+   - Fluxo de cálculo IEDI detalhado
+   - Fluxo de integração Brandwatch
+   - Fluxo de geração de ranking
+   - Diagramas de entidades (ERD)
 
-### Reach Groups
+## Visão Geral do Sistema IEDI
 
-- **Group A**: > 29 million visits/month (weight 91)
-- **Group B**: 11-29 million visits/month (weight 85)
-- **Group C**: 500k-11 million visits/month (weight 24)
-- **Group D**: < 500k visits/month (weight 20)
+O **Sistema IEDI** automatiza o cálculo do Índice de Exposição Digital na Imprensa para bancos brasileiros, integrando-se com a plataforma Brandwatch para extração de menções e aplicando metodologia proprietária de pontuação.
 
-### Data Sources
+### Entidades Principais
 
-The system integrates with **Brandwatch** social listening platform to collect mentions from digital media outlets, applying the IEDI methodology to calculate exposure indices for each bank.
+- **Bancos**: Instituições financeiras analisadas (Banco do Brasil, Itaú, Bradesco, Santander)
+- **Veículos Relevantes**: Portais de notícias classificados por grupo de alcance (A, B, C, D)
+- **Veículos de Nicho**: Portais especializados em economia/finanças
+- **Análises**: Períodos de coleta de dados (ex: 1T2025)
+- **Menções**: Matérias extraídas da Brandwatch
+- **Resultados IEDI**: Índices calculados por banco
 
-## Navigation
+### Fluxo Básico
 
-- [← Back to root](../../README.md)
-- [→ Architecture Documentation](../architecture/README.md)
+1. **Configuração**: Cadastrar bancos, veículos e credenciais Brandwatch
+2. **Análise**: Definir período de referência e datas de divulgação por banco
+3. **Extração**: Conectar à Brandwatch API e extrair menções do período
+4. **Cálculo**: Aplicar fórmulas IEDI em cada menção
+5. **Agregação**: Calcular índice médio e aplicar balizamento
+6. **Ranking**: Gerar comparativo entre bancos
+
+### Metodologia IEDI (Resumo)
+
+O IEDI é calculado com base em:
+
+#### Componentes do Numerador
+- **Grupo de Alcance do Veículo**: 20 a 91 pontos (A=91, B=85, C=24, D=20)
+- **Bônus Veículo Relevante**: +95 pontos (se na lista de veículos relevantes)
+- **Bônus Veículo de Nicho**: +54 pontos (exceto grupo A)
+- **Presença no Título**: +100 pontos (banco mencionado no título)
+- **Presença no Subtítulo**: +80 pontos (banco mencionado no snippet)
+
+#### Denominadores
+- **Grupo A**: 286 (positivo) ou 366 (negativo/neutro)
+- **Outros Grupos**: 280 (positivo) ou 360 (negativo/neutro)
+
+#### Fórmula Final
+```
+IEDI_Base = Numerador / Denominador
+IEDI_Base = IEDI_Base × (-1) se sentimento ≠ positivo
+IEDI_Escala = (10 × IEDI_Base + 1) / 2
+IEDI_Final = IEDI_Médio × (% Positividade / 100)
+```
+
+### Grupos de Alcance
+
+| Grupo | Visitantes Mensais | Peso |
+|-------|-------------------|------|
+| A     | ≥ 29 milhões      | 91   |
+| B     | 11M - 29M         | 85   |
+| C     | 500K - 11M        | 24   |
+| D     | < 500K            | 20   |
+
+## Diferença entre Architecture e Business
+
+### `docs/architecture/` (Genérico)
+- ✅ Padrões arquiteturais reutilizáveis
+- ✅ Estrutura de código Flask + SQLAlchemy
+- ✅ Design patterns (Repository, Blueprint, Factory)
+- ✅ Aplicável a **qualquer** projeto web Python
+
+### `docs/business/` (Específico)
+- ✅ Regras de negócio do IEDI
+- ✅ Integração com Brandwatch
+- ✅ Fórmulas de cálculo proprietárias
+- ✅ Aplicável **apenas** ao Sistema IEDI
+
+## Navegação
+
+- [← Voltar para raiz](../../README.md)
+- [→ Documentação de Arquitetura](../architecture/README.md) - Padrões técnicos genéricos
+
+## Contato
+
+Para dúvidas sobre a metodologia IEDI ou integração Brandwatch, consulte os documentos específicos nesta pasta.
