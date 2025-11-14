@@ -113,3 +113,28 @@ class Mention(Base):
     @created_at.expression
     def created_at(cls):
         return cls._created_at
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'analysis_id': self.analysis_id,
+            'brandwatch_id': self.brandwatch_id,
+            'categories': [cat.name for cat in self.categories] if self.categories else [],
+            'sentiment': self.sentiment.name if self.sentiment else None,
+            'title': self.title,
+            'snippet': self.snippet,
+            'full_text': self.full_text,
+            'domain': self.domain,
+            'monthly_visitors': self.monthly_visitors,
+            'reach_group': self.reach_group.name if self.reach_group else None,
+            'published_date': self.published_date.isoformat() if self.published_date else None,
+            'iedi_score': self.iedi_score,
+            'iedi_normalized': self.iedi_normalized,
+            'numerator': self.numerator,
+            'denominator': self.denominator,
+            'title_verified': self.title_verified,
+            'subtitle_verified': self.subtitle_verified,
+            'relevant_outlet_verified': self.relevant_outlet_verified,
+            'niche_outlet_verified': self.niche_outlet_verified,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }

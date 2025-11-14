@@ -45,3 +45,19 @@ class IEDIResult(Base):
     @created_at.expression
     def created_at(cls):
         return cls._created_at
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'analysis_id': self.analysis_id,
+            'bank_id': self.bank_id,
+            'total_volume': self.total_volume,
+            'positive_volume': self.positive_volume,
+            'negative_volume': self.negative_volume,
+            'neutral_volume': self.neutral_volume,
+            'average_iedi': self.average_iedi,
+            'final_iedi': self.final_iedi,
+            'positivity_rate': self.positivity_rate,
+            'negativity_rate': self.negativity_rate,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
