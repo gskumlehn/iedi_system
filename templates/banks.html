@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Veículos Relevantes - IEDI{% endblock %}
+{% block title %}Bancos - IEDI{% endblock %}
 
 {% block content %}
 <div class="page-header">
     <div class="page-title-wrapper">
         <svg class="page-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
         </svg>
         <div>
-            <h1 class="page-title">Veículos Relevantes</h1>
-            <p class="page-description">Gerencie veículos de imprensa de grande alcance</p>
+            <h1 class="page-title">Bancos</h1>
+            <p class="page-description">Gerencie bancos e suas variações de nome</p>
         </div>
     </div>
     <button class="btn btn-primary" onclick="openCreateModal()">
@@ -19,57 +19,57 @@
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        Novo Veículo
+        Novo Banco
     </button>
 </div>
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title">Lista de Veículos Relevantes</h2>
-        <p class="card-description" id="veiculo-count">0 veículo(s) cadastrado(s)</p>
+        <h2 class="card-title">Lista de Bancos</h2>
+        <p class="card-description" id="banco-count">0 banco(s) cadastrado(s)</p>
     </div>
     <div class="card-content">
         <div id="loading" class="loading">Carregando...</div>
         <div id="empty-state" class="empty-state hidden">
             <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
-            <p class="empty-state-title">Nenhum veículo cadastrado</p>
-            <p class="empty-state-description">Clique em "Novo Veículo" para começar</p>
+            <p class="empty-state-title">Nenhum banco cadastrado</p>
+            <p class="empty-state-description">Clique em "Novo Banco" para começar</p>
         </div>
         <div id="table-container" class="table-container hidden">
             <table>
                 <thead>
                     <tr>
                         <th>Nome</th>
-                        <th>Domínio</th>
+                        <th>Variações</th>
                         <th>Status</th>
                         <th style="text-align: right;">Ações</th>
                     </tr>
                 </thead>
-                <tbody id="veiculos-tbody"></tbody>
+                <tbody id="bancos-tbody"></tbody>
             </table>
         </div>
     </div>
 </div>
 
 <!-- Modal Criar/Editar -->
-<div id="veiculo-modal" class="modal-overlay hidden">
+<div id="banco-modal" class="modal-overlay hidden">
     <div class="modal">
         <div class="modal-header">
-            <h2 class="modal-title" id="modal-title">Novo Veículo</h2>
-            <p class="modal-description">Preencha os dados do veículo relevante</p>
+            <h2 class="modal-title" id="modal-title">Novo Banco</h2>
+            <p class="modal-description">Preencha os dados do banco</p>
         </div>
-        <form id="veiculo-form" onsubmit="handleSubmit(event)">
+        <form id="banco-form" onsubmit="handleSubmit(event)">
             <div class="modal-content">
                 <div class="form-group">
                     <label class="form-label" for="nome">Nome *</label>
-                    <input type="text" id="nome" class="form-input" placeholder="Ex: G1" required>
+                    <input type="text" id="nome" class="form-input" placeholder="Ex: Banco do Brasil" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="dominio">Domínio *</label>
-                    <input type="text" id="dominio" class="form-input" placeholder="Ex: g1.globo.com" required>
+                    <label class="form-label" for="variacoes">Variações (uma por linha)</label>
+                    <textarea id="variacoes" class="form-textarea" placeholder="Ex:&#10;BB&#10;Banco do Brasil&#10;BancoDoBrasil"></textarea>
                 </div>
                 <div class="form-group mb-0">
                     <label class="form-label">
@@ -79,7 +79,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('veiculo-modal')">Cancelar</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('banco-modal')">Cancelar</button>
                 <button type="submit" class="btn btn-primary" id="submit-btn">Criar</button>
             </div>
         </form>
@@ -87,52 +87,56 @@
 </div>
 
 <script>
-let veiculos = [];
+let bancos = [];
 let editingId = null;
 
-async function loadVeiculos() {
+async function loadBancos() {
     try {
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('empty-state').classList.add('hidden');
         document.getElementById('table-container').classList.add('hidden');
         
-        veiculos = await apiRequest('/veiculos/api/relevantes');
+        bancos = await apiRequest('/banks/api');
         
         document.getElementById('loading').classList.add('hidden');
-        document.getElementById('veiculo-count').textContent = `${veiculos.length} veículo(s) cadastrado(s)`;
+        document.getElementById('banco-count').textContent = `${bancos.length} banco(s) cadastrado(s)`;
         
-        if (veiculos.length === 0) {
+        if (bancos.length === 0) {
             document.getElementById('empty-state').classList.remove('hidden');
         } else {
             document.getElementById('table-container').classList.remove('hidden');
-            renderVeiculos();
+            renderBancos();
         }
     } catch (error) {
         document.getElementById('loading').classList.add('hidden');
-        showToast('Erro ao carregar veículos', 'error');
+        showToast('Erro ao carregar bancos', 'error');
     }
 }
 
-function renderVeiculos() {
-    const tbody = document.getElementById('veiculos-tbody');
-    tbody.innerHTML = veiculos.map(veiculo => `
+function renderBancos() {
+    const tbody = document.getElementById('bancos-tbody');
+    tbody.innerHTML = bancos.map(banco => `
         <tr>
-            <td><strong>${veiculo.nome}</strong></td>
-            <td><span class="text-muted">${veiculo.dominio}</span></td>
+            <td><strong>${banco.nome}</strong></td>
             <td>
-                <span class="badge ${veiculo.ativo ? 'badge-success' : 'badge-secondary'}">
-                    ${veiculo.ativo ? 'Ativo' : 'Inativo'}
+                <span class="text-muted">
+                    ${banco.variacoes.length} variação(ões)
+                </span>
+            </td>
+            <td>
+                <span class="badge ${banco.ativo ? 'badge-success' : 'badge-secondary'}">
+                    ${banco.ativo ? 'Ativo' : 'Inativo'}
                 </span>
             </td>
             <td>
                 <div class="table-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="openEditModal(${veiculo.id})">
+                    <button class="btn btn-secondary btn-sm" onclick="openEditModal(${banco.id})">
                         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
                     </button>
-                    <button class="btn btn-danger btn-sm" onclick="handleDelete(${veiculo.id}, '${veiculo.nome}')">
+                    <button class="btn btn-danger btn-sm" onclick="handleDelete(${banco.id}, '${banco.nome}')">
                         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -146,71 +150,72 @@ function renderVeiculos() {
 
 function openCreateModal() {
     editingId = null;
-    document.getElementById('modal-title').textContent = 'Novo Veículo';
+    document.getElementById('modal-title').textContent = 'Novo Banco';
     document.getElementById('submit-btn').textContent = 'Criar';
-    document.getElementById('veiculo-form').reset();
-    document.getElementById('ativo').checked = true;
-    openModal('veiculo-modal');
+    document.getElementById('banco-form').reset();
+    document.getElementById('active').checked = true;
+    openModal('banco-modal');
 }
 
 function openEditModal(id) {
-    const veiculo = veiculos.find(v => v.id === id);
-    if (!veiculo) return;
+    const banco = bancos.find(b => b.id === id);
+    if (!banco) return;
     
     editingId = id;
-    document.getElementById('modal-title').textContent = 'Editar Veículo';
+    document.getElementById('modal-title').textContent = 'Editar Banco';
     document.getElementById('submit-btn').textContent = 'Atualizar';
-    document.getElementById('nome').value = veiculo.nome;
-    document.getElementById('dominio').value = veiculo.dominio;
-    document.getElementById('ativo').checked = veiculo.ativo;
-    openModal('veiculo-modal');
+    document.getElementById('name').value = banco.nome;
+    document.getElementById('variations').value = banco.variacoes.join('\n');
+    document.getElementById('active').checked = banco.ativo;
+    openModal('banco-modal');
 }
 
 async function handleSubmit(event) {
     event.preventDefault();
     
-    const nome = document.getElementById('nome').value.trim();
-    const dominio = document.getElementById('dominio').value.trim();
-    const ativo = document.getElementById('ativo').checked;
+    const nome = document.getElementById('name').value.trim();
+    const variacoesText = document.getElementById('variations').value.trim();
+    const variacoes = variacoesText ? variacoesText.split('\n').map(v => v.trim()).filter(v => v) : [];
+    const ativo = document.getElementById('active').checked;
     
-    const data = { nome, dominio, ativo };
+    const data = { nome, variacoes, ativo };
     
     try {
         if (editingId) {
-            await apiRequest(`/veiculos/api/relevantes/${editingId}`, {
+            await apiRequest(`/banks/api/${editingId}`, {
                 method: 'PUT',
                 body: JSON.stringify(data)
             });
-            showToast('Veículo atualizado com sucesso!', 'success');
+            showToast('Banco atualizado com sucesso!', 'success');
         } else {
-            await apiRequest('/veiculos/api/relevantes', {
+            await apiRequest('/banks/api', {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
-            showToast('Veículo criado com sucesso!', 'success');
+            showToast('Banco criado com sucesso!', 'success');
         }
         
-        closeModal('veiculo-modal');
-        loadVeiculos();
+        closeModal('banco-modal');
+        loadBancos();
     } catch (error) {
         showToast(error.message, 'error');
     }
 }
 
 async function handleDelete(id, nome) {
-    if (!confirmAction(`Tem certeza que deseja excluir o veículo "${nome}"?`)) {
+    if (!confirmAction(`Tem certeza que deseja excluir o banco "${nome}"?`)) {
         return;
     }
     
     try {
-        await apiRequest(`/veiculos/api/relevantes/${id}`, { method: 'DELETE' });
-        showToast('Veículo excluído com sucesso!', 'success');
-        loadVeiculos();
+        await apiRequest(`/banks/api/${id}`, { method: 'DELETE' });
+        showToast('Banco excluído com sucesso!', 'success');
+        loadBancos();
     } catch (error) {
         showToast(error.message, 'error');
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadVeiculos);
+document.addEventListener('DOMContentLoaded', loadBancos);
 </script>
 {% endblock %}

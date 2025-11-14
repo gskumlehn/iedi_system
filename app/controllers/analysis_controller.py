@@ -6,31 +6,26 @@ db = Database()
 
 @analysis_bp.route("/")
 def index():
-    """Página de visualização de análises"""
-    return render_template("analises.html")
+    return render_template("analyses.html")
 
 @analysis_bp.route("/api", methods=['GET'])
-def get_analises():
-    """Listar todas as análises"""
-    analises = db.get_analises()
-    return jsonify(analises)
+def list_analyses():
+    analyses = db.get_analyses()
+    return jsonify(analyses)
 
-@analysis_bp.route("/api/<int:analise_id>", methods=['GET'])
-def get_analise(analise_id):
-    """Obter detalhes de uma análise específica"""
-    analise = db.get_analise(analise_id)
-    if not analise:
-        return jsonify({'error': 'Análise não encontrada'}), 404
+@analysis_bp.route("/api/<int:analysis_id>", methods=['GET'])
+def get_analysis(analysis_id):
+    analysis = db.get_analysis(analysis_id)
+    if not analysis:
+        return jsonify({'error': 'Analysis not found'}), 404
     
-    # Buscar resultados IEDI
-    resultados = db.get_resultados_iedi(analise_id)
-    analise['resultados'] = resultados
+    results = db.get_results(analysis_id)
+    analysis['results'] = results
     
-    return jsonify(analise)
+    return jsonify(analysis)
 
-@analysis_bp.route("/api/<int:analise_id>/mencoes", methods=['GET'])
-def get_analise_mencoes(analise_id):
-    """Obter menções de uma análise"""
-    banco_id = request.args.get('banco_id', type=int)
-    mencoes = db.get_mencoes(analise_id, banco_id)
-    return jsonify(mencoes)
+@analysis_bp.route("/api/<int:analysis_id>/mentions", methods=['GET'])
+def get_analysis_mentions(analysis_id):
+    bank_id = request.args.get('bank_id', type=int)
+    mentions = db.get_mentions(analysis_id, bank_id)
+    return jsonify(mentions)

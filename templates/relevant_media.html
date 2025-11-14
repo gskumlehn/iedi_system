@@ -1,19 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Veículos de Nicho - IEDI{% endblock %}
+{% block title %}Veículos Relevantes - IEDI{% endblock %}
 
 {% block content %}
 <div class="page-header">
     <div class="page-title-wrapper">
         <svg class="page-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
         </svg>
         <div>
-            <h1 class="page-title">Veículos de Nicho</h1>
-            <p class="page-description">Gerencie veículos especializados e segmentados</p>
+            <h1 class="page-title">Veículos Relevantes</h1>
+            <p class="page-description">Gerencie veículos de imprensa de grande alcance</p>
         </div>
     </div>
     <button class="btn btn-primary" onclick="openCreateModal()">
@@ -27,15 +25,15 @@
 
 <div class="card">
     <div class="card-header">
-        <h2 class="card-title">Lista de Veículos de Nicho</h2>
+        <h2 class="card-title">Lista de Veículos Relevantes</h2>
         <p class="card-description" id="veiculo-count">0 veículo(s) cadastrado(s)</p>
     </div>
     <div class="card-content">
         <div id="loading" class="loading">Carregando...</div>
         <div id="empty-state" class="empty-state hidden">
             <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
             </svg>
             <p class="empty-state-title">Nenhum veículo cadastrado</p>
             <p class="empty-state-description">Clique em "Novo Veículo" para começar</p>
@@ -46,7 +44,6 @@
                     <tr>
                         <th>Nome</th>
                         <th>Domínio</th>
-                        <th>Categoria</th>
                         <th>Status</th>
                         <th style="text-align: right;">Ações</th>
                     </tr>
@@ -62,21 +59,17 @@
     <div class="modal">
         <div class="modal-header">
             <h2 class="modal-title" id="modal-title">Novo Veículo</h2>
-            <p class="modal-description">Preencha os dados do veículo de nicho</p>
+            <p class="modal-description">Preencha os dados do veículo relevante</p>
         </div>
         <form id="veiculo-form" onsubmit="handleSubmit(event)">
             <div class="modal-content">
                 <div class="form-group">
                     <label class="form-label" for="nome">Nome *</label>
-                    <input type="text" id="nome" class="form-input" placeholder="Ex: InfoMoney" required>
+                    <input type="text" id="nome" class="form-input" placeholder="Ex: G1" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="dominio">Domínio *</label>
-                    <input type="text" id="dominio" class="form-input" placeholder="Ex: infomoney.com.br" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="categoria">Categoria</label>
-                    <input type="text" id="categoria" class="form-input" placeholder="Ex: Finanças, Tecnologia, etc.">
+                    <input type="text" id="dominio" class="form-input" placeholder="Ex: g1.globo.com" required>
                 </div>
                 <div class="form-group mb-0">
                     <label class="form-label">
@@ -103,7 +96,7 @@ async function loadVeiculos() {
         document.getElementById('empty-state').classList.add('hidden');
         document.getElementById('table-container').classList.add('hidden');
         
-        veiculos = await apiRequest('/veiculos/api/nicho');
+        veiculos = await apiRequest('/media/api/relevant');
         
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('veiculo-count').textContent = `${veiculos.length} veículo(s) cadastrado(s)`;
@@ -126,11 +119,6 @@ function renderVeiculos() {
         <tr>
             <td><strong>${veiculo.nome}</strong></td>
             <td><span class="text-muted">${veiculo.dominio}</span></td>
-            <td>
-                ${veiculo.categoria 
-                    ? `<span class="badge badge-secondary">${veiculo.categoria}</span>`
-                    : '<span class="text-muted">-</span>'}
-            </td>
             <td>
                 <span class="badge ${veiculo.ativo ? 'badge-success' : 'badge-secondary'}">
                     ${veiculo.ativo ? 'Ativo' : 'Inativo'}
@@ -161,7 +149,7 @@ function openCreateModal() {
     document.getElementById('modal-title').textContent = 'Novo Veículo';
     document.getElementById('submit-btn').textContent = 'Criar';
     document.getElementById('veiculo-form').reset();
-    document.getElementById('ativo').checked = true;
+    document.getElementById('active').checked = true;
     openModal('veiculo-modal');
 }
 
@@ -172,32 +160,30 @@ function openEditModal(id) {
     editingId = id;
     document.getElementById('modal-title').textContent = 'Editar Veículo';
     document.getElementById('submit-btn').textContent = 'Atualizar';
-    document.getElementById('nome').value = veiculo.nome;
-    document.getElementById('dominio').value = veiculo.dominio;
-    document.getElementById('categoria').value = veiculo.categoria || '';
-    document.getElementById('ativo').checked = veiculo.ativo;
+    document.getElementById('name').value = veiculo.nome;
+    document.getElementById('domain').value = veiculo.dominio;
+    document.getElementById('active').checked = veiculo.ativo;
     openModal('veiculo-modal');
 }
 
 async function handleSubmit(event) {
     event.preventDefault();
     
-    const nome = document.getElementById('nome').value.trim();
-    const dominio = document.getElementById('dominio').value.trim();
-    const categoria = document.getElementById('categoria').value.trim() || null;
-    const ativo = document.getElementById('ativo').checked;
+    const nome = document.getElementById('name').value.trim();
+    const dominio = document.getElementById('domain').value.trim();
+    const ativo = document.getElementById('active').checked;
     
-    const data = { nome, dominio, categoria, ativo };
+    const data = { nome, dominio, ativo };
     
     try {
         if (editingId) {
-            await apiRequest(`/veiculos/api/nicho/${editingId}`, {
+            await apiRequest(`/media/api/relevant/${editingId}`, {
                 method: 'PUT',
                 body: JSON.stringify(data)
             });
             showToast('Veículo atualizado com sucesso!', 'success');
         } else {
-            await apiRequest('/veiculos/api/nicho', {
+            await apiRequest('/media/api/relevant', {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
@@ -217,7 +203,7 @@ async function handleDelete(id, nome) {
     }
     
     try {
-        await apiRequest(`/veiculos/api/nicho/${id}`, { method: 'DELETE' });
+        await apiRequest(`/media/api/relevant/${id}`, { method: 'DELETE' });
         showToast('Veículo excluído com sucesso!', 'success');
         loadVeiculos();
     } catch (error) {

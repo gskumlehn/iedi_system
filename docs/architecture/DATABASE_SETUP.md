@@ -13,6 +13,7 @@ SQLAlchemy supports multiple database backends:
 - **SQLite**: Embedded, zero-configuration, development/testing
 - **Oracle**: Enterprise, high performance, commercial
 - **Microsoft SQL Server**: Enterprise, Windows integration
+- **Google BigQuery**: Cloud data warehouse, analytics at scale, serverless
 
 ### Connection Strings
 
@@ -28,6 +29,9 @@ sqlite:///path/to/database.db
 
 # SQL Server
 mssql+pyodbc://user:password@host/database?driver=ODBC+Driver+17+for+SQL+Server
+
+# BigQuery
+bigquery://project-id/dataset-name
 ```
 
 ## SQLAlchemy Setup
@@ -42,6 +46,7 @@ pip install SQLAlchemy
 pip install pymysql          # MySQL/MariaDB
 pip install psycopg2-binary  # PostgreSQL
 pip install pyodbc           # SQL Server
+pip install sqlalchemy-bigquery  # Google BigQuery
 ```
 
 ### 2. Create Database Module
@@ -553,6 +558,200 @@ def after_cursor_execute(conn, cursor, statement, parameters, context, executema
     total = time.time() - conn.info['query_start_time'].pop()
     if total > 1.0:  # Log slow queries
         print(f"Slow query ({total:.2f}s): {statement}")
+```
+
+## BigQuery Integration
+
+### Overview
+
+Google BigQuery is a serverless, highly scalable cloud data warehouse designed for analytics. It uses a different architecture than traditional RDBMS:
+
+- **Serverless**: No infrastructure management
+- **Columnar storage**: Optimized for analytical queries
+- **Petabyte scale**: Handles massive datasets
+- **Pay-per-query**: Charged based on data processed
+
+### Setup
+
+#### 1. Install Dependencies
+
+```bash
+pip install sqlalchemy-bigquery
+pip install google-cloud-bigquery
+```
+
+#### 2. Authentication
+
+```python
+# app/infra/bigquery_sa.py
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from contextlib import contextmanager
+
+def get_bigquery_engine():
+    project_id = os.getenv("GCP_PROJECT_ID")
+    dataset_id = os.getenv("BQ_DATASET_ID")
+    credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    
+    connection_string = f"bigquery://{project_id}/{dataset_id}"
+    
+    engine = create_engine(
+        connection_string,
+        credentials_path=credentials_path,
+        echo=False
+    )
+    return engine
+
+@contextmanager
+def get_bigquery_session():
+    engine = get_bigquery_engine()
+    SessionMaker = sessionmaker(bind=engine)
+    session = SessionMaker()
+    
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+```
+
+#### 3. Model Definition
+
+```python
+# app/models/analytics_event.py
+from sqlalchemy import Column, Integer, String, TIMESTAMP, ARRAY
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+class AnalyticsEvent(Base):
+    __tablename__ = "analytics_events"
+    
+    event_id = Column(Integer, primary_key=True)
+    user_id = Column(String)
+    event_type = Column(String)
+    event_timestamp = Column(TIMESTAMP)
+    properties = Column(ARRAY(String))  # BigQuery supports arrays
+    
+    def to_dict(self):
+        return {
+            'event_id': self.event_id,
+            'user_id': self.user_id,
+            'event_type': self.event_type,
+            'event_timestamp': self.event_timestamp.isoformat() if self.event_timestamp else None,
+            'properties': self.properties
+        }
+```
+
+#### 4. Repository Pattern
+
+```python
+# app/repositories/analytics_repository.py
+from app.infra.bigquery_sa import get_bigquery_session
+from app.models.analytics_event import AnalyticsEvent
+
+class AnalyticsRepository:
+    @staticmethod
+    def list_events(limit=100):
+        with get_bigquery_session() as session:
+            events = session.query(AnalyticsEvent).limit(limit).all()
+            return [event.to_dict() for event in events]
+    
+    @staticmethod
+    def insert_event(user_id, event_type, properties):
+        with get_bigquery_session() as session:
+            event = AnalyticsEvent(
+                user_id=user_id,
+                event_type=event_type,
+                properties=properties
+            )
+            session.add(event)
+            return event.event_id
+```
+
+### BigQuery-Specific Considerations
+
+#### Data Types
+
+BigQuery has unique data types:
+
+```python
+from sqlalchemy import Column, Integer, String, TIMESTAMP, DATE, FLOAT, BOOLEAN
+from sqlalchemy_bigquery import ARRAY, STRUCT
+
+class BigQueryModel(Base):
+    __tablename__ = "example_table"
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    created_at = Column(TIMESTAMP)
+    tags = Column(ARRAY(String))  # Array of strings
+    metadata = Column(STRUCT)     # Nested structure
+```
+
+#### Query Optimization
+
+```python
+# ✅ Good: Filter early to reduce data scanned
+from sqlalchemy import func
+
+events = session.query(AnalyticsEvent)\
+    .filter(AnalyticsEvent.event_timestamp >= '2024-01-01')\
+    .filter(AnalyticsEvent.event_type == 'purchase')\
+    .all()
+
+# ✅ Good: Use partitioned tables
+class PartitionedEvent(Base):
+    __tablename__ = "events"
+    __table_args__ = {
+        'bigquery_partition_by': 'DATE(event_timestamp)'
+    }
+```
+
+#### Cost Management
+
+- **Partition tables** by date to reduce scanned data
+- **Use clustering** for frequently filtered columns
+- **Avoid SELECT *** - specify only needed columns
+- **Cache results** when possible
+- **Use materialized views** for repeated queries
+
+### Hybrid Architecture
+
+Many applications use both traditional RDBMS and BigQuery:
+
+```python
+# app/infra/database.py
+from app.infra.mysql_sa import get_session as get_mysql_session
+from app.infra.bigquery_sa import get_bigquery_session
+
+class DataAccess:
+    @staticmethod
+    def get_operational_session():
+        """MySQL for transactional data (CRUD operations)"""
+        return get_mysql_session()
+    
+    @staticmethod
+    def get_analytics_session():
+        """BigQuery for analytical queries (reporting, aggregations)"""
+        return get_bigquery_session()
+```
+
+**Use Cases:**
+- **MySQL/PostgreSQL**: User accounts, orders, real-time transactions
+- **BigQuery**: Analytics, reporting, data warehousing, historical data
+
+### Environment Variables
+
+```bash
+# .env
+GCP_PROJECT_ID=my-project-id
+BQ_DATASET_ID=my_dataset
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
 ```
 
 ## Best Practices

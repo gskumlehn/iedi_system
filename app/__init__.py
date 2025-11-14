@@ -13,15 +13,13 @@ def create_app():
         static_folder="../static",
     )
 
-    # ProxyFix para nginx
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1)
     app.config["PREFERRED_URL_SCHEME"] = "https"
     app.config['JSON_AS_ASCII'] = False
 
-    # Registrar blueprints
     app.register_blueprint(root_bp, url_prefix="/")
-    app.register_blueprint(bank_bp, url_prefix="/bancos")
-    app.register_blueprint(media_bp, url_prefix="/veiculos")
-    app.register_blueprint(analysis_bp, url_prefix="/analises")
+    app.register_blueprint(bank_bp, url_prefix="/banks")
+    app.register_blueprint(media_bp, url_prefix="/media")
+    app.register_blueprint(analysis_bp, url_prefix="/analyses")
 
     return app

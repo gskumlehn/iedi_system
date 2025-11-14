@@ -123,7 +123,7 @@ async function loadAnalises() {
         document.getElementById('empty-state').classList.add('hidden');
         document.getElementById('table-container').classList.add('hidden');
         
-        analises = await apiRequest('/analises/api');
+        analises = await apiRequest('/analyses/api');
         
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('analise-count').textContent = `${analises.length} análise(s) realizada(s)`;

@@ -4,86 +4,74 @@ from app.models import Database
 media_bp = Blueprint("media", __name__)
 db = Database()
 
-# Veículos Relevantes
-@media_bp.route("/relevantes")
+@media_bp.route("/relevant")
 def relevant_media():
-    """Página de gerenciamento de veículos relevantes"""
-    return render_template("veiculos_relevantes.html")
+    return render_template("relevant_media.html")
 
-@media_bp.route("/api/relevantes", methods=['GET'])
-def get_veiculos_relevantes():
-    """Listar veículos relevantes"""
-    veiculos = db.get_veiculos_relevantes()
-    return jsonify(veiculos)
+@media_bp.route("/api/relevant", methods=['GET'])
+def list_relevant_media():
+    media = db.get_relevant_media()
+    return jsonify(media)
 
-@media_bp.route("/api/relevantes", methods=['POST'])
-def create_veiculo_relevante():
-    """Criar veículo relevante"""
+@media_bp.route("/api/relevant", methods=['POST'])
+def create_relevant_media():
     data = request.json
-    vr_id = db.create_veiculo_relevante(
-        nome=data['nome'],
-        dominio=data['dominio'],
-        ativo=data.get('ativo', True)
+    media_id = db.create_relevant_media(
+        name=data['name'],
+        domain=data['domain'],
+        active=data.get('active', True)
     )
-    return jsonify({'id': vr_id, 'success': True})
+    return jsonify({'id': media_id, 'success': True})
 
-@media_bp.route("/api/relevantes/<int:vr_id>", methods=['PUT'])
-def update_veiculo_relevante(vr_id):
-    """Atualizar veículo relevante"""
+@media_bp.route("/api/relevant/<int:media_id>", methods=['PUT'])
+def update_relevant_media(media_id):
     data = request.json
-    db.update_veiculo_relevante(
-        vr_id=vr_id,
-        nome=data['nome'],
-        dominio=data['dominio'],
-        ativo=data.get('ativo', True)
+    db.update_relevant_media(
+        media_id=media_id,
+        name=data['name'],
+        domain=data['domain'],
+        active=data.get('active', True)
     )
     return jsonify({'success': True})
 
-@media_bp.route("/api/relevantes/<int:vr_id>", methods=['DELETE'])
-def delete_veiculo_relevante(vr_id):
-    """Excluir veículo relevante"""
-    db.delete_veiculo_relevante(vr_id)
+@media_bp.route("/api/relevant/<int:media_id>", methods=['DELETE'])
+def delete_relevant_media(media_id):
+    db.delete_relevant_media(media_id)
     return jsonify({'success': True})
 
-# Veículos de Nicho
-@media_bp.route("/nicho")
+@media_bp.route("/niche")
 def niche_media():
-    """Página de gerenciamento de veículos de nicho"""
-    return render_template("veiculos_nicho.html")
+    return render_template("niche_media.html")
 
-@media_bp.route("/api/nicho", methods=['GET'])
-def get_veiculos_nicho():
-    """Listar veículos de nicho"""
-    veiculos = db.get_veiculos_nicho()
-    return jsonify(veiculos)
+@media_bp.route("/api/niche", methods=['GET'])
+def list_niche_media():
+    media = db.get_niche_media()
+    return jsonify(media)
 
-@media_bp.route("/api/nicho", methods=['POST'])
-def create_veiculo_nicho():
-    """Criar veículo de nicho"""
+@media_bp.route("/api/niche", methods=['POST'])
+def create_niche_media():
     data = request.json
-    vn_id = db.create_veiculo_nicho(
-        nome=data['nome'],
-        dominio=data['dominio'],
-        categoria=data.get('categoria'),
-        ativo=data.get('ativo', True)
+    media_id = db.create_niche_media(
+        name=data['name'],
+        domain=data['domain'],
+        category=data.get('category'),
+        active=data.get('active', True)
     )
-    return jsonify({'id': vn_id, 'success': True})
+    return jsonify({'id': media_id, 'success': True})
 
-@media_bp.route("/api/nicho/<int:vn_id>", methods=['PUT'])
-def update_veiculo_nicho(vn_id):
-    """Atualizar veículo de nicho"""
+@media_bp.route("/api/niche/<int:media_id>", methods=['PUT'])
+def update_niche_media(media_id):
     data = request.json
-    db.update_veiculo_nicho(
-        vn_id=vn_id,
-        nome=data['nome'],
-        dominio=data['dominio'],
-        categoria=data.get('categoria'),
-        ativo=data.get('ativo', True)
+    db.update_niche_media(
+        media_id=media_id,
+        name=data['name'],
+        domain=data['domain'],
+        category=data.get('category'),
+        active=data.get('active', True)
     )
     return jsonify({'success': True})
 
-@media_bp.route("/api/nicho/<int:vn_id>", methods=['DELETE'])
-def delete_veiculo_nicho(vn_id):
-    """Excluir veículo de nicho"""
-    db.delete_veiculo_nicho(vn_id)
+@media_bp.route("/api/niche/<int:media_id>", methods=['DELETE'])
+def delete_niche_media(media_id):
+    db.delete_niche_media(media_id)
     return jsonify({'success': True})
