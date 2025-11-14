@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Veículos Relevantes - IEDI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-title-wrapper">
+        <svg class="page-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        <div>
+            <h1 class="page-title">Veículos Relevantes</h1>
+            <p class="page-description">Gerencie veículos de imprensa de grande alcance</p>
+        </div>
+    </div>
+    <button class="btn btn-primary" onclick="openCreateModal()">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Novo Veículo
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Lista de Veículos Relevantes</h2>
+        <p class="card-description" id="veiculo-count">0 veículo(s) cadastrado(s)</p>
+    </div>
+    <div class="card-content">
+        <div id="loading" class="loading">Carregando...</div>
+        <div id="empty-state" class="empty-state hidden">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <p class="empty-state-title">Nenhum veículo cadastrado</p>
+            <p class="empty-state-description">Clique em "Novo Veículo" para começar</p>
+        </div>
+        <div id="table-container" class="table-container hidden">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Domínio</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="veiculos-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Criar/Editar -->
+<div id="veiculo-modal" class="modal-overlay hidden">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modal-title">Novo Veículo</h2>
+            <p class="modal-description">Preencha os dados do veículo relevante</p>
+        </div>
+        <form id="veiculo-form" onsubmit="handleSubmit(event)">
+            <div class="modal-content">
+                <div class="form-group">
+                    <label class="form-label" for="nome">Nome *</label>
+                    <input type="text" id="nome" class="form-input" placeholder="Ex: G1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="dominio">Domínio *</label>
+                    <input type="text" id="dominio" class="form-input" placeholder="Ex: g1.globo.com" required>
+                </div>
+                <div class="form-group mb-0">
+                    <label class="form-label">
+                        <input type="checkbox" id="ativo" checked>
+                        Ativo
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('veiculo-modal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="submit-btn">Criar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+let veiculos = [];
+let editingId = null;
+
+async function loadVeiculos() {
+    try {
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('empty-state').classList.add('hidden');
+        document.getElementById('table-container').classList.add('hidden');
+        
+        veiculos = await apiRequest('/api/veiculos-relevantes');
+        
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('veiculo-count').textContent = `${veiculos.length} veículo(s) cadastrado(s)`;
+        
+        if (veiculos.length === 0) {
+            document.getElementById('empty-state').classList.remove('hidden');
+        } else {
+            document.getElementById('table-container').classList.remove('hidden');
+            renderVeiculos();
+        }
+    } catch (error) {
+        document.getElementById('loading').classList.add('hidden');
+        showToast('Erro ao carregar veículos', 'error');
+    }
+}
+
+function renderVeiculos() {
+    const tbody = document.getElementById('veiculos-tbody');
+    tbody.innerHTML = veiculos.map(veiculo => `
+        <tr>
+            <td><strong>${veiculo.nome}</strong></td>
+            <td><span class="text-muted">${veiculo.dominio}</span></td>
+            <td>
+                <span class="badge ${veiculo.ativo ? 'badge-success' : 'badge-secondary'}">
+                    ${veiculo.ativo ? 'Ativo' : 'Inativo'}
+                </span>
+            </td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="openEditModal(${veiculo.id})">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="handleDelete(${veiculo.id}, '${veiculo.nome}')">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function openCreateModal() {
+    editingId = null;
+    document.getElementById('modal-title').textContent = 'Novo Veículo';
+    document.getElementById('submit-btn').textContent = 'Criar';
+    document.getElementById('veiculo-form').reset();
+    document.getElementById('ativo').checked = true;
+    openModal('veiculo-modal');
+}
+
+function openEditModal(id) {
+    const veiculo = veiculos.find(v => v.id === id);
+    if (!veiculo) return;
+    
+    editingId = id;
+    document.getElementById('modal-title').textContent = 'Editar Veículo';
+    document.getElementById('submit-btn').textContent = 'Atualizar';
+    document.getElementById('nome').value = veiculo.nome;
+    document.getElementById('dominio').value = veiculo.dominio;
+    document.getElementById('ativo').checked = veiculo.ativo;
+    openModal('veiculo-modal');
+}
+
+async function handleSubmit(event) {
+    event.preventDefault();
+    
+    const nome = document.getElementById('nome').value.trim();
+    const dominio = document.getElementById('dominio').value.trim();
+    const ativo = document.getElementById('ativo').checked;
+    
+    const data = { nome, dominio, ativo };
+    
+    try {
+        if (editingId) {
+            await apiRequest(`/api/veiculos-relevantes/${editingId}`, {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            });
+            showToast('Veículo atualizado com sucesso!', 'success');
+        } else {
+            await apiRequest('/api/veiculos-relevantes', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            showToast('Veículo criado com sucesso!', 'success');
+        }
+        
+        closeModal('veiculo-modal');
+        loadVeiculos();
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
+}
+
+async function handleDelete(id, nome) {
+    if (!confirmAction(`Tem certeza que deseja excluir o veículo "${nome}"?`)) {
+        return;
+    }
+    
+    try {
+        await apiRequest(`/api/veiculos-relevantes/${id}`, { method: 'DELETE' });
+        showToast('Veículo excluído com sucesso!', 'success');
+        loadVeiculos();
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadVeiculos);
+</script>
+{% endblock %}

@@ -23,27 +23,31 @@ db = Database()
 
 # Rotas de páginas HTML
 @app.route('/')
-def index():
+def dashboard():
     return render_template('index.html')
 
 @app.route('/bancos')
-def bancos_page():
+def banks():
     return render_template('bancos.html')
 
 @app.route('/porta-vozes')
 def porta_vozes_page():
     return render_template('porta_vozes.html')
 
-@app.route('/veiculos')
-def veiculos_page():
-    return render_template('veiculos.html')
+@app.route('/veiculos-relevantes')
+def relevant_media():
+    return render_template('veiculos_relevantes.html')
+
+@app.route('/veiculos-nicho')
+def niche_media():
+    return render_template('veiculos_nicho.html')
 
 @app.route('/configuracoes')
 def configuracoes_page():
     return render_template('configuracoes.html')
 
 @app.route('/analises')
-def analises_page():
+def analyses():
     return render_template('analises.html')
 
 @app.route('/analise-resultados')
