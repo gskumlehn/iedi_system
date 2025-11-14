@@ -1,36 +1,4 @@
-# Python
-__pycache__/
-*.py[cod]
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-.Python
-
-# Virtual Environment
-venv/
-ENV/
-env/
-
-# SQLite
-*.db
-*.sqlite
-*.sqlite3
-
-# Logs
-*.log
-logs/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
+.venv/
+.env/
+secrets/
 .idea/
-*.swp
-
-# Data
-data/*.db
-!data/.gitkeep
