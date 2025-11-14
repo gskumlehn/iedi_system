@@ -6,22 +6,24 @@ Scripts SQL para criação do schema e tabelas do sistema IEDI no Google BigQuer
 
 Execute os scripts na ordem numérica:
 
-**Criação do Schema e Tabelas:**
+### Criação do Schema e Tabelas
 
 1. `01_create_schema.sql` - Cria o schema `iedi`
 2. `02_create_table_banks.sql` - Cria tabela de bancos
-3. `03_create_table_relevant_media_outlets.sql` - Cria tabela de veículos relevantes
-4. `04_create_table_niche_media_outlets.sql` - Cria tabela de veículos de nicho
-5. `05_create_table_analyses.sql` - Cria tabela de análises
-6. `06_create_table_bank_periods.sql` - Cria tabela de períodos por banco
-7. `07_create_table_mentions.sql` - Cria tabela de menções
-8. `08_create_table_iedi_results.sql` - Cria tabela de resultados IEDI
+3. `03_create_table_media_outlets.sql` - Cria tabela de veículos de mídia (unificada)
+4. `04_create_table_analyses.sql` - Cria tabela de análises
+5. `05_create_table_bank_periods.sql` - Cria tabela de períodos por banco
+6. `06_create_table_mentions.sql` - Cria tabela de menções
+7. `07_create_table_iedi_results.sql` - Cria tabela de resultados IEDI
 
-**Inserção de Dados Iniciais:**
+### Inserção de Dados Iniciais
 
-9. `09_insert_banks.sql` - Insere 4 bancos (BB, Bradesco, Itaú, Santander)
-10. `10_insert_relevant_media_outlets.sql` - Insere 40 veículos relevantes
-11. `11_insert_niche_media_outlets.sql` - Insere 22 veículos de nicho
+8. `08_insert_banks.sql` - Insere 4 bancos (BB, Bradesco, Itaú, Santander)
+9. `09_insert_media_outlets.sql` - Insere 62 veículos (40 relevant + 22 niche)
+
+### Migração (Opcional)
+
+10. `10_migrate_unify_media_outlets.sql` - Migra dados de tabelas antigas para tabela unificada
 
 ## Como Executar
 
@@ -36,24 +38,18 @@ Execute os scripts na ordem numérica:
 ### Opção 2: bq CLI
 
 ```bash
-# Configurar projeto
 export PROJECT_ID=your-gcp-project-id
 
-# Executar scripts
-# Criar schema e tabelas
 bq query --project_id=$PROJECT_ID < 01_create_schema.sql
 bq query --project_id=$PROJECT_ID < 02_create_table_banks.sql
-bq query --project_id=$PROJECT_ID < 03_create_table_relevant_media_outlets.sql
-bq query --project_id=$PROJECT_ID < 04_create_table_niche_media_outlets.sql
-bq query --project_id=$PROJECT_ID < 05_create_table_analyses.sql
-bq query --project_id=$PROJECT_ID < 06_create_table_bank_periods.sql
-bq query --project_id=$PROJECT_ID < 07_create_table_mentions.sql
-bq query --project_id=$PROJECT_ID < 08_create_table_iedi_results.sql
+bq query --project_id=$PROJECT_ID < 03_create_table_media_outlets.sql
+bq query --project_id=$PROJECT_ID < 04_create_table_analyses.sql
+bq query --project_id=$PROJECT_ID < 05_create_table_bank_periods.sql
+bq query --project_id=$PROJECT_ID < 06_create_table_mentions.sql
+bq query --project_id=$PROJECT_ID < 07_create_table_iedi_results.sql
 
-# Inserir dados iniciais
-bq query --project_id=$PROJECT_ID < 09_insert_banks.sql
-bq query --project_id=$PROJECT_ID < 10_insert_relevant_media_outlets.sql
-bq query --project_id=$PROJECT_ID < 11_insert_niche_media_outlets.sql
+bq query --project_id=$PROJECT_ID < 08_insert_banks.sql
+bq query --project_id=$PROJECT_ID < 09_insert_media_outlets.sql
 ```
 
 ### Opção 3: Python (SQLAlchemy)
@@ -62,7 +58,6 @@ bq query --project_id=$PROJECT_ID < 11_insert_niche_media_outlets.sql
 from app.models import Base
 from app.infra.bq_sa import engine
 
-# Cria todas as tabelas automaticamente
 Base.metadata.create_all(engine)
 ```
 
@@ -70,13 +65,12 @@ Base.metadata.create_all(engine)
 
 ```
 iedi/
-├── banks                        (Bancos)
-├── relevant_media_outlets       (Veículos relevantes)
-├── niche_media_outlets          (Veículos de nicho)
-├── analyses                     (Análises)
-├── bank_periods                 (Períodos por banco)
-├── mentions                     (Menções da Brandwatch)
-└── iedi_results                 (Resultados IEDI agregados)
+├── banks                    (Bancos)
+├── media_outlets            (Veículos de mídia - relevant + niche)
+├── analyses                 (Análises)
+├── bank_periods             (Períodos por banco)
+├── mentions                 (Menções da Brandwatch)
+└── iedi_results             (Resultados IEDI agregados)
 ```
 
 ## Relacionamentos
@@ -102,6 +96,14 @@ mentions (N) ──→ (N) banks (via categories array)
 | `bool` | `BOOL` | TRUE/FALSE |
 | `datetime` | `TIMESTAMP` | 2025-01-01 00:00:00 UTC |
 | `list[str]` | `ARRAY<STRING>` | ["item1", "item2"] |
+
+## Media Outlets (Tabela Unificada)
+
+A tabela `media_outlets` unifica veículos relevantes e de nicho:
+
+- **is_niche = FALSE**: Veículos relevantes (40 outlets)
+- **is_niche = TRUE**: Veículos de nicho (22 outlets)
+- **monthly_visitors**: Apenas para niche (NULL para relevant)
 
 ## Observações
 
