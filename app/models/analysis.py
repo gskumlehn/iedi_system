@@ -13,8 +13,11 @@ class Analysis(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
-    query = Column(Text, nullable=False)
+    query_name = Column(String(255), nullable=False)
+    _start_date = Column("start_date", TIMESTAMP, nullable=False)
+    _end_date = Column("end_date", TIMESTAMP, nullable=False)
     custom_period = Column(Boolean, default=False, nullable=False)
+    status = Column(String(50), default='pending', nullable=False)
     _created_at = Column("created_at", TIMESTAMP, nullable=False)
     _updated_at = Column("updated_at", TIMESTAMP, nullable=False)
 
@@ -41,6 +44,44 @@ class Analysis(Base):
         return cls._created_at
 
     @hybrid_property
+    def start_date(self) -> datetime:
+        if self._start_date is None:
+            return None
+        return self._start_date.astimezone(self.BR_TZ)
+
+    @start_date.setter
+    def start_date(self, value: datetime):
+        if value is None:
+            self._start_date = None
+            return
+        if not isinstance(value, datetime):
+            raise TypeError("start_date must be a datetime instance")
+        self._start_date = value
+
+    @start_date.expression
+    def start_date(cls):
+        return cls._start_date
+
+    @hybrid_property
+    def end_date(self) -> datetime:
+        if self._end_date is None:
+            return None
+        return self._end_date.astimezone(self.BR_TZ)
+
+    @end_date.setter
+    def end_date(self, value: datetime):
+        if value is None:
+            self._end_date = None
+            return
+        if not isinstance(value, datetime):
+            raise TypeError("end_date must be a datetime instance")
+        self._end_date = value
+
+    @end_date.expression
+    def end_date(cls):
+        return cls._end_date
+
+    @hybrid_property
     def updated_at(self) -> datetime:
         if self._updated_at is None:
             return None
@@ -58,6 +99,19 @@ class Analysis(Base):
     @updated_at.expression
     def updated_at(cls):
         return cls._updated_at
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'query_name': self.query_name,
+            'start_date': self.start_date.isoformat() if self.start_date else None,
+            'end_date': self.end_date.isoformat() if self.end_date else None,
+            'custom_period': self.custom_period,
+            'status': self.status,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
 
 class BankPeriod(Base):
     __tablename__ = "bank_periods"
@@ -131,3 +185,15 @@ class BankPeriod(Base):
     @created_at.expression
     def created_at(cls):
         return cls._created_at
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'analysis_id': self.analysis_id,
+            'bank_id': self.bank_id,
+            'category_detail': self.category_detail,
+            'start_date': self.start_date.isoformat() if self.start_date else None,
+            'end_date': self.end_date.isoformat() if self.end_date else None,
+            'total_mentions': self.total_mentions,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }

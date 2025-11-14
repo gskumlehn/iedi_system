@@ -59,6 +59,17 @@ class RelevantMediaOutlet(Base):
     @updated_at.expression
     def updated_at(cls):
         return cls._updated_at
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'domain': self.domain,
+            'category': self.category,
+            'active': self.active,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
 
 class NicheMediaOutlet(Base):
     __tablename__ = "niche_media_outlets"
@@ -113,3 +124,15 @@ class NicheMediaOutlet(Base):
     @updated_at.expression
     def updated_at(cls):
         return cls._updated_at
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'domain': self.domain,
+            'category': self.category,
+            'monthly_visitors': self.monthly_visitors,
+            'active': self.active,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
