@@ -1,72 +1,54 @@
 from datetime import datetime
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy_bigquery import ARRAY, TIMESTAMP
-from zoneinfo import ZoneInfo
+import json
 
 Base = declarative_base()
 
 class Bank(Base):
     __tablename__ = "banks"
-    __table_args__ = {"schema": "iedi"}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False, unique=True)
-    _variations = Column("variations", ARRAY(String), nullable=False, default=list)
+    _variations = Column("variations", Text, nullable=True)  # JSON array as text
+    earnings_release_date = Column(DateTime, nullable=True)
+    collection_days = Column(Integer, nullable=True)
     active = Column(Boolean, default=True, nullable=False)
-    _created_at = Column("created_at", TIMESTAMP, nullable=False)
-    _updated_at = Column("updated_at", TIMESTAMP, nullable=False)
-
-    UTC_TZ = ZoneInfo("UTC")
-    BR_TZ = ZoneInfo("America/Sao_Paulo")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     @hybrid_property
     def variations(self) -> list[str]:
-        return self._variations or []
+        """Retorna variations como lista Python"""
+        if not self._variations:
+            return []
+        try:
+            return json.loads(self._variations)
+        except (json.JSONDecodeError, TypeError):
+            return []
 
     @variations.setter
     def variations(self, value: list[str]):
-        self._variations = value if value else []
+        """Armazena variations como JSON string"""
+        if value is None or value == []:
+            self._variations = None
+        else:
+            self._variations = json.dumps(value, ensure_ascii=False)
 
     @variations.expression
     def variations(cls):
         return cls._variations
-
-    @hybrid_property
-    def created_at(self) -> datetime:
-        if self._created_at is None:
-            return None
-        return self._created_at.astimezone(self.BR_TZ)
-
-    @created_at.setter
-    def created_at(self, value: datetime):
-        if value is None:
-            self._created_at = None
-            return
-        if not isinstance(value, datetime):
-            raise TypeError("created_at must be a datetime instance")
-        self._created_at = value
-
-    @created_at.expression
-    def created_at(cls):
-        return cls._created_at
-
-    @hybrid_property
-    def updated_at(self) -> datetime:
-        if self._updated_at is None:
-            return None
-        return self._updated_at.astimezone(self.BR_TZ)
-
-    @updated_at.setter
-    def updated_at(self, value: datetime):
-        if value is None:
-            self._updated_at = None
-            return
-        if not isinstance(value, datetime):
-            raise TypeError("updated_at must be a datetime instance")
-        self._updated_at = value
-
-    @updated_at.expression
-    def updated_at(cls):
-        return cls._updated_at
+    
+    def to_dict(self):
+        """Converte para dicionário"""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'variations': self.variations,
+            'earnings_release_date': self.earnings_release_date.isoformat() if self.earnings_release_date else None,
+            'collection_days': self.collection_days,
+            'active': self.active,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }

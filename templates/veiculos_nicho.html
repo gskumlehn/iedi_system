@@ -103,7 +103,7 @@ async function loadVeiculos() {
         document.getElementById('empty-state').classList.add('hidden');
         document.getElementById('table-container').classList.add('hidden');
         
-        veiculos = await apiRequest('/api/veiculos-nicho');
+        veiculos = await apiRequest('/veiculos/api/nicho');
         
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('veiculo-count').textContent = `${veiculos.length} veículo(s) cadastrado(s)`;
@@ -191,13 +191,13 @@ async function handleSubmit(event) {
     
     try {
         if (editingId) {
-            await apiRequest(`/api/veiculos-nicho/${editingId}`, {
+            await apiRequest(`/veiculos/api/nicho/${editingId}`, {
                 method: 'PUT',
                 body: JSON.stringify(data)
             });
             showToast('Veículo atualizado com sucesso!', 'success');
         } else {
-            await apiRequest('/api/veiculos-nicho', {
+            await apiRequest('/veiculos/api/nicho', {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
@@ -217,7 +217,7 @@ async function handleDelete(id, nome) {
     }
     
     try {
-        await apiRequest(`/api/veiculos-nicho/${id}`, { method: 'DELETE' });
+        await apiRequest(`/veiculos/api/nicho/${id}`, { method: 'DELETE' });
         showToast('Veículo excluído com sucesso!', 'success');
         loadVeiculos();
     } catch (error) {

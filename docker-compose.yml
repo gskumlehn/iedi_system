@@ -1,25 +1,13 @@
-version: '3.8'
-
 services:
-  iedi-web:
+  web:
     build: .
-    container_name: iedi-system
+    image: iedi-system:latest
     ports:
-      - "5000:5000"
+      - "8080:8080"
+    env_file:
+      - .env
     volumes:
+      - ./:/app
       - ./data:/app/data
-    environment:
-      - FLASK_ENV=production
-      - PYTHONUNBUFFERED=1
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-volumes:
-  # Volume nomeado como alternativa (comentado por padrão)
-  iedi-data:
-    driver: local
+    command: >
+      gunicorn --bind 0.0.0.0:8080 --workers 2 --threads 4 wsgi:app

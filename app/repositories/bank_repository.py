@@ -1,44 +1,49 @@
 from typing import List, Optional
-from app.infra.bq_sa import get_session
+from app.infra.mysql_sa import get_session
 from app.models.bank import Bank
 
 class BankRepository:
 
-    def create(self, name: str, variations: List[str]) -> Bank:
-        session = get_session()
-        bank = Bank(name=name, variations=variations)
-        session.add(bank)
-        session.commit()
-        session.refresh(bank)
-        return bank
-
-    def find_by_id(self, bank_id: int) -> Optional[Bank]:
-        session = get_session()
-        return session.query(Bank).filter(Bank.id == bank_id).first()
-
-    def find_by_name(self, name: str) -> Optional[Bank]:
-        session = get_session()
-        return session.query(Bank).filter(Bank.name == name).first()
-
-    def find_all_active(self) -> List[Bank]:
-        session = get_session()
-        return session.query(Bank).filter(Bank.active == True).all()
-
-    def update(self, bank_id: int, **kwargs) -> Optional[Bank]:
-        session = get_session()
-        bank = session.query(Bank).filter(Bank.id == bank_id).first()
-        if bank:
-            for key, value in kwargs.items():
-                setattr(bank, key, value)
-            session.commit()
-            session.refresh(bank)
-        return bank
-
-    def delete(self, bank_id: int) -> bool:
-        session = get_session()
-        bank = session.query(Bank).filter(Bank.id == bank_id).first()
-        if bank:
-            bank.active = False
-            session.commit()
-            return True
-        return False
+    @staticmethod
+    def list_all(ativo_only: bool = False) -> List[dict]:
+        """Listar todos os bancos"""
+        with get_session() as session:
+            query = session.query(Bank)
+            if ativo_only:
+                query = query.filter(Bank.active == True)
+            banks = query.order_by(Bank.name).all()
+            return [bank.to_dict() for bank in banks]
+    
+    @staticmethod
+    def get_by_id(bank_id: int) -> Optional[dict]:
+        """Buscar banco por ID"""
+        with get_session() as session:
+            bank = session.query(Bank).filter(Bank.id == bank_id).first()
+            return bank.to_dict() if bank else None
+    
+    @staticmethod
+    def create(name: str, variations: List[str], active: bool = True) -> int:
+        """Criar novo banco"""
+        with get_session() as session:
+            bank = Bank(name=name, variations=variations, active=active)
+            session.add(bank)
+            session.flush()
+            return bank.id
+    
+    @staticmethod
+    def update(bank_id: int, name: str, variations: List[str], active: bool) -> None:
+        """Atualizar banco existente"""
+        with get_session() as session:
+            bank = session.query(Bank).filter(Bank.id == bank_id).first()
+            if bank:
+                bank.name = name
+                bank.variations = variations
+                bank.active = active
+    
+    @staticmethod
+    def delete(bank_id: int) -> None:
+        """Excluir banco (soft delete)"""
+        with get_session() as session:
+            bank = session.query(Bank).filter(Bank.id == bank_id).first()
+            if bank:
+                session.delete(bank)

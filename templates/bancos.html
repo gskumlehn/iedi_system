@@ -96,7 +96,7 @@ async function loadBancos() {
         document.getElementById('empty-state').classList.add('hidden');
         document.getElementById('table-container').classList.add('hidden');
         
-        bancos = await apiRequest('/api/bancos');
+        bancos = await apiRequest('/bancos/api');
         
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('banco-count').textContent = `${bancos.length} banco(s) cadastrado(s)`;
@@ -182,13 +182,13 @@ async function handleSubmit(event) {
     
     try {
         if (editingId) {
-            await apiRequest(`/api/bancos/${editingId}`, {
+            await apiRequest(`/bancos/api/${editingId}`, {
                 method: 'PUT',
                 body: JSON.stringify(data)
             });
             showToast('Banco atualizado com sucesso!', 'success');
         } else {
-            await apiRequest('/api/bancos', {
+            await apiRequest('/bancos/api', {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
@@ -208,7 +208,7 @@ async function handleDelete(id, nome) {
     }
     
     try {
-        await apiRequest(`/api/bancos/${id}`, { method: 'DELETE' });
+        await apiRequest(`/bancos/api/${id}`, { method: 'DELETE' });
         showToast('Banco excluído com sucesso!', 'success');
         loadBancos();
     } catch (error) {

@@ -79,10 +79,10 @@
 async function loadStats() {
     try {
         const [bancos, relevantes, nicho, analises] = await Promise.all([
-            apiRequest('/api/bancos'),
-            apiRequest('/api/veiculos-relevantes'),
-            apiRequest('/api/veiculos-nicho'),
-            apiRequest('/api/analises')
+            apiRequest('/bancos/api'),
+            apiRequest('/veiculos/api/relevantes'),
+            apiRequest('/veiculos/api/nicho'),
+            apiRequest('/analises/api')
         ]);
         
         document.getElementById('stat-bancos').textContent = bancos.length;
