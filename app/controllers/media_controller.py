@@ -1,77 +1,71 @@
-from flask import Blueprint, render_template, request, jsonify
-from app.models import Database
+from flask import Blueprint, jsonify, render_template, request
+from app.repositories.media_outlet_repository import MediaOutletRepository
 
-media_bp = Blueprint("media", __name__)
-db = Database()
+media_bp = Blueprint('media', __name__, url_prefix='/media')
 
-@media_bp.route("/relevant")
-def relevant_media():
-    return render_template("relevant_media.html")
+@media_bp.route("/")
+def index():
+    return render_template('media.html')
 
-@media_bp.route("/api/relevant", methods=['GET'])
-def list_relevant_media():
-    media = db.get_relevant_media()
-    return jsonify(media)
+@media_bp.route("/api", methods=['GET'])
+def list_outlets():
+    is_niche_param = request.args.get('niche')
+    is_niche = None
+    
+    if is_niche_param is not None:
+        is_niche = is_niche_param.lower() == 'true'
+    
+    outlets = MediaOutletRepository.list_all(is_niche=is_niche)
+    return jsonify(outlets)
 
-@media_bp.route("/api/relevant", methods=['POST'])
-def create_relevant_media():
+@media_bp.route("/api/<int:outlet_id>", methods=['GET'])
+def get_outlet(outlet_id):
+    outlet = MediaOutletRepository.get_by_id(outlet_id)
+    if not outlet:
+        return jsonify({'error': 'Media outlet not found'}), 404
+    return jsonify(outlet)
+
+@media_bp.route("/api", methods=['POST'])
+def create_outlet():
     data = request.json
-    media_id = db.create_relevant_media(
-        name=data['name'],
-        domain=data['domain'],
-        active=data.get('active', True)
-    )
-    return jsonify({'id': media_id, 'success': True})
-
-@media_bp.route("/api/relevant/<int:media_id>", methods=['PUT'])
-def update_relevant_media(media_id):
-    data = request.json
-    db.update_relevant_media(
-        media_id=media_id,
-        name=data['name'],
-        domain=data['domain'],
-        active=data.get('active', True)
-    )
-    return jsonify({'success': True})
-
-@media_bp.route("/api/relevant/<int:media_id>", methods=['DELETE'])
-def delete_relevant_media(media_id):
-    db.delete_relevant_media(media_id)
-    return jsonify({'success': True})
-
-@media_bp.route("/niche")
-def niche_media():
-    return render_template("niche_media.html")
-
-@media_bp.route("/api/niche", methods=['GET'])
-def list_niche_media():
-    media = db.get_niche_media()
-    return jsonify(media)
-
-@media_bp.route("/api/niche", methods=['POST'])
-def create_niche_media():
-    data = request.json
-    media_id = db.create_niche_media(
+    
+    if not data.get('name') or not data.get('domain'):
+        return jsonify({'error': 'Name and domain are required'}), 400
+    
+    outlet = MediaOutletRepository.create(
         name=data['name'],
         domain=data['domain'],
         category=data.get('category'),
-        active=data.get('active', True)
+        monthly_visitors=data.get('monthly_visitors'),
+        is_niche=data.get('is_niche', False)
     )
-    return jsonify({'id': media_id, 'success': True})
+    
+    return jsonify(outlet), 201
 
-@media_bp.route("/api/niche/<int:media_id>", methods=['PUT'])
-def update_niche_media(media_id):
+@media_bp.route("/api/<int:outlet_id>", methods=['PUT'])
+def update_outlet(outlet_id):
     data = request.json
-    db.update_niche_media(
-        media_id=media_id,
-        name=data['name'],
-        domain=data['domain'],
+    
+    outlet = MediaOutletRepository.update(
+        outlet_id=outlet_id,
+        name=data.get('name'),
+        domain=data.get('domain'),
         category=data.get('category'),
-        active=data.get('active', True)
+        monthly_visitors=data.get('monthly_visitors'),
+        is_niche=data.get('is_niche'),
+        active=data.get('active')
     )
-    return jsonify({'success': True})
+    
+    if not outlet:
+        return jsonify({'error': 'Media outlet not found'}), 404
+    
+    return jsonify(outlet)
 
-@media_bp.route("/api/niche/<int:media_id>", methods=['DELETE'])
-def delete_niche_media(media_id):
-    db.delete_niche_media(media_id)
-    return jsonify({'success': True})
+@media_bp.route("/api/<int:outlet_id>", methods=['DELETE'])
+def delete_outlet(outlet_id):
+    success = MediaOutletRepository.delete(outlet_id)
+    
+    if not success:
+        return jsonify({'error': 'Media outlet not found'}), 404
+    
+    return jsonify({'message': 'Media outlet deleted successfully'})
