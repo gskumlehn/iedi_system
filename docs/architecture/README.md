@@ -1,34 +1,59 @@
-# Documentação de Arquitetura
+# Architecture Documentation
 
-Esta pasta contém documentação técnica sobre a arquitetura, estrutura e implementação do sistema IEDI.
+This folder contains generic technical guidelines and architectural patterns for building Python-based data processing systems with clean architecture principles.
 
-## Índice
+## Core Principles
 
-### Estrutura e Padrões
+This documentation follows a **clean architecture pattern** inspired by industry best practices, emphasizing:
 
-- **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Estrutura completa do projeto (pastas, arquivos, responsabilidades)
-- **[NOMENCLATURA_BACKEND_FRONTEND.md](./NOMENCLATURA_BACKEND_FRONTEND.md)** - Padrões de nomenclatura e convenções de código
+- **Separation of concerns** through layered architecture
+- **Code in English** without comments (self-documenting code)
+- **Alphabetically ordered imports** for consistency
+- **One-line spacing between methods** for readability
+- **Hybrid property patterns** for database compatibility
 
-### Implementação e Integração
+## Documentation Index
 
-- **[IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)** - Guia de implementação do sistema
-- **[GUIA_IMPLEMENTACAO_BIGQUERY.md](./GUIA_IMPLEMENTACAO_BIGQUERY.md)** - Guia específico para implementação com BigQuery
-- **[README_INTEGRACAO.md](./README_INTEGRACAO.md)** - Documentação de integração com APIs externas
+### Project Foundation
 
-### Fluxos e Processos
+**[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Complete project structure template with folder organization, file responsibilities, and layer definitions (models, repositories, services, controllers).
 
-- **[FLUXOGRAMA_SISTEMA.md](./FLUXOGRAMA_SISTEMA.md)** - Fluxogramas e diagramas do sistema
+**[NAMING_CONVENTIONS.md](./NAMING_CONVENTIONS.md)** - Comprehensive naming standards for backend (Python) and frontend (JavaScript/TypeScript) including variables, functions, classes, files, and database entities.
 
-### Instalação e Migração
+### Setup and Installation
 
-- **[INSTALACAO.md](./INSTALACAO.md)** - Instruções de instalação e configuração
-- **[MIGRACAO.md](./MIGRACAO.md)** - Guia de migração entre versões
+**[INSTALLATION.md](./INSTALLATION.md)** - Step-by-step installation guide for setting up the development environment, dependencies, and initial configuration.
 
-### Análises Técnicas
+**[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - Implementation guide covering the complete development workflow from project initialization to deployment.
 
-- **[ANALISE_BB_MONITOR.md](./ANALISE_BB_MONITOR.md)** - Análise comparativa com sistema bb-monitor
+### System Architecture
 
-## Navegação
+**[SYSTEM_FLOW.md](./SYSTEM_FLOW.md)** - System flowcharts and architecture diagrams illustrating data flow, component interactions, and process sequences.
 
-- [← Voltar para raiz](../../README.md)
-- [→ Documentação de Negócio](../business/README.md)
+### Integration Patterns
+
+**[API_INTEGRATION.md](./API_INTEGRATION.md)** - Guidelines for integrating external APIs, handling authentication, error management, and data transformation patterns.
+
+**[BIGQUERY_INTEGRATION.md](./BIGQUERY_INTEGRATION.md)** - Specific patterns for integrating Google BigQuery as data warehouse, including schema design, hybrid properties for compatibility, and query optimization.
+
+## Architecture Layers
+
+The recommended architecture follows these layers:
+
+1. **Models** - Data entities with ORM mappings and hybrid properties
+2. **Repositories** - Data access layer abstracting database operations
+3. **Services** - Business logic and orchestration
+4. **Controllers** - API endpoints and request handling
+5. **Infrastructure** - External integrations (databases, APIs, cloud services)
+
+## Technology Stack Template
+
+- **Backend**: Python 3.11+, Flask 3.0+, SQLAlchemy
+- **Database**: BigQuery (data warehouse), PostgreSQL/MySQL (operational)
+- **API Integration**: REST APIs with requests library
+- **Code Style**: English, no comments, clean architecture
+
+## Navigation
+
+- [← Back to root](../../README.md)
+- [→ Business Documentation](../business/README.md)

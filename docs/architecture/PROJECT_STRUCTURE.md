@@ -1,269 +1,278 @@
-# IEDI System - Project Structure Guide
+# Project Structure Template
+
+This document defines a generic project structure for Python-based data processing systems following clean architecture principles.
 
 ## Directory Structure
 
 ```
-iedi_system/
+project_root/
 ├── app/
-│   ├── models/              # SQLAlchemy models
+│   ├── models/              # Data models (SQLAlchemy ORM)
 │   │   ├── __init__.py
-│   │   ├── bank.py
-│   │   ├── media_outlet.py
-│   │   ├── analysis.py
-│   │   ├── mention.py
-│   │   └── iedi_result.py
+│   │   ├── entity_a.py
+│   │   ├── entity_b.py
+│   │   └── entity_c.py
 │   ├── repositories/        # Data access layer
 │   │   ├── __init__.py
-│   │   ├── bank_repository.py
-│   │   ├── media_outlet_repository.py
-│   │   ├── analysis_repository.py
-│   │   ├── mention_repository.py
-│   │   └── iedi_result_repository.py
-│   ├── services/            # Business logic
+│   │   ├── entity_a_repository.py
+│   │   ├── entity_b_repository.py
+│   │   └── entity_c_repository.py
+│   ├── services/            # Business logic layer
 │   │   ├── __init__.py
-│   │   ├── iedi_calculator.py
-│   │   ├── brandwatch_service.py
-│   │   └── analysis_service.py
-│   ├── controllers/         # Flask blueprints
+│   │   ├── calculation_service.py
+│   │   ├── external_api_service.py
+│   │   └── orchestration_service.py
+│   ├── controllers/         # API endpoints (Flask blueprints)
 │   │   ├── __init__.py
-│   │   ├── bank_controller.py
-│   │   ├── media_outlet_controller.py
-│   │   └── analysis_controller.py
-│   ├── infra/               # Infrastructure
+│   │   ├── entity_a_controller.py
+│   │   ├── entity_b_controller.py
+│   │   └── process_controller.py
+│   ├── infra/               # Infrastructure integrations
 │   │   ├── __init__.py
-│   │   └── bq_sa.py
+│   │   ├── database_engine.py
+│   │   └── external_api_client.py
 │   ├── enums/               # Enumerations
 │   │   ├── __init__.py
-│   │   ├── sentiment.py
-│   │   └── reach_group.py
-│   ├── constants/           # Constants
+│   │   ├── status.py
+│   │   └── category.py
+│   ├── constants/           # Application constants
 │   │   ├── __init__.py
-│   │   └── weights.py
-│   └── utils/               # Utilities
+│   │   └── config.py
+│   └── utils/               # Utility functions
 │       └── __init__.py
-├── templates/               # HTML templates
+├── templates/               # HTML templates (if using server-side rendering)
 │   ├── base.html
 │   ├── index.html
-│   ├── banks.html
-│   ├── media_outlets.html
-│   └── create_analysis.html
-├── static/                  # Static files
+│   └── components/
+├── static/                  # Static assets (CSS, JS, images)
 │   ├── css/
-│   │   └── style.css
-│   └── js/
-│       └── main.js
-├── app.py                   # Flask application
-├── requirements.txt
+│   ├── js/
+│   └── img/
+├── sql/                     # SQL scripts for database setup
+│   ├── 01_create_schema.sql
+│   ├── 02_create_tables.sql
+│   └── 03_insert_seed_data.sql
+├── tests/                   # Test suite
+│   ├── unit/
+│   ├── integration/
+│   └── fixtures/
+├── docs/                    # Documentation
+│   ├── architecture/
+│   └── business/
+├── .env_sample              # Environment variables template
+├── .gitignore
+├── app.py                   # Application entry point
+├── requirements.txt         # Python dependencies
 └── README.md
 ```
 
-## Code Style Guidelines
+## Layer Responsibilities
 
-### General Rules
+### Models (`app/models/`)
 
-1. **Language**: English only (backend)
-2. **Comments**: No explanatory comments
-3. **Imports**: Alphabetical order
-4. **Spacing**: 1 blank line between methods
-5. **Type Hints**: Always use type hints
+Data entities representing database tables or domain objects.
 
-### Import Order
+**Responsibilities:**
+- Define table structure with SQLAlchemy ORM
+- Implement hybrid properties for database compatibility (dates, enums, arrays)
+- Define relationships between entities
+- Keep models pure (no business logic)
 
+**Example:**
 ```python
-# Standard library
-from datetime import datetime
-from typing import List, Optional
+from sqlalchemy import Column, Integer, String, Date, Enum
+from sqlalchemy.ext.hybrid import hybrid_property
 
-# Third-party
-from flask import Blueprint, jsonify, request
-from sqlalchemy import Column, Integer, String
-
-# Local
-from app.infra.bq_sa import get_session
-from app.models.bank import Bank
+class Entity(Base):
+    __tablename__ = 'entities'
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    _status = Column('status', String(20))
+    _created_at = Column('created_at', DateTime(timezone=True))
+    
+    @hybrid_property
+    def status(self):
+        return EntityStatus(self._status) if self._status else None
+    
+    @status.setter
+    def status(self, value):
+        self._status = value.value if value else None
 ```
 
-### Model Example
+### Repositories (`app/repositories/`)
 
+Data access layer abstracting database operations.
+
+**Responsibilities:**
+- CRUD operations (Create, Read, Update, Delete)
+- Query construction and execution
+- Transaction management
+- Return domain models, not raw database rows
+
+**Example:**
 ```python
-from datetime import datetime
-from sqlalchemy import Boolean, Column, DateTime, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
-
-class Bank(Base):
-    __tablename__ = "banks"
-    __table_args__ = {"schema": "iedi"}
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255), nullable=False, unique=True)
-    active = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+class EntityRepository:
+    def __init__(self, session):
+        self.session = session
+    
+    def find_all(self):
+        return self.session.query(Entity).all()
+    
+    def find_by_id(self, entity_id):
+        return self.session.query(Entity).filter(Entity.id == entity_id).first()
+    
+    def save(self, entity):
+        self.session.add(entity)
+        self.session.commit()
+        return entity
+    
+    def delete(self, entity_id):
+        entity = self.find_by_id(entity_id)
+        if entity:
+            self.session.delete(entity)
+            self.session.commit()
 ```
 
-### Repository Example
+### Services (`app/services/`)
 
+Business logic and orchestration layer.
+
+**Responsibilities:**
+- Implement business rules and calculations
+- Orchestrate multiple repositories
+- Handle external API integrations
+- Coordinate complex workflows
+- Validate business constraints
+
+**Example:**
 ```python
-from typing import List, Optional
-from app.infra.bq_sa import get_session
-from app.models.bank import Bank
-
-class BankRepository:
-
-    def create(self, name: str) -> Bank:
-        session = get_session()
-        bank = Bank(name=name)
-        session.add(bank)
-        session.commit()
-        session.refresh(bank)
-        return bank
-
-    def find_by_id(self, bank_id: int) -> Optional[Bank]:
-        session = get_session()
-        return session.query(Bank).filter(Bank.id == bank_id).first()
-
-    def find_all(self) -> List[Bank]:
-        session = get_session()
-        return session.query(Bank).all()
-```
-
-### Service Example
-
-```python
-from typing import Dict, List
-from app.constants.weights import TITLE_WEIGHT
-from app.models.bank import Bank
-from app.repositories.bank_repository import BankRepository
-
-class IEDICalculator:
-
-    def __init__(self):
-        self.bank_repo = BankRepository()
-
-    def calculate(self, mention: Dict, bank: Bank) -> float:
-        numerator = 0
-        denominator = 0
+class CalculationService:
+    def __init__(self, entity_repository, config_repository):
+        self.entity_repository = entity_repository
+        self.config_repository = config_repository
+    
+    def calculate_metric(self, entity_id):
+        entity = self.entity_repository.find_by_id(entity_id)
+        config = self.config_repository.get_active_config()
         
-        if self._check_title(mention["title"], bank):
-            numerator += TITLE_WEIGHT
-        denominator += TITLE_WEIGHT
+        # Business logic here
+        result = self._apply_formula(entity, config)
         
-        return (numerator / denominator) * 10 if denominator > 0 else 0.0
-
-    def _check_title(self, title: str, bank: Bank) -> bool:
-        return bank.name.lower() in title.lower()
+        return result
+    
+    def _apply_formula(self, entity, config):
+        # Complex calculation logic
+        pass
 ```
 
-### Controller Example
+### Controllers (`app/controllers/`)
 
+API endpoints handling HTTP requests and responses.
+
+**Responsibilities:**
+- Define REST API routes
+- Validate request parameters
+- Call appropriate services
+- Format responses (JSON)
+- Handle HTTP status codes and errors
+
+**Example:**
 ```python
 from flask import Blueprint, jsonify, request
-from app.services.analysis_service import AnalysisService
 
-analysis_bp = Blueprint("analysis", __name__, url_prefix="/api/analysis")
-analysis_service = AnalysisService()
+entity_bp = Blueprint('entities', __name__)
 
-@analysis_bp.route("/", methods=["POST"])
-def create_analysis():
-    data = request.json
-    result = analysis_service.create(
-        name=data["name"],
-        query=data["query"]
-    )
-    return jsonify({"success": True, "data": result}), 201
+@entity_bp.route('/api/entities', methods=['GET'])
+def list_entities():
+    service = EntityService()
+    entities = service.get_all_entities()
+    return jsonify([entity.to_dict() for entity in entities])
 
-@analysis_bp.route("/", methods=["GET"])
-def list_analyses():
-    analyses = analysis_service.list_all()
-    return jsonify({"success": True, "data": analyses}), 200
+@entity_bp.route('/api/entities/<int:id>', methods=['GET'])
+def get_entity(id):
+    service = EntityService()
+    entity = service.get_entity_by_id(id)
+    if not entity:
+        return jsonify({'error': 'Not found'}), 404
+    return jsonify(entity.to_dict())
 ```
 
-## Frontend Guidelines
+### Infrastructure (`app/infra/`)
 
-### HTML Structure
+External system integrations and technical concerns.
 
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>IEDI - Sistema</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-    <nav>
-        <a href="/">Início</a>
-        <a href="/bancos">Bancos</a>
-        <a href="/veiculos">Veículos</a>
-        <a href="/analises">Análises</a>
-    </nav>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-    <script src="/static/js/main.js"></script>
-</body>
-</html>
+**Responsibilities:**
+- Database connection management
+- External API clients
+- Cloud service integrations (BigQuery, S3, etc.)
+- Configuration management
+
+**Example:**
+```python
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+class DatabaseEngine:
+    def __init__(self, connection_string):
+        self.engine = create_engine(connection_string)
+        self.Session = sessionmaker(bind=self.engine)
+    
+    def get_session(self):
+        return self.Session()
 ```
 
-### Messages (Portuguese)
+### Enums (`app/enums/`)
 
-```javascript
-const messages = {
-    success: "Operação realizada com sucesso!",
-    error: "Erro ao processar solicitação",
-    required: "Campo obrigatório",
-    invalid: "Valor inválido"
-};
+Type-safe enumeration definitions.
+
+**Responsibilities:**
+- Define fixed sets of values
+- Provide type safety
+- Centralize constant definitions
+
+**Example:**
+```python
+from enum import Enum
+
+class Status(str, Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
 ```
 
-## Remaining Files to Create
+## Code Organization Principles
 
-### Repositories
-- `media_outlet_repository.py`
-- `mention_repository.py`
-- `iedi_result_repository.py`
+1. **Alphabetical imports** - All imports sorted alphabetically
+2. **One-line spacing** - Single blank line between methods
+3. **English only** - All code, variables, and functions in English
+4. **No comments** - Self-documenting code with clear naming
+5. **Single responsibility** - Each class/function has one clear purpose
+6. **Dependency injection** - Pass dependencies through constructors
 
-### Services
-- `iedi_calculator.py` (use iedi_calculator_v2.py as base)
-- `brandwatch_service.py`
-- `analysis_service.py`
+## File Naming Conventions
 
-### Controllers
-- `bank_controller.py`
-- `media_outlet_controller.py`
-- `analysis_controller.py`
+- **Models**: `entity_name.py` (singular, snake_case)
+- **Repositories**: `entity_name_repository.py`
+- **Services**: `purpose_service.py` or `entity_name_service.py`
+- **Controllers**: `entity_name_controller.py`
+- **Tests**: `test_entity_name.py`
 
-### Templates
-- `base.html`
-- `index.html`
-- `banks.html`
-- `media_outlets.html`
-- `create_analysis.html`
+## Import Order
 
-### Static Files
-- `static/css/style.css`
-- `static/js/main.js`
+```python
+# 1. Standard library
+import os
+from datetime import datetime
 
-### Main Application
-- `app.py`
-- `requirements.txt`
+# 2. Third-party packages
+from flask import Flask, jsonify
+from sqlalchemy import Column, Integer
 
-## Next Steps
-
-1. Create remaining repositories following BankRepository pattern
-2. Create services following business logic separation
-3. Create controllers as Flask blueprints
-4. Create minimal frontend templates
-5. Create main app.py with all blueprints registered
-6. Test end-to-end flow
-7. Deploy to production
-
-## Environment Variables
-
-```bash
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
-GCP_PROJECT_ID=your-project-id
-FLASK_APP=app.py
-FLASK_ENV=development
+# 3. Local application
+from app.models.entity import Entity
+from app.repositories.entity_repository import EntityRepository
 ```
+
+All imports within each group should be alphabetically sorted.
