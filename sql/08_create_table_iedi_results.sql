@@ -11,7 +11,4 @@ CREATE TABLE IF NOT EXISTS iedi.iedi_results (
   positivity_rate FLOAT64 NOT NULL DEFAULT 0.0,
   negativity_rate FLOAT64 NOT NULL DEFAULT 0.0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
-)
-OPTIONS (
-  description = 'IEDI results - aggregated IEDI scores per bank per analysis'
 );

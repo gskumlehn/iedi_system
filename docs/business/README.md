@@ -40,15 +40,6 @@ Esta pasta contém documentação **específica do negócio** do Sistema IEDI (�
    - Colunas customizadas
    - Tabelas de apoio para visualizações
 
-### Fluxos do Sistema
-
-6. **[SYSTEM_FLOW.md](./SYSTEM_FLOW.md)** - Fluxogramas detalhados (Mermaid):
-   - Fluxo principal de análise
-   - Fluxo de cálculo IEDI detalhado
-   - Fluxo de integração Brandwatch
-   - Fluxo de geração de ranking
-   - Diagramas de entidades (ERD)
-
 ## Visão Geral do Sistema IEDI
 
 O **Sistema IEDI** automatiza o cálculo do Índice de Exposição Digital na Imprensa para bancos brasileiros, integrando-se com a plataforma Brandwatch para extração de menções e aplicando metodologia proprietária de pontuação.
