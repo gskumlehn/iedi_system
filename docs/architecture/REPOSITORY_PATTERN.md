@@ -565,8 +565,179 @@ def get_top_selling_products(limit: int = 10) -> List[dict]:
         ]
 ```
 
+## BigQuery Repository Pattern
+
+### When to Use BigQuery
+
+Use BigQuery repositories for:
+- **Analytics queries**: Aggregations, reporting, dashboards
+- **Historical data**: Long-term storage and analysis
+- **Large datasets**: Petabyte-scale data processing
+- **Read-heavy workloads**: Data warehousing, BI tools
+
+Use traditional RDBMS (MySQL/PostgreSQL) for:
+- **Transactional data**: CRUD operations, real-time updates
+- **Relational integrity**: Foreign keys, constraints
+- **Low-latency queries**: Sub-second response times
+
+### BigQuery Repository Example
+
+```python
+# app/repositories/analytics_repository.py
+from app.infra.bigquery_sa import get_bigquery_session
+from app.models.analytics_event import AnalyticsEvent
+from sqlalchemy import func
+from typing import List, Dict
+from datetime import datetime
+
+class AnalyticsRepository:
+    
+    @staticmethod
+    def list_events(start_date: datetime, end_date: datetime, limit: int = 1000) -> List[Dict]:
+        with get_bigquery_session() as session:
+            events = session.query(AnalyticsEvent)\
+                .filter(AnalyticsEvent.event_timestamp >= start_date)\
+                .filter(AnalyticsEvent.event_timestamp < end_date)\
+                .limit(limit)\
+                .all()
+            return [event.to_dict() for event in events]
+    
+    @staticmethod
+    def get_event_counts_by_type(start_date: datetime, end_date: datetime) -> List[Dict]:
+        with get_bigquery_session() as session:
+            results = session.query(
+                AnalyticsEvent.event_type,
+                func.count(AnalyticsEvent.event_id).label('count')
+            ).filter(
+                AnalyticsEvent.event_timestamp >= start_date,
+                AnalyticsEvent.event_timestamp < end_date
+            ).group_by(AnalyticsEvent.event_type)\
+             .order_by(func.count(AnalyticsEvent.event_id).desc())\
+             .all()
+            
+            return [
+                {'event_type': event_type, 'count': count}
+                for event_type, count in results
+            ]
+    
+    @staticmethod
+    def insert_event(user_id: str, event_type: str, properties: List[str]) -> int:
+        with get_bigquery_session() as session:
+            event = AnalyticsEvent(
+                user_id=user_id,
+                event_type=event_type,
+                event_timestamp=datetime.utcnow(),
+                properties=properties
+            )
+            session.add(event)
+            session.flush()
+            return event.event_id
+```
+
+### Hybrid Repository Pattern
+
+For applications using both traditional RDBMS and BigQuery:
+
+```python
+# app/repositories/order_repository.py
+from app.infra.database import get_session  # MySQL
+from app.infra.bigquery_sa import get_bigquery_session  # BigQuery
+from app.models.order import Order
+from app.models.order_analytics import OrderAnalytics
+
+class OrderRepository:
+    
+    @staticmethod
+    def create(user_id: int, total: float) -> int:
+        """Create order in MySQL (transactional)"""
+        with get_session() as session:
+            order = Order(user_id=user_id, total=total)
+            session.add(order)
+            session.flush()
+            return order.id
+    
+    @staticmethod
+    def find_by_id(order_id: int) -> Optional[Dict]:
+        """Find order in MySQL (real-time)"""
+        with get_session() as session:
+            order = session.query(Order).filter_by(id=order_id).first()
+            return order.to_dict() if order else None
+    
+    @staticmethod
+    def get_sales_report(start_date: datetime, end_date: datetime) -> List[Dict]:
+        """Get sales analytics from BigQuery (analytics)"""
+        with get_bigquery_session() as session:
+            results = session.query(
+                func.date(OrderAnalytics.order_date).label('date'),
+                func.sum(OrderAnalytics.total).label('total_sales'),
+                func.count(OrderAnalytics.order_id).label('order_count')
+            ).filter(
+                OrderAnalytics.order_date >= start_date,
+                OrderAnalytics.order_date < end_date
+            ).group_by('date')\
+             .order_by('date')\
+             .all()
+            
+            return [
+                {
+                    'date': date.isoformat(),
+                    'total_sales': float(total_sales),
+                    'order_count': order_count
+                }
+                for date, total_sales, order_count in results
+            ]
+```
+
+### BigQuery-Specific Considerations
+
+#### 1. Partitioning for Performance
+
+```python
+# Always filter by partition column to reduce costs
+@staticmethod
+def list_events_by_date(date: datetime) -> List[Dict]:
+    with get_bigquery_session() as session:
+        # ✅ Good: Filter by partition column
+        events = session.query(AnalyticsEvent)\
+            .filter(func.date(AnalyticsEvent.event_timestamp) == date)\
+            .all()
+        return [e.to_dict() for e in events]
+```
+
+#### 2. Avoid SELECT *
+
+```python
+# ✅ Good: Select only needed columns
+@staticmethod
+def get_user_ids() -> List[str]:
+    with get_bigquery_session() as session:
+        results = session.query(AnalyticsEvent.user_id).distinct().all()
+        return [user_id for (user_id,) in results]
+
+# ❌ Bad: Selects all columns (expensive)
+@staticmethod
+def get_user_ids() -> List[str]:
+    with get_bigquery_session() as session:
+        events = session.query(AnalyticsEvent).all()
+        return list(set(e.user_id for e in events))
+```
+
+#### 3. Batch Inserts
+
+```python
+@staticmethod
+def bulk_insert_events(events_data: List[Dict]) -> None:
+    with get_bigquery_session() as session:
+        events = [
+            AnalyticsEvent(**data)
+            for data in events_data
+        ]
+        session.bulk_save_objects(events)
+```
+
 ## References
 
 - [Repository Pattern by Martin Fowler](https://martinfowler.com/eaaCatalog/repository.html)
 - [SQLAlchemy ORM Tutorial](https://docs.sqlalchemy.org/en/latest/orm/tutorial.html)
 - [Python Type Hints](https://docs.python.org/3/library/typing.html)
+- [BigQuery Best Practices](https://cloud.google.com/bigquery/docs/best-practices)

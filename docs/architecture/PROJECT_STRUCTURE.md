@@ -29,7 +29,8 @@ project_root/
 │   │   └── process_controller.py
 │   ├── infra/               # Infrastructure integrations
 │   │   ├── __init__.py
-│   │   ├── database_engine.py
+│   │   ├── database.py          # MySQL/PostgreSQL
+│   │   ├── bigquery_sa.py       # BigQuery (optional)
 │   │   └── external_api_client.py
 │   ├── enums/               # Enumerations
 │   │   ├── __init__.py

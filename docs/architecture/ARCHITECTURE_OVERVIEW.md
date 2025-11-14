@@ -34,7 +34,8 @@ The system follows a layered architecture with clear separation of concerns:
 ┌──────────────▼──────────────────────────┐
 │          Infrastructure Layer           │
 │     (Database / External APIs)          │
-│  - SQLAlchemy engine                    │
+│  - SQLAlchemy engine (MySQL/PostgreSQL) │
+│  - BigQuery engine (Analytics)          │
 │  - Connection pooling                   │
 │  - External integrations                │
 └─────────────────────────────────────────┘
@@ -57,7 +58,8 @@ project/
 │   ├── models/               # Domain models (SQLAlchemy)
 │   │   └── feature.py
 │   ├── infra/                # Infrastructure
-│   │   └── database.py
+│   │   ├── database.py        # MySQL/PostgreSQL
+│   │   └── bigquery_sa.py     # BigQuery (optional)
 │   ├── constants/            # Application constants
 │   ├── enums/                # Enumerations
 │   └── utils/                # Utility functions
