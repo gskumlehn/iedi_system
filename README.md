@@ -34,32 +34,32 @@ Sistema web completo para calcular e gerenciar o Índice de Exposição Digital 
 - 📰 Histórico de análises
 - 🎯 Métricas de positividade e negatividade
 
+## Documentação
+
+A documentação completa do sistema está organizada em duas categorias:
+
+### 📐 [Documentação de Arquitetura](./docs/architecture/README.md)
+Documentação técnica sobre estrutura, padrões de código, implementação e integração.
+
+### 📊 [Documentação de Negócio](./docs/business/README.md)
+Regras de negócio, metodologia IEDI, cálculos e mapeamento de dados do Brandwatch.
+
 ## Estrutura do Projeto
 
 ```
 iedi_system/
-├── app/
-│   ├── models.py           # Modelos do banco de dados SQLite
-│   └── iedi_calculator.py  # Lógica de cálculo do IEDI
-├── static/
-│   ├── css/
-│   │   └── style.css       # Estilos CSS
-│   └── js/
-│       └── main.js         # JavaScript principal
-├── templates/
-│   ├── base.html           # Template base
-│   ├── index.html          # Dashboard
-│   ├── bancos.html         # Gerenciamento de bancos
-│   ├── porta_vozes.html    # Gerenciamento de porta-vozes
-│   ├── veiculos.html       # Gerenciamento de veículos
-│   ├── configuracoes.html  # Configurações do sistema
-│   ├── analises.html       # Lista de análises
-│   └── analise_detalhes.html # Detalhes de uma análise
-├── data/
-│   └── iedi.db            # Banco de dados SQLite (criado automaticamente)
+├── app/                    # Código-fonte da aplicação
+│   ├── models/            # Modelos de dados (SQLAlchemy)
+│   ├── repositories/      # Camada de acesso a dados
+│   ├── services/          # Lógica de negócio
+│   ├── controllers/       # Endpoints da API
+│   ├── enums/             # Enumerações
+│   └── infra/             # Infraestrutura (BigQuery, Brandwatch)
+├── docs/                   # Documentação
+│   ├── architecture/      # Documentação técnica
+│   └── business/          # Documentação de negócio
+├── sql/                    # Scripts SQL para BigQuery
 ├── app.py                 # Aplicação Flask principal
-├── Dockerfile             # Configuração Docker
-├── docker-compose.yml     # Orquestração Docker
 ├── requirements.txt       # Dependências Python
 └── README.md             # Este arquivo
 ```
@@ -210,27 +210,15 @@ Para executar uma análise IEDI, você precisa:
 
 ## Metodologia IEDI
 
-O sistema implementa a metodologia oficial do IEDI com as seguintes variáveis:
+O sistema implementa a metodologia IEDI versão 2.0 com cálculo baseado em:
 
-### Variáveis Principais
-- **Título** (peso 100): Banco mencionado no título
-- **Veículo Relevante** (peso 95): Publicação em veículo de grande alcance
-- **Subtítulo/1º Parágrafo** (peso 80): Banco mencionado no início do texto
-- **Veículo de Nicho** (peso 54): Publicação em veículo especializado
-- **Imagem** (peso 20): Presença de imagem na matéria
-- **Porta-voz** (peso 20): Citação de porta-voz do banco
+- **Variáveis de presença**: Título, Subtítulo (condicional), Veículo Relevante, Veículo de Nicho
+- **Classificação por alcance**: Grupos A, B, C, D baseados em tráfego mensal
+- **Ajuste por sentimento**: Positivo, Neutro, Negativo
+- **Balizamento**: Proporção de menções positivas entre os bancos
+- **Denominadores dinâmicos**: 286/366 para Grupo A, 280/360 para demais grupos
 
-### Classificação por Alcance
-- **Grupo A** (peso 91): > 29 milhões de visitas/mês
-- **Grupo B** (peso 85): 11-29 milhões de visitas/mês
-- **Grupo C** (peso 24): 500 mil - 11 milhões de visitas/mês
-- **Grupo D** (peso 20): < 500 mil visitas/mês
-
-### Cálculo
-1. Nota base = soma ponderada das variáveis presentes
-2. Ajuste por sentimento (negativo inverte o sinal)
-3. Bônus de resposta (15%) para menções negativas com resposta oficial
-4. IEDI final = balizamento por proporção de menções positivas
+Para detalhes completos da metodologia, consulte a [Documentação de Negócio](./docs/business/README.md).
 
 ## Backup e Restauração
 
