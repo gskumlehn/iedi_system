@@ -11,7 +11,7 @@ class Analysis(Base):
     __tablename__ = "analyses"
     __table_args__ = {"schema": "iedi"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(String, primary_key=True)
     name = Column(String(255), nullable=False)
     query_name = Column(String(255), nullable=False)
     _start_date = Column("start_date", TIMESTAMP, nullable=False)
@@ -117,9 +117,9 @@ class BankPeriod(Base):
     __tablename__ = "bank_periods"
     __table_args__ = {"schema": "iedi"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    analysis_id = Column(Integer, nullable=False)
-    bank_id = Column(Integer, nullable=False)
+    id = Column(String, primary_key=True)
+    analysis_id = Column(String, nullable=False)
+    bank_id = Column(String, nullable=False)
     category_detail = Column(String(255), nullable=False)
     _start_date = Column("start_date", TIMESTAMP, nullable=False)
     _end_date = Column("end_date", TIMESTAMP, nullable=False)

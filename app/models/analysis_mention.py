@@ -11,9 +11,9 @@ class AnalysisMention(Base):
     __tablename__ = "analysis_mentions"
     __table_args__ = {"schema": "iedi"}
 
-    analysis_id = Column(Integer, primary_key=True, nullable=False)
-    mention_id = Column(Integer, primary_key=True, nullable=False)
-    bank_id = Column(Integer, primary_key=True, nullable=False)
+    analysis_id = Column(String, primary_key=True, nullable=False)
+    mention_id = Column(String, primary_key=True, nullable=False)
+    bank_id = Column(String, primary_key=True, nullable=False)
     _created_at = Column("created_at", TIMESTAMP, nullable=False)
 
     UTC_TZ = ZoneInfo("UTC")

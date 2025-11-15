@@ -11,9 +11,9 @@ class IEDIResult(Base):
     __tablename__ = "iedi_results"
     __table_args__ = {"schema": "iedi"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    analysis_id = Column(Integer, nullable=False)
-    bank_id = Column(Integer, nullable=False)
+    id = Column(String, primary_key=True)
+    analysis_id = Column(String, nullable=False)
+    bank_id = Column(String, nullable=False)
     total_volume = Column(Integer, default=0, nullable=False)
     positive_volume = Column(Integer, default=0, nullable=False)
     negative_volume = Column(Integer, default=0, nullable=False)

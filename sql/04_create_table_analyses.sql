@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS iedi.analyses (
-  id INT64 NOT NULL,
+  id STRING NOT NULL,
   name STRING NOT NULL,
   query_name STRING NOT NULL,
   start_date TIMESTAMP NOT NULL,

@@ -15,7 +15,7 @@ class Mention(Base):
     __tablename__ = "mentions"
     __table_args__ = {"schema": "iedi"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(String, primary_key=True)
     brandwatch_id = Column(String(255), unique=True, nullable=True)
     _categories = Column("categories", ARRAY(String), nullable=False)
     _sentiment = Column("sentiment", String(50), nullable=False)

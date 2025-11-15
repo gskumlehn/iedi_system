@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS iedi.iedi_results (
-  id INT64 NOT NULL,
-  analysis_id INT64 NOT NULL,
-  bank_id INT64 NOT NULL,
+  id STRING NOT NULL,
+  analysis_id STRING NOT NULL,
+  bank_id STRING NOT NULL,
   total_volume INT64 NOT NULL DEFAULT 0,
   positive_volume INT64 NOT NULL DEFAULT 0,
   negative_volume INT64 NOT NULL DEFAULT 0,

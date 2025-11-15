@@ -11,7 +11,7 @@ class MediaOutlet(Base):
     __tablename__ = "media_outlets"
     __table_args__ = {"schema": "iedi"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(String, primary_key=True)
     name = Column(String(255), nullable=False)
     domain = Column(String(255), nullable=False, unique=True)
     category = Column(String(100), nullable=True)

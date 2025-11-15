@@ -8,7 +8,7 @@ Base = declarative_base()
 class Bank(Base):
     __tablename__ = "banks"
     
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)
     name = Column(String(255), nullable=False)
     variations = Column(ARRAY(String))
     active = Column(Boolean, nullable=False, default=True)

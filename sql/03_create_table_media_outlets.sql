@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS iedi.media_outlets (
-  id INT64 NOT NULL,
+  id STRING NOT NULL,
   name STRING NOT NULL,
   domain STRING NOT NULL,
   category STRING,

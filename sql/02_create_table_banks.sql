@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS iedi.banks (
-  id INT64 NOT NULL,
+  id STRING NOT NULL,
   name STRING NOT NULL,
   variations ARRAY<STRING>,
   active BOOL NOT NULL DEFAULT TRUE,
