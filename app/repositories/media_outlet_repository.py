@@ -1,6 +1,7 @@
 from typing import List, Optional
 from app.infra.bq_sa import get_session
 from app.models.media_outlet import MediaOutlet
+from app.utils.uuid_generator import generate_uuid
 
 class MediaOutletRepository:
 
@@ -19,7 +20,7 @@ class MediaOutletRepository:
         return [outlet.to_dict() for outlet in outlets]
     
     @staticmethod
-    def get_by_id(outlet_id: int) -> Optional[dict]:
+    def get_by_id(outlet_id: str) -> Optional[dict]:
         session = get_session()
         outlet = session.query(MediaOutlet).filter(MediaOutlet.id == outlet_id).first()
         return outlet.to_dict() if outlet else None
@@ -28,6 +29,7 @@ class MediaOutletRepository:
     def create(name: str, domain: str, category: Optional[str], monthly_visitors: Optional[int], is_niche: bool) -> dict:
         session = get_session()
         outlet = MediaOutlet(
+            id=generate_uuid(),
             name=name,
             domain=domain,
             category=category,
@@ -41,7 +43,7 @@ class MediaOutletRepository:
         return outlet.to_dict()
     
     @staticmethod
-    def update(outlet_id: int, name: Optional[str] = None, domain: Optional[str] = None, 
+    def update(outlet_id: str, name: Optional[str] = None, domain: Optional[str] = None, 
                category: Optional[str] = None, monthly_visitors: Optional[int] = None, 
                is_niche: Optional[bool] = None, active: Optional[bool] = None) -> Optional[dict]:
         session = get_session()
@@ -68,7 +70,7 @@ class MediaOutletRepository:
         return outlet.to_dict()
     
     @staticmethod
-    def delete(outlet_id: int) -> bool:
+    def delete(outlet_id: str) -> bool:
         session = get_session()
         outlet = session.query(MediaOutlet).filter(MediaOutlet.id == outlet_id).first()
         

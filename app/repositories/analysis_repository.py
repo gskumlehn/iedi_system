@@ -2,18 +2,19 @@ from datetime import datetime
 from typing import List, Optional
 from app.infra.bq_sa import get_session
 from app.models.analysis import Analysis, BankPeriod
+from app.utils.uuid_generator import generate_uuid
 
 class AnalysisRepository:
 
     def create(self, name: str, query: str, custom_period: bool) -> Analysis:
         session = get_session()
-        analysis = Analysis(name=name, query=query, custom_period=custom_period)
+        analysis = Analysis(id=generate_uuid(), name=name, query=query, custom_period=custom_period)
         session.add(analysis)
         session.commit()
         session.refresh(analysis)
         return analysis
 
-    def find_by_id(self, analysis_id: int) -> Optional[Analysis]:
+    def find_by_id(self, analysis_id: str) -> Optional[Analysis]:
         session = get_session()
         return session.query(Analysis).filter(Analysis.id == analysis_id).first()
 
@@ -23,10 +24,11 @@ class AnalysisRepository:
 
 class BankPeriodRepository:
 
-    def create(self, analysis_id: int, bank_id: int, category_detail: str, 
+    def create(self, analysis_id: str, bank_id: str, category_detail: str, 
                start_date: datetime, end_date: datetime) -> BankPeriod:
         session = get_session()
         period = BankPeriod(
+            id=generate_uuid(),
             analysis_id=analysis_id,
             bank_id=bank_id,
             category_detail=category_detail,
@@ -38,11 +40,11 @@ class BankPeriodRepository:
         session.refresh(period)
         return period
 
-    def find_by_analysis(self, analysis_id: int) -> List[BankPeriod]:
+    def find_by_analysis(self, analysis_id: str) -> List[BankPeriod]:
         session = get_session()
         return session.query(BankPeriod).filter(BankPeriod.analysis_id == analysis_id).all()
 
-    def find_by_analysis_and_bank(self, analysis_id: int, bank_id: int) -> Optional[BankPeriod]:
+    def find_by_analysis_and_bank(self, analysis_id: str, bank_id: str) -> Optional[BankPeriod]:
         session = get_session()
         return session.query(BankPeriod).filter(
             BankPeriod.analysis_id == analysis_id,
