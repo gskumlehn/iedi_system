@@ -248,6 +248,26 @@ class MentionEnrichmentService:
             Primeiro parágrafo ou None se não disponível
         """
         pass
+    
+    @staticmethod
+    def extract_unique_url(mention: Dict) -> str:
+        """
+        Extrai URL única da menção Brandwatch.
+        
+        Brandwatch pode retornar a URL em dois campos:
+        - 'url': URL principal
+        - 'originalUrl': URL original (redirecionamentos)
+        
+        Args:
+            mention: Dados brutos da menção Brandwatch
+        
+        Returns:
+            URL única (primeiro campo preenchido)
+        
+        Raises:
+            ValueError: Se nenhum campo de URL estiver preenchido
+        """
+        pass
 ```
 
 ### Implementação
@@ -277,6 +297,9 @@ class MentionEnrichmentService:
             if field not in mention:
                 raise ValueError(f"Campo obrigatório ausente: {field}")
         
+        # Extrair URL única (verificar 'url' e 'originalUrl')
+        unique_url = self._extract_unique_url(mention)
+        
         # Buscar veículo de mídia
         media_outlet = self._get_media_outlet(mention['domain'])
         
@@ -291,11 +314,12 @@ class MentionEnrichmentService:
         # Construir menção enriquecida
         enriched = {
             # Dados originais
-            'brandwatch_id': mention['id'],
+            'url': unique_url,
+            'brandwatch_id': mention.get('id'),
+            'original_url': mention.get('originalUrl'),
             'title': mention.get('title'),
             'snippet': mention.get('snippet'),
             'full_text': mention.get('fullText'),
-            'url': mention.get('url'),
             'domain': mention['domain'],
             'published_date': self._parse_date(mention.get('publishedDate')),
             
@@ -364,6 +388,18 @@ class MentionEnrichmentService:
         except Exception as e:
             logger.warning(f"Erro ao parsear data: {date_str} - {e}")
             return None
+    
+    def _extract_unique_url(self, mention: dict) -> str:
+        """Extrai URL única (verificar 'url' e 'originalUrl')."""
+        url = mention.get('url') or mention.get('originalUrl')
+        
+        if not url:
+            raise ValueError(
+                f"Menção sem URL: {mention.get('id')} - "
+                "Campos 'url' e 'originalUrl' vazios"
+            )
+        
+        return url
 ```
 
 ---
@@ -848,7 +884,7 @@ class IEDIOrchestrator:
             
             # 5. Armazenamento
             mention_record = self.mention_repo.find_or_create(
-                brandwatch_id=enriched['brandwatch_id'],
+                url=enriched['url'],
                 **enriched
             )
             

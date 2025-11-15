@@ -10,6 +10,14 @@ class MentionRepository:
     Repository para gerenciar menções (dados brutos da Brandwatch).
     
     Menções são armazenadas uma única vez e reutilizadas em múltiplas análises.
+    O identificador único é a URL (não o brandwatch_id).
+    
+    Brandwatch pode retornar a URL em dois campos:
+    - 'url': URL principal da menção
+    - 'originalUrl': URL original (caso seja redirecionamento)
+    
+    Ao coletar dados, verificar ambos os campos e usar o primeiro preenchido.
+    
     Cálculos IEDI específicos por banco são gerenciados via AnalysisMentionRepository.
     """
 
@@ -18,11 +26,17 @@ class MentionRepository:
         Cria uma nova menção com dados brutos da Brandwatch.
         
         Args:
-            **kwargs: Campos da menção (brandwatch_id, title, domain, etc.)
+            **kwargs: Campos da menção (url, brandwatch_id, title, domain, etc.)
         
         Returns:
             Mention: Menção criada
+        
+        Raises:
+            ValueError: Se o campo 'url' não for fornecido
         """
+        if 'url' not in kwargs:
+            raise ValueError("Campo 'url' é obrigatório para criar menção")
+        
         session = get_session()
         if 'id' not in kwargs:
             kwargs['id'] = generate_uuid()
@@ -35,9 +49,27 @@ class MentionRepository:
         session.refresh(mention)
         return mention
 
+    def find_by_url(self, url: str) -> Optional[Mention]:
+        """
+        Busca menção por URL (identificador único real).
+        
+        Args:
+            url: URL da menção
+        
+        Returns:
+            Mention ou None se não encontrada
+        """
+        session = get_session()
+        return session.query(Mention).filter(
+            Mention.url == url
+        ).first()
+    
     def find_by_brandwatch_id(self, brandwatch_id: str) -> Optional[Mention]:
         """
-        Busca menção por brandwatch_id (identificador único da Brandwatch).
+        Busca menção por brandwatch_id (ATENÇÃO: não é identificador único).
+        
+        Este método existe para compatibilidade, mas o brandwatch_id pode se repetir.
+        Use find_by_url() para busca por identificador único.
         
         Args:
             brandwatch_id: ID da menção na Brandwatch API
@@ -50,23 +82,51 @@ class MentionRepository:
             Mention.brandwatch_id == brandwatch_id
         ).first()
 
-    def find_or_create(self, brandwatch_id: str, **kwargs) -> Mention:
+    def find_or_create(self, url: str, **kwargs) -> Mention:
         """
-        Busca menção existente ou cria nova se não existir.
+        Busca menção existente por URL ou cria nova se não existir.
         
         Args:
-            brandwatch_id: ID da menção na Brandwatch API
-            **kwargs: Campos da menção (title, domain, etc.)
+            url: URL da menção (identificador único)
+            **kwargs: Campos da menção (title, domain, brandwatch_id, etc.)
         
         Returns:
             Mention: Menção encontrada ou criada
         """
-        existing = self.find_by_brandwatch_id(brandwatch_id)
+        existing = self.find_by_url(url)
         if existing:
             return existing
         
-        kwargs['brandwatch_id'] = brandwatch_id
+        kwargs['url'] = url
         return self.create(**kwargs)
+    
+    @staticmethod
+    def extract_unique_url(mention_data: dict) -> str:
+        """
+        Extrai URL única da menção Brandwatch.
+        
+        Brandwatch pode retornar a URL em dois campos:
+        - 'url': URL principal
+        - 'originalUrl': URL original (redirecionamentos)
+        
+        Args:
+            mention_data: Dados brutos da menção Brandwatch
+        
+        Returns:
+            URL única (primeiro campo preenchido)
+        
+        Raises:
+            ValueError: Se nenhum campo de URL estiver preenchido
+        """
+        url = mention_data.get('url') or mention_data.get('originalUrl')
+        
+        if not url:
+            raise ValueError(
+                f"Menção sem URL: {mention_data.get('id')} - "
+                "Campos 'url' e 'originalUrl' vazios"
+            )
+        
+        return url
 
     def find_by_domain(self, domain: str) -> List[Mention]:
         """

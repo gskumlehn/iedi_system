@@ -159,16 +159,20 @@ A etapa produz uma lista de menções brutas em formato JSON:
 ```json
 [
   {
-    "id": "bw_123456",
-    "title": "Banco do Brasil anuncia lucro recorde no 3º trimestre",
-    "snippet": "O Banco do Brasil divulgou ontem seus resultados...",
-    "fullText": "O Banco do Brasil divulgou ontem seus resultados trimestrais, superando as expectativas do mercado. A instituição registrou lucro líquido de R$ 8,2 bilhões...",
-    "url": "https://valor.globo.com/financas/noticia/2024/11/15/banco-do-brasil-anuncia-lucro-recorde.ghtml",
-    "domain": "valor.globo.com",
-    "publishedDate": "2024-11-15T10:30:00Z",
-    "sentiment": "positive",
-    "mediaType": "News",
-    "language": "pt"
+   ```json
+{
+  "id": "bw_123456",
+  "title": "Banco do Brasil anuncia lucro recorde no 3º trimestre",
+  "snippet": "O Banco do Brasil divulgou ontem seus resultados...",
+  "fullText": "O Banco do Brasil divulgou ontem seus resultados trimestrais, superando as expectativas do mercado. A instituição registrou lucro líquido de R$ 8,2 bilhões...",
+  "url": "https://valor.globo.com/financas/noticia/2024/11/15/banco-do-brasil-anuncia-lucro-recorde.ghtml",
+  "originalUrl": "https://valor.globo.com/financas/noticia/2024/11/15/banco-do-brasil-anuncia-lucro-recorde.ghtml",
+  "domain": "valor.globo.com",
+  "publishedDate": "2024-11-15T10:30:00Z",
+  "sentiment": "positive",
+  "mediaType": "News",
+  "language": "pt"
+} "pt"
   },
   {
     "id": "bw_789012",
@@ -347,8 +351,10 @@ Menção enriquecida (dicionário Python):
 
 ```python
 {
-    # Dados originais Brandwatch
+    # Dados originais
+    'url': 'https://valor.globo.com/financas/noticia/2024/11/15/banco-do-brasil-anuncia-lucro-recorde.ghtml',
     'brandwatch_id': 'bw_123456',
+    'original_url': 'https://valor.globo.com/financas/noticia/2024/11/15/banco-do-brasil-anuncia-lucro-recorde.ghtml',
     'title': 'Banco do Brasil anuncia lucro recorde',
     'snippet': 'O Banco do Brasil divulgou...',
     'full_text': 'O Banco do Brasil divulgou ontem...',
@@ -767,15 +773,18 @@ A quinta etapa armazena as menções e os resultados IEDI no banco de dados BigQ
 #### 5.1 Criar/Buscar Menção
 
 ```python
-# Buscar menção existente por brandwatch_id
-mention = mention_repo.find_by_brandwatch_id(
-    brandwatch_id=mention_data['brandwatch_id']
-)
+# Extrair URL única (verificar 'url' e 'originalUrl')
+unique_url = mention_repo.extract_unique_url(mention_data)
+
+# Buscar menção existente por URL (identificador único real)
+mention = mention_repo.find_by_url(url=unique_url)
 
 if not mention:
     # Criar nova menção (dados brutos apenas)
     mention = mention_repo.create(
-        brandwatch_id=mention_data['brandwatch_id'],
+        url=unique_url,
+        brandwatch_id=mention_data.get('id'),
+        original_url=mention_data.get('originalUrl'),
         title=mention_data['title'],
         snippet=mention_data['snippet'],
         full_text=mention_data['full_text'],
@@ -833,8 +842,8 @@ Registros criados no BigQuery:
 
 #### Tabela `mentions`
 
-| id | brandwatch_id | title | domain | published_date | sentiment |
-|----|---------------|-------|--------|----------------|-----------|
+| id | url | brandwatch_id | title | domain | published_date | sentiment |
+|----|-----|---------------|-------|--------|----------------|-----------|
 | uuid-m1 | bw_123456 | BB anuncia lucro... | valor.globo.com | 2024-11-15 10:30 | positive |
 
 #### Tabela `analysis_mentions`

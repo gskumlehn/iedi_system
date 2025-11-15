@@ -15,9 +15,16 @@ class Mention(Base):
     """
     Modelo de Menção - Armazena APENAS dados brutos da Brandwatch API.
     
-    Esta tabela contém menções únicas identificadas por brandwatch_id.
-    Não contém cálculos IEDI nem vínculos com análises ou bancos específicos.
+    Esta tabela contém menções únicas identificadas por URL (não por brandwatch_id).
+    O campo 'url' é o identificador único real, pois o 'id' da Brandwatch pode se repetir.
     
+    Brandwatch pode retornar a URL em dois campos:
+    - 'url': URL principal da menção
+    - 'originalUrl': URL original (caso a menção seja um redirecionamento)
+    
+    Ao coletar dados, verificar ambos os campos e usar o primeiro preenchido.
+    
+    Não contém cálculos IEDI nem vínculos com análises ou bancos específicos.
     Cálculos IEDI específicos por banco são armazenados em AnalysisMention.
     """
     __tablename__ = "mentions"
@@ -25,7 +32,13 @@ class Mention(Base):
 
     # Identificadores
     id = Column(String(36), primary_key=True)
-    brandwatch_id = Column(String(255), unique=True, nullable=True)
+    
+    # Identificador único da Brandwatch (URL da menção)
+    # IMPORTANTE: O ID da Brandwatch não é único. O identificador único é a URL.
+    # Brandwatch pode retornar tanto 'url' quanto 'originalUrl' - verificar ambos.
+    url = Column(String(500), unique=True, nullable=False)  # Identificador único
+    brandwatch_id = Column(String(255), nullable=True)  # ID Brandwatch (não único)
+    original_url = Column(String(500), nullable=True)  # URL original (backup)
     
     # Dados brutos da Brandwatch (não processados)
     _categories = Column("categories", ARRAY(String), nullable=False)
@@ -33,7 +46,6 @@ class Mention(Base):
     title = Column(Text, nullable=True)
     snippet = Column(Text, nullable=True)
     full_text = Column(Text, nullable=True)
-    url = Column(String(500), nullable=True)
     domain = Column(String(255), nullable=True)
     _published_date = Column("published_date", TIMESTAMP, nullable=True)
     
