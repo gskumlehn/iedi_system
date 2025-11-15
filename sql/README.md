@@ -13,17 +13,19 @@ Execute os scripts na ordem numérica:
 3. `03_create_table_media_outlets.sql` - Cria tabela de veículos de mídia (unificada)
 4. `04_create_table_analyses.sql` - Cria tabela de análises
 5. `05_create_table_bank_periods.sql` - Cria tabela de períodos por banco
-6. `06_create_table_mentions.sql` - Cria tabela de menções
-7. `07_create_table_iedi_results.sql` - Cria tabela de resultados IEDI
+6. `06_create_table_mentions.sql` - Cria tabela de menções (sem analysis_id)
+7. `07_create_table_analysis_mentions.sql` - Cria tabela de relacionamento N:N
+8. `08_create_table_iedi_results.sql` - Cria tabela de resultados IEDI
 
 ### Inserção de Dados Iniciais
 
-8. `08_insert_banks.sql` - Insere 4 bancos (BB, Bradesco, Itaú, Santander)
-9. `09_insert_media_outlets.sql` - Insere 62 veículos (40 relevant + 22 niche)
+9. `09_insert_banks.sql` - Insere 4 bancos (BB, Bradesco, Itaú, Santander)
+10. `10_insert_media_outlets.sql` - Insere 62 veículos (40 relevant + 22 niche)
 
-### Migração (Opcional)
+### Migrações Opcionais
 
-10. `10_migrate_unify_media_outlets.sql` - Migra dados de tabelas antigas para tabela unificada
+11. `11_migrate_unify_media_outlets.sql` - Unificação de veículos (se vindo de schema antigo)
+12. `12_migrate_mentions_schema.sql` - Refatoração de menções (se vindo de schema antigo)
 
 ## Como Executar
 
@@ -69,7 +71,8 @@ iedi/
 ├── media_outlets            (Veículos de mídia - relevant + niche)
 ├── analyses                 (Análises)
 ├── bank_periods             (Períodos por banco)
-├── mentions                 (Menções da Brandwatch)
+├── mentions                 (Menções da Brandwatch - sem analysis_id)
+├── analysis_mentions        (Relacionamento N:N entre analyses e mentions)
 └── iedi_results             (Resultados IEDI agregados)
 ```
 
@@ -77,13 +80,15 @@ iedi/
 
 ```
 analyses (1) ──→ (N) bank_periods
-analyses (1) ──→ (N) mentions
+analyses (1) ──→ (N) analysis_mentions ──→ (N) mentions  (N:N)
 analyses (1) ──→ (N) iedi_results
 
 bank_periods (N) ──→ (1) banks
 iedi_results (N) ──→ (1) banks
+analysis_mentions (N) ──→ (1) banks
+analysis_mentions (N) ──→ (1) mentions
 
-mentions (N) ──→ (N) banks (via categories array)
+mentions: Dados brutos independentes (sem FK)
 ```
 
 ## Tipos de Dados BigQuery

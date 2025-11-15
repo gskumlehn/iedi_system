@@ -16,7 +16,6 @@ class Mention(Base):
     __table_args__ = {"schema": "iedi"}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    analysis_id = Column(Integer, nullable=False)
     brandwatch_id = Column(String(255), unique=True, nullable=True)
     _categories = Column("categories", ARRAY(String), nullable=False)
     _sentiment = Column("sentiment", String(50), nullable=False)
@@ -117,7 +116,6 @@ class Mention(Base):
     def to_dict(self):
         return {
             'id': self.id,
-            'analysis_id': self.analysis_id,
             'brandwatch_id': self.brandwatch_id,
             'categories': [cat.name for cat in self.categories] if self.categories else [],
             'sentiment': self.sentiment.name if self.sentiment else None,

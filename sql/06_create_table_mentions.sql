@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS iedi.mentions (
   id INT64 NOT NULL,
-  analysis_id INT64 NOT NULL,
-  categories ARRAY<STRING>,
   brandwatch_id STRING NOT NULL,
+  categories ARRAY<STRING>,
   title STRING,
   snippet STRING,
   full_text STRING,

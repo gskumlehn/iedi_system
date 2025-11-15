@@ -95,52 +95,50 @@ O sistema IEDI monitora **apenas 62 veículos de mídia** cadastrados nas listas
 
 ## Implementação na Brandwatch API
 
-### Filtro por Domínio (site)
+### Estratégia: Filtro por Categoria + Validação Local
 
-A Brandwatch API suporta filtro por domínio através do parâmetro `site`:
+**Decisão de Design:**
+- ✅ **Filtro por Categoria (category)**: Aplicado na API Brandwatch para filtrar por banco
+- ❌ **Filtro por Domínio (site)**: NÃO aplicado na API
+- ✅ **Validação Local**: Domínios validados após download
 
-```bash
-curl -X GET 'https://api.brandwatch.com/projects/PROJECT_ID/data/mentions?queryId=QUERY_ID&startDate=2024-01-01&endDate=2024-01-31&site=g1.globo.com&site=valor.globo.com&site=exame.com'
-```
-
-### Implementação com bcr-api (Python)
+### Fluxo de Download
 
 ```python
 from bcr_api import BrandwatchClient
+from app.utils.domain_validator import DomainValidator
 
 client = BrandwatchClient()
 
-# Lista de domínios monitorados
-MONITORED_DOMAINS = [
-    'agenciabrasil.ebc.com.br',
-    'band.uol.com.br',
-    'bandnewstv.com.br',
-    # ... todos os 62 domínios
-]
-
-# Baixar menções filtradas por domínio
+# Step 1: Baixar menções filtradas por banco (categoria)
 mentions = client.get_mentions(
     project_id=PROJECT_ID,
     query_id=QUERY_ID,
     start_date='2024-01-01',
     end_date='2024-01-31',
-    site=MONITORED_DOMAINS  # Filtro por domínio
+    category=BANCO_DO_BRASIL_CATEGORY_ID  # Filtro por banco
+    # SEM filtro de domínio
 )
+
+# Step 2: Validar domínios localmente
+result = DomainValidator.validate_mentions(mentions)
+
+print(f"✅ Menções válidas: {result['valid_count']}")
+print(f"❌ Menções inválidas: {result['invalid_count']}")
+print(f"🔍 Domínios não monitorados: {result['invalid_domains']}")
+
+# Step 3: Processar apenas menções válidas
+valid_mentions = result['valid']
 ```
 
----
+### Benefícios desta Abordagem
 
-## Alternativa: Filtro por Category
-
-Se os domínios já estiverem categorizados na Brandwatch (ex: "Veículos IEDI"), podemos usar filtro por categoria:
-
-```python
-# Opção 1: Filtro por domínio (mais preciso)
-mentions = client.get_mentions(..., site=MONITORED_DOMAINS)
-
-# Opção 2: Filtro por categoria (se configurado na Brandwatch)
-mentions = client.get_mentions(..., category=IEDI_VEHICLES_CATEGORY_ID)
-```
+| Benefício | Descrição |
+|-----------|-----------|  
+| **Flexibilidade** | Fácil adicionar/remover domínios sem reconfigurar Brandwatch |
+| **Auditoria** | Descobre quais domínios não monitorados mencionam os bancos |
+| **Controle** | Validação no código Python (fácil debugar e testar) |
+| **Performance** | Filtro por categoria reduz volume significativamente |
 
 ---
 
