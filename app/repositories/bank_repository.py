@@ -1,6 +1,7 @@
 from typing import List, Optional
 from app.infra.mysql_sa import get_session
 from app.models.bank import Bank
+from app.enums.bank_name import BankName
 from app.utils.uuid_generator import generate_uuid
 
 
@@ -11,7 +12,7 @@ class BankRepository:
             query = session.query(Bank)
             if ativo_only:
                 query = query.filter(Bank.active == True)
-            banks = query.order_by(Bank.name).all()
+            banks = query.order_by(Bank._name).all()
             return [bank.to_dict() for bank in banks]
     
     @staticmethod
@@ -21,7 +22,7 @@ class BankRepository:
             return bank.to_dict() if bank else None
     
     @staticmethod
-    def create(name: str, variations: List[str], active: bool = True) -> str:
+    def create(name: BankName, variations: List[str], active: bool = True) -> str:
         with get_session() as session:
             bank = Bank(id=generate_uuid(), name=name, variations=variations, active=active)
             session.add(bank)
@@ -29,7 +30,7 @@ class BankRepository:
             return bank.id
     
     @staticmethod
-    def update(bank_id: str, name: str, variations: List[str], active: bool) -> None:
+    def update(bank_id: str, name: BankName, variations: List[str], active: bool) -> None:
         with get_session() as session:
             bank = session.query(Bank).filter(Bank.id == bank_id).first()
             if bank:
