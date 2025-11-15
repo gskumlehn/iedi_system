@@ -7,43 +7,25 @@ from zoneinfo import ZoneInfo
 
 Base = declarative_base()
 
+
 class AnalysisMention(Base):
-    """
-    Modelo de Relacionamento Análise-Menção-Banco.
-    
-    Esta tabela conecta análises, menções e bancos, armazenando os cálculos IEDI
-    específicos para cada combinação (análise + menção + banco).
-    
-    Uma menção pode citar múltiplos bancos, e cada banco terá seu próprio registro
-    com cálculos IEDI independentes.
-    
-    Exemplo:
-        Menção: "BB e Itaú anunciam parceria"
-        Registros:
-            - (analysis_1, mention_1, banco_bb) -> iedi_score=85.5
-            - (analysis_1, mention_1, banco_itau) -> iedi_score=82.3
-    """
     __tablename__ = "analysis_mentions"
     __table_args__ = {"schema": "iedi"}
 
-    # Chave primária composta (análise + menção + banco)
     analysis_id = Column(String(36), primary_key=True, nullable=False)
     mention_id = Column(String(36), primary_key=True, nullable=False)
     bank_id = Column(String(36), primary_key=True, nullable=False)
     
-    # Cálculos IEDI específicos para este banco nesta análise
     iedi_score = Column(Float, nullable=True)
     iedi_normalized = Column(Float, nullable=True)
     numerator = Column(Integer, nullable=True)
     denominator = Column(Integer, nullable=True)
     
-    # Flags de verificação (específicas por banco)
     title_verified = Column(Integer, default=0, nullable=False)
     subtitle_verified = Column(Integer, default=0, nullable=False)
     relevant_outlet_verified = Column(Integer, default=0, nullable=False)
     niche_outlet_verified = Column(Integer, default=0, nullable=False)
     
-    # Timestamp de criação do relacionamento
     _created_at = Column("created_at", TIMESTAMP, nullable=False)
 
     UTC_TZ = ZoneInfo("UTC")
@@ -51,7 +33,6 @@ class AnalysisMention(Base):
 
     @hybrid_property
     def created_at(self) -> datetime:
-        """Data de criação do relacionamento (timezone Brasil)"""
         if self._created_at is None:
             return None
         return self._created_at.astimezone(self.BR_TZ)
@@ -70,7 +51,6 @@ class AnalysisMention(Base):
         return cls._created_at
 
     def to_dict(self):
-        """Serializa relacionamento para dicionário (incluindo cálculos IEDI)"""
         return {
             'analysis_id': self.analysis_id,
             'mention_id': self.mention_id,

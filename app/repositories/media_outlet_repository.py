@@ -3,8 +3,8 @@ from app.infra.bq_sa import get_session
 from app.models.media_outlet import MediaOutlet
 from app.utils.uuid_generator import generate_uuid
 
-class MediaOutletRepository:
 
+class MediaOutletRepository:
     @staticmethod
     def list_all(is_niche: Optional[bool] = None, active_only: bool = True) -> List[dict]:
         session = get_session()
@@ -90,3 +90,8 @@ class MediaOutletRepository:
             query = query.filter(MediaOutlet.is_niche == is_niche)
         
         return query.all()
+    
+    @staticmethod
+    def find_by_domain(domain: str) -> Optional[MediaOutlet]:
+        session = get_session()
+        return session.query(MediaOutlet).filter(MediaOutlet.domain == domain).first()

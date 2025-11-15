@@ -11,36 +11,16 @@ from app.enums.sentiment import Sentiment
 
 Base = declarative_base()
 
+
 class Mention(Base):
-    """
-    Modelo de Menção - Armazena APENAS dados brutos da Brandwatch API.
-    
-    Esta tabela contém menções únicas identificadas por URL (não por brandwatch_id).
-    O campo 'url' é o identificador único real, pois o 'id' da Brandwatch pode se repetir.
-    
-    Brandwatch pode retornar a URL em dois campos:
-    - 'url': URL principal da menção
-    - 'originalUrl': URL original (caso a menção seja um redirecionamento)
-    
-    Ao coletar dados, verificar ambos os campos e usar o primeiro preenchido.
-    
-    Não contém cálculos IEDI nem vínculos com análises ou bancos específicos.
-    Cálculos IEDI específicos por banco são armazenados em AnalysisMention.
-    """
     __tablename__ = "mentions"
     __table_args__ = {"schema": "iedi"}
 
-    # Identificadores
     id = Column(String(36), primary_key=True)
+    url = Column(String(500), unique=True, nullable=False)
+    brandwatch_id = Column(String(255), nullable=True)
+    original_url = Column(String(500), nullable=True)
     
-    # Identificador único da Brandwatch (URL da menção)
-    # IMPORTANTE: O ID da Brandwatch não é único. O identificador único é a URL.
-    # Brandwatch pode retornar tanto 'url' quanto 'originalUrl' - verificar ambos.
-    url = Column(String(500), unique=True, nullable=False)  # Identificador único
-    brandwatch_id = Column(String(255), nullable=True)  # ID Brandwatch (não único)
-    original_url = Column(String(500), nullable=True)  # URL original (backup)
-    
-    # Dados brutos da Brandwatch (não processados)
     _categories = Column("categories", ARRAY(String), nullable=False)
     _sentiment = Column("sentiment", String(50), nullable=False)
     title = Column(Text, nullable=True)
@@ -49,12 +29,10 @@ class Mention(Base):
     domain = Column(String(255), nullable=True)
     _published_date = Column("published_date", TIMESTAMP, nullable=True)
     
-    # Metadados do veículo de mídia (copiados de media_outlets)
-    media_outlet_id = Column(String(36), nullable=True)  # FK para media_outlets
+    media_outlet_id = Column(String(36), nullable=True)
     monthly_visitors = Column(Integer, default=0, nullable=False)
     _reach_group = Column("reach_group", String(10), nullable=False)
     
-    # Timestamps de auditoria
     _created_at = Column("created_at", TIMESTAMP, nullable=False)
     _updated_at = Column("updated_at", TIMESTAMP, nullable=True)
 
@@ -63,7 +41,6 @@ class Mention(Base):
 
     @hybrid_property
     def categories(self) -> list[BankName]:
-        """Lista de bancos detectados na menção (dados brutos)"""
         return [BankName.from_name(name) for name in self._categories or []]
 
     @categories.setter
@@ -76,7 +53,6 @@ class Mention(Base):
 
     @hybrid_property
     def sentiment(self) -> Sentiment:
-        """Sentimento da menção (positivo, negativo, neutro)"""
         return Sentiment.from_name(self._sentiment)
 
     @sentiment.setter
@@ -89,7 +65,6 @@ class Mention(Base):
 
     @hybrid_property
     def reach_group(self) -> ReachGroup:
-        """Grupo de alcance do veículo (A, B, C, D)"""
         return ReachGroup.from_name(self._reach_group)
 
     @reach_group.setter
@@ -102,7 +77,6 @@ class Mention(Base):
 
     @hybrid_property
     def published_date(self) -> datetime:
-        """Data de publicação da menção (timezone Brasil)"""
         if self._published_date is None:
             return None
         return self._published_date.astimezone(self.BR_TZ)
@@ -122,7 +96,6 @@ class Mention(Base):
 
     @hybrid_property
     def created_at(self) -> datetime:
-        """Data de criação do registro (timezone Brasil)"""
         if self._created_at is None:
             return None
         return self._created_at.astimezone(self.BR_TZ)
@@ -142,7 +115,6 @@ class Mention(Base):
 
     @hybrid_property
     def updated_at(self) -> datetime:
-        """Data de última atualização do registro (timezone Brasil)"""
         if self._updated_at is None:
             return None
         return self._updated_at.astimezone(self.BR_TZ)
@@ -161,16 +133,16 @@ class Mention(Base):
         return cls._updated_at
 
     def to_dict(self):
-        """Serializa menção para dicionário (apenas dados brutos)"""
         return {
             'id': self.id,
+            'url': self.url,
             'brandwatch_id': self.brandwatch_id,
+            'original_url': self.original_url,
             'categories': [cat.name for cat in self.categories] if self.categories else [],
             'sentiment': self.sentiment.name if self.sentiment else None,
             'title': self.title,
             'snippet': self.snippet,
             'full_text': self.full_text,
-            'url': self.url,
             'domain': self.domain,
             'published_date': self.published_date.isoformat() if self.published_date else None,
             'media_outlet_id': self.media_outlet_id,
