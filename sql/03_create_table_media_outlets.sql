@@ -1,9 +1,8 @@
 CREATE TABLE IF NOT EXISTS iedi.media_outlets (
-  id STRING NOT NULL,
-  name STRING NOT NULL,
-  domain STRING NOT NULL,
-  category STRING,
-  monthly_visitors INT64,
+  id STRING(36) NOT NULL,
+  name STRING(255) NOT NULL,
+  domain STRING(255) NOT NULL,
+  monthly_visitors INT64 NOT NULL DEFAULT 0,
   is_niche BOOL NOT NULL DEFAULT FALSE,
   active BOOL NOT NULL DEFAULT TRUE,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
