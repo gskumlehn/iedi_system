@@ -2,6 +2,7 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -12,7 +13,9 @@ from app.services.iedi_calculation_service import IEDICalculationService
 from app.services.iedi_aggregation_service import IEDIAggregationService
 from app.services.iedi_orchestrator import IEDIOrchestrator
 from app.repositories.analysis_repository import AnalysisRepository
+from app.repositories.bank_repository import BankRepository
 from app.enums.period_type import PeriodType
+from app.enums.bank_name import BankName
 from app.utils.uuid_generator import generate_uuid
 
 
@@ -32,12 +35,33 @@ def test_outubro_bb():
     print(f"Query Brandwatch: {query_name}")
     print()
     
+    print("Buscando Banco do Brasil no banco de dados...")
+    bb_bank = None
+    all_banks = BankRepository.find_all()
+    for bank in all_banks:
+        if bank.name == BankName.BANCO_DO_BRASIL:
+            bb_bank = bank
+            break
+    
+    if not bb_bank:
+        print("✗ Banco do Brasil não encontrado no banco de dados")
+        print("Execute os scripts SQL de insert primeiro:")
+        print("  - sql/09_insert_banks.sql")
+        return
+    
+    print(f"✓ Banco do Brasil encontrado: {bb_bank.id}")
+    print()
+    
     print("Inicializando services...")
     brandwatch_service = BrandwatchService()
     mention_service = MentionService()
-    bank_detection_service = BankDetectionService()
     iedi_calculation_service = IEDICalculationService()
     iedi_aggregation_service = IEDIAggregationService()
+    
+    bank_detection_service = Mock(spec=BankDetectionService)
+    bank_detection_service.detect_banks = Mock(return_value=[bb_bank])
+    
+    print("✓ BankDetectionService mockado - todas menções = Banco do Brasil")
     
     orchestrator = IEDIOrchestrator(
         brandwatch_service=brandwatch_service,
@@ -73,6 +97,8 @@ def test_outubro_bb():
     
     print("Executando processamento IEDI...")
     print("-" * 80)
+    print("NOTA: BankDetectionService mockado - todas menções atribuídas ao BB")
+    print("-" * 80)
     
     try:
         result = orchestrator.process_analysis(
@@ -107,6 +133,11 @@ def test_outubro_bb():
         print("-" * 80)
         print()
         print("✓ Teste concluído com sucesso!")
+        print()
+        print("PRÓXIMOS PASSOS:")
+        print("- Configurar categorias 'Bancos' na Brandwatch")
+        print("- Criar query para todos os bancos")
+        print("- Remover mock do BankDetectionService")
         
     except Exception as e:
         print()
