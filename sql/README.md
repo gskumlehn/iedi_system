@@ -1,79 +1,147 @@
-# SQL Scripts - IEDI BigQuery Schema
+# SQL Migrations - Sistema IEDI
 
-Scripts SQL para criação do schema e tabelas do sistema IEDI no Google BigQuery.
+Scripts SQL para criação e população do banco de dados BigQuery.
 
-## Ordem de Execução
+## Estrutura
 
-Execute os scripts na ordem numérica:
+```
+sql/
+├── 01_create_dataset.sql              # Criar dataset 'iedi'
+├── 02_create_table_banks.sql          # Tabela de bancos
+├── 03_create_table_media_outlets.sql  # Tabela de veículos de mídia
+├── 04_create_table_analyses.sql       # Tabela de análises
+├── 05_create_table_bank_periods.sql   # Tabela de períodos por banco
+├── 06_create_table_mentions.sql       # Tabela de menções
+├── 07_create_table_analysis_mentions.sql  # Relacionamento análise-menção-banco
+├── 08_create_table_iedi_results.sql   # Tabela de resultados IEDI
+├── 09_insert_banks.sql                # Inserir 4 bancos
+├── 10_insert_media_outlets.sql        # Inserir 62 veículos de mídia
+├── run_migrations.py                  # Script automatizado ⭐
+└── README.md                          # Este arquivo
+```
 
-### Criação do Schema e Tabelas
+## Método Recomendado: Script Automatizado
 
-1. `01_create_schema.sql` - Cria o schema `iedi`
-2. `02_create_table_banks.sql` - Cria tabela de bancos
-3. `03_create_table_media_outlets.sql` - Cria tabela de veículos de mídia (unificada)
-4. `04_create_table_analyses.sql` - Cria tabela de análises
-5. `05_create_table_bank_periods.sql` - Cria tabela de períodos por banco
-6. `06_create_table_mentions.sql` - Cria tabela de menções (sem analysis_id)
-7. `07_create_table_analysis_mentions.sql` - Cria tabela de relacionamento N:N
-8. `08_create_table_iedi_results.sql` - Cria tabela de resultados IEDI
+### Pré-requisitos
 
-### Inserção de Dados Iniciais
+1. **Service Account do Google Cloud**
 
-9. `09_insert_banks.sql` - Insere 4 bancos (BB, Bradesco, Itaú, Santander)
-10. `10_insert_media_outlets.sql` - Insere 62 veículos (40 relevant + 22 niche)
+Crie um service account com permissões de BigQuery:
 
-### Migrações Opcionais
+- Acesse [Google Cloud Console](https://console.cloud.google.com)
+- Navegue para **IAM & Admin** → **Service Accounts**
+- Crie service account com permissões:
+  * `BigQuery Admin`
+  * `BigQuery Data Editor`
+  * `BigQuery Job User`
+- Baixe a chave JSON
 
-11. `11_migrate_unify_media_outlets.sql` - Unificação de veículos (se vindo de schema antigo)
-12. `12_migrate_mentions_schema.sql` - Refatoração de menções (se vindo de schema antigo)
+2. **Variáveis de Ambiente**
 
-## Como Executar
+```bash
+export GOOGLE_CLOUD_PROJECT_ID=seu-projeto-id
+export GOOGLE_APPLICATION_CREDENTIALS=/caminho/para/service-account.json
+```
 
-### Opção 1: BigQuery Console
+3. **Dependências Python**
 
-1. Acesse o [BigQuery Console](https://console.cloud.google.com/bigquery)
+```bash
+pip install google-cloud-bigquery
+```
+
+### Executar Migrations
+
+```bash
+python sql/run_migrations.py
+```
+
+O script irá:
+1. Conectar ao BigQuery usando service account
+2. Listar todos os arquivos SQL
+3. Solicitar confirmação
+4. Executar na ordem correta
+5. Exibir resumo de execução
+
+### Saída Esperada
+
+```
+================================================================================
+MIGRATIONS BIGQUERY - Sistema IEDI
+================================================================================
+
+Conectando ao BigQuery...
+✓ Conectado ao projeto: seu-projeto-id
+
+Encontrados 10 arquivos SQL:
+  - 01_create_dataset.sql
+  - 02_create_table_banks.sql
+  ...
+
+Pressione ENTER para continuar ou Ctrl+C para cancelar...
+
+================================================================================
+Executando: 01_create_dataset.sql
+================================================================================
+✓ 01_create_dataset.sql executado com sucesso
+
+...
+
+================================================================================
+RESUMO
+================================================================================
+Total de arquivos: 10
+Executados com sucesso: 10
+Erros: 0
+
+✓ Todas as migrations foram executadas com sucesso!
+```
+
+## Métodos Alternativos
+
+### Opção 2: BigQuery Console (Manual)
+
+1. Acesse [BigQuery Console](https://console.cloud.google.com/bigquery)
 2. Selecione seu projeto
 3. Clique em "Compose new query"
 4. Cole o conteúdo de cada arquivo SQL
-5. Execute na ordem
+5. Execute na ordem numérica
 
-### Opção 2: bq CLI
+### Opção 3: bq CLI
 
 ```bash
-export PROJECT_ID=your-gcp-project-id
+export PROJECT_ID=seu-projeto-id
 
-bq query --project_id=$PROJECT_ID < 01_create_schema.sql
-bq query --project_id=$PROJECT_ID < 02_create_table_banks.sql
-bq query --project_id=$PROJECT_ID < 03_create_table_media_outlets.sql
-bq query --project_id=$PROJECT_ID < 04_create_table_analyses.sql
-bq query --project_id=$PROJECT_ID < 05_create_table_bank_periods.sql
-bq query --project_id=$PROJECT_ID < 06_create_table_mentions.sql
-bq query --project_id=$PROJECT_ID < 07_create_table_iedi_results.sql
-
-bq query --project_id=$PROJECT_ID < 08_insert_banks.sql
-bq query --project_id=$PROJECT_ID < 09_insert_media_outlets.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 01_create_dataset.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 02_create_table_banks.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 03_create_table_media_outlets.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 04_create_table_analyses.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 05_create_table_bank_periods.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 06_create_table_mentions.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 07_create_table_analysis_mentions.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 08_create_table_iedi_results.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 09_insert_banks.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 10_insert_media_outlets.sql
 ```
 
-### Opção 3: Python (SQLAlchemy)
+## Ordem de Execução
 
-```python
-from app.models import Base
-from app.infra.bq_sa import engine
+**IMPORTANTE**: Execute na ordem correta para respeitar dependências:
 
-Base.metadata.create_all(engine)
-```
+1. **Dataset** (01) - Criar namespace `iedi`
+2. **Tabelas** (02-08) - Criar estrutura
+3. **Inserts** (09-10) - Popular dados iniciais
 
 ## Estrutura do Schema
 
 ```
 iedi/
 ├── banks                    (Bancos)
-├── media_outlets            (Veículos de mídia - relevant + niche)
+├── media_outlets            (Veículos de mídia)
 ├── analyses                 (Análises)
 ├── bank_periods             (Períodos por banco)
-├── mentions                 (Menções da Brandwatch - sem analysis_id)
-├── analysis_mentions        (Relacionamento N:N entre analyses e mentions)
-└── iedi_results             (Resultados IEDI agregados)
+├── mentions                 (Menções da Brandwatch)
+├── analysis_mentions        (Relacionamento N:N)
+└── iedi_results             (Resultados IEDI)
 ```
 
 ## Relacionamentos
@@ -88,41 +156,103 @@ iedi_results (N) ──→ (1) banks
 analysis_mentions (N) ──→ (1) banks
 analysis_mentions (N) ──→ (1) mentions
 
-mentions: Dados brutos independentes (sem FK)
+mentions: Dados brutos independentes
 ```
 
 ## Tipos de Dados BigQuery
 
 | Tipo Python | Tipo BigQuery | Exemplo |
 |-------------|---------------|---------|
+| `str` | `STRING(tamanho)` | "texto" |
 | `int` | `INT64` | 123 |
-| `str` | `STRING` | "texto" |
 | `float` | `FLOAT64` | 3.14 |
 | `bool` | `BOOL` | TRUE/FALSE |
 | `datetime` | `TIMESTAMP` | 2025-01-01 00:00:00 UTC |
 | `list[str]` | `ARRAY<STRING>` | ["item1", "item2"] |
 
-## Media Outlets (Tabela Unificada)
+## Troubleshooting
 
-A tabela `media_outlets` unifica veículos relevantes e de nicho:
+### Erro: "GOOGLE_CLOUD_PROJECT_ID não definido"
 
-- **is_niche = FALSE**: Veículos relevantes (40 outlets)
-- **is_niche = TRUE**: Veículos de nicho (22 outlets)
-- **monthly_visitors**: Apenas para niche (NULL para relevant)
+```bash
+export GOOGLE_CLOUD_PROJECT_ID=seu-projeto-id
+```
+
+### Erro: "Arquivo de credenciais não encontrado"
+
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS=/caminho/completo/service-account.json
+```
+
+### Erro: "Permission denied"
+
+Service account precisa das permissões:
+- `BigQuery Admin`
+- `BigQuery Data Editor`
+- `BigQuery Job User`
+
+### Erro: "Dataset already exists"
+
+Normal se executar múltiplas vezes. Scripts usam `CREATE TABLE IF NOT EXISTS`.
+
+## Verificar Resultados
+
+### Via Console BigQuery
+
+1. Acesse [BigQuery Console](https://console.cloud.google.com/bigquery)
+2. Navegue para seu projeto
+3. Verifique dataset `iedi`
+4. Explore as tabelas criadas
+
+### Via Python
+
+```python
+from google.cloud import bigquery
+
+client = bigquery.Client(project='seu-projeto-id')
+
+# Listar tabelas
+tables = client.list_tables('iedi')
+for table in tables:
+    print(f"- {table.table_id}")
+
+# Contar registros
+query = "SELECT COUNT(*) as total FROM iedi.banks"
+result = client.query(query).result()
+for row in result:
+    print(f"Total de bancos: {row.total}")
+```
+
+### Via bq CLI
+
+```bash
+# Listar tabelas
+bq ls iedi
+
+# Contar registros
+bq query --use_legacy_sql=false "SELECT COUNT(*) FROM iedi.banks"
+```
+
+## Rollback
+
+Para remover tudo e recomeçar:
+
+```bash
+# Via bq CLI
+bq rm -r -f -d iedi
+
+# Ou via Python
+from google.cloud import bigquery
+client = bigquery.Client(project='seu-projeto-id')
+client.delete_dataset('iedi', delete_contents=True, not_found_ok=True)
+```
+
+Depois execute `python sql/run_migrations.py` novamente.
 
 ## Observações
 
-- Todas as tabelas usam `INT64` para IDs (auto-increment gerenciado pela aplicação)
-- Timestamps são armazenados em UTC
-- Arrays são nativos do BigQuery (`ARRAY<STRING>`)
-- Schema `iedi` está configurado para região `us`
-
-## Limpeza
-
-Para remover todas as tabelas e o schema:
-
-```sql
-DROP SCHEMA iedi CASCADE;
-```
-
-⚠️ **ATENÇÃO**: Este comando remove TODOS os dados permanentemente!
+- IDs usam UUID (STRING(36)) - BigQuery não suporta AUTO_INCREMENT
+- Timestamps armazenados em UTC
+- Arrays nativos do BigQuery (`ARRAY<STRING>`)
+- BigQuery gerencia índices automaticamente
+- Sem PRIMARY KEY ou FOREIGN KEY constraints (não suportados)
