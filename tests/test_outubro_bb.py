@@ -16,7 +16,7 @@ from app.services.iedi_aggregation_service import IEDIAggregationService
 from app.services.iedi_orchestrator import IEDIOrchestrator
 from app.repositories.analysis_repository import AnalysisRepository
 from app.repositories.bank_repository import BankRepository
-from app.enums.period_type import PeriodType
+
 from app.enums.bank_name import BankName
 from app.utils.uuid_generator import generate_uuid
 
@@ -139,7 +139,7 @@ def test_outubro_bb():
     print("Criando registro de análise...")
     AnalysisRepository.create(
         id=analysis_id,
-        period_type=PeriodType.MONTHLY,
+        period_type="MONTHLY",
         start_date=start_date,
         end_date=end_date,
         query_name=query_name
