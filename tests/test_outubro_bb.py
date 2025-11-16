@@ -20,6 +20,9 @@ from app.enums.period_type import PeriodType
 from app.enums.bank_name import BankName
 from app.utils.uuid_generator import generate_uuid
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def extract_domain(url: str) -> str:
     from urllib.parse import urlparse

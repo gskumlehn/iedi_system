@@ -15,10 +15,12 @@ import sys
 from pathlib import Path
 from google.cloud import bigquery
 from google.oauth2 import service_account
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def get_bigquery_client():
-    project_id = os.getenv('GOOGLE_CLOUD_PROJECT_ID')
+    project_id = os.getenv('GCP_PROJECT_ID')
     credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
     
     if not project_id:

@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Float, Integer
+from sqlalchemy import Column, Float, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_bigquery import TIMESTAMP

@@ -4,7 +4,7 @@ gunicorn==21.2.0
 Werkzeug==3.0.1
 
 # Database
-SQLAlchemy==2.0.23
+SQLAlchemy==1.4.54
 sqlalchemy-bigquery==1.9.0
 PyMySQL==1.1.0
 
@@ -24,7 +24,7 @@ requests==2.31.0
 python-dotenv==1.0.0
 
 # Brandwatch API
-bcr-api==0.1.0
+bcr-api
 
 # Testing (development)
 pytest==7.4.3
