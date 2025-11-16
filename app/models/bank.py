@@ -10,7 +10,7 @@ Base = declarative_base()
 
 
 class Bank(Base):
-    __tablename__ = "banks"
+    __tablename__ = "bank"
     __table_args__ = {"schema": "iedi"}
     
     id = Column(String, primary_key=True)

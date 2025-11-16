@@ -13,7 +13,7 @@ Base = declarative_base()
 
 
 class Mention(Base):
-    __tablename__ = "mentions"
+    __tablename__ = "mention"
     __table_args__ = {"schema": "iedi"}
 
     id = Column(String(36), primary_key=True)

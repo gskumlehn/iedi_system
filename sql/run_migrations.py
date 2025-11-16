@@ -100,6 +100,14 @@ def main():
         print(f"✓ Conectado ao projeto: {client.project}")
         print()
         
+        print("Removendo schema 'iedi' existente (se houver)...")
+        try:
+            client.query("DROP SCHEMA IF EXISTS iedi CASCADE").result()
+            print("✓ Schema 'iedi' removido")
+        except Exception as e:
+            print(f"⚠️  Aviso ao remover schema: {str(e)}")
+        print()
+        
         sql_dir = Path(__file__).parent
         sql_files = get_sql_files(sql_dir)
         

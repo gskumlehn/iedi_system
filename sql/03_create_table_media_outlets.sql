@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS iedi.media_outlets (
+CREATE TABLE IF NOT EXISTS iedi.media_outlet (
   id STRING(36) NOT NULL,
   name STRING(255) NOT NULL,
   domain STRING(255) NOT NULL,

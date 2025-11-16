@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 Base = declarative_base()
 
 class IEDIResult(Base):
-    __tablename__ = "iedi_results"
+    __tablename__ = "iedi_result"
     __table_args__ = {"schema": "iedi"}
 
     id = Column(String, primary_key=True)

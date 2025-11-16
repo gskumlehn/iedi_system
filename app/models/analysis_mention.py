@@ -9,7 +9,7 @@ Base = declarative_base()
 
 
 class AnalysisMention(Base):
-    __tablename__ = "analysis_mentions"
+    __tablename__ = "analysis_mention"
     __table_args__ = {"schema": "iedi"}
 
     analysis_id = Column(String(36), primary_key=True, nullable=False)

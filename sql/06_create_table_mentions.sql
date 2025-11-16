@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS iedi.mentions (
+CREATE TABLE IF NOT EXISTS iedi.mention (
   id STRING(36) NOT NULL,
   url STRING(500) NOT NULL,
   brandwatch_id STRING(255),

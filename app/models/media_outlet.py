@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 Base = declarative_base()
 
 class MediaOutlet(Base):
-    __tablename__ = "media_outlets"
+    __tablename__ = "media_outlet"
     __table_args__ = {"schema": "iedi"}
 
     id = Column(String, primary_key=True)

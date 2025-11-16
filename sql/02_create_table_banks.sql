@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS iedi.banks (
+CREATE TABLE IF NOT EXISTS iedi.bank (
   id STRING(36) NOT NULL,
   name STRING(255) NOT NULL,
   variations ARRAY<STRING>,

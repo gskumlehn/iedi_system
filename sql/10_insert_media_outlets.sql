@@ -1,4 +1,4 @@
-INSERT INTO iedi.media_outlets (id, name, domain, category, monthly_visitors, is_niche, active, created_at, updated_at) VALUES
+INSERT INTO iedi.media_outlet (id, name, domain, category, monthly_visitors, is_niche, active, created_at, updated_at) VALUES
 -- Relevant media outlets (is_niche = FALSE)
 ('57c8b37a-d7a3-46fe-a6a5-3ff2b6634220', 'Agência Brasil', 'agenciabrasil.ebc.com.br', NULL, NULL, FALSE, TRUE, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
 ('a6ee6d92-8ced-4261-99cc-f5b5a7af2519', 'Band', 'band.uol.com.br', NULL, NULL, FALSE, TRUE, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS iedi.iedi_results (
+CREATE TABLE IF NOT EXISTS iedi.iedi_result (
   id STRING(36) NOT NULL,
   analysis_id STRING(36) NOT NULL,
   bank_id STRING(36) NOT NULL,
