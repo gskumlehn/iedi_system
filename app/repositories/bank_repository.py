@@ -27,7 +27,10 @@ class BankRepository:
     @staticmethod
     def find_all() -> List[Bank]:
         with get_session() as session:
-            return session.query(Bank).filter(Bank.active == True).order_by(Bank._name).all()
+            banks = session.query(Bank).filter(Bank.active == True).order_by(Bank._name).all()
+            for bank in banks:
+                session.expunge(bank)
+            return banks
 
     @staticmethod
     def update(bank_id: str, name: BankName, variations: List[str], active: bool) -> None:
