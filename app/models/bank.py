@@ -22,11 +22,11 @@ class Bank(Base):
     
     @hybrid_property
     def name(self) -> BankName:
-        return BankName.from_value(self._name)
+        return BankName[self._name]
 
     @name.setter
     def name(self, value: BankName):
-        self._name = value.value
+        self._name = value.name
 
     @name.expression
     def name(cls):
