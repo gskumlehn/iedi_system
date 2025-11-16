@@ -1,8 +1,31 @@
+# Web Framework
 Flask==3.0.0
 gunicorn==21.2.0
+Werkzeug==3.0.1
+
+# Database
 SQLAlchemy==2.0.23
+sqlalchemy-bigquery==1.9.0
 PyMySQL==1.1.0
+
+# Google Cloud
+google-cloud-bigquery==3.14.1
+google-auth==2.25.2
+google-auth-oauthlib==1.2.0
+
+# Data Processing
 pandas==2.1.4
 numpy==1.26.2
+
+# HTTP Requests
+requests==2.31.0
+
+# Environment
 python-dotenv==1.0.0
-bcr-api
+
+# Brandwatch API
+bcr-api==0.1.0
+
+# Testing (development)
+pytest==7.4.3
+pytest-mock==3.12.0
