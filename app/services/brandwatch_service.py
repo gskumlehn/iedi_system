@@ -17,14 +17,16 @@ class BrandwatchService:
         if self._client is None:
             try:
                 from bcr_api import Client
+            except ImportError:
+                raise ImportError("Biblioteca bcr-api não instalada. Execute: pip install bcr-api")
+            
+            try:
                 self._client = Client(
                     username=self.username,
                     password=self.password,
                     project=int(self.project_id)
                 )
                 logger.info("Cliente Brandwatch conectado com sucesso")
-            except ImportError:
-                raise ImportError("Biblioteca bcr-api não instalada. Execute: pip install bcr-api")
             except Exception as e:
                 logger.error(f"Erro ao conectar Brandwatch: {e}")
                 raise
