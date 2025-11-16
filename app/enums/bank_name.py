@@ -16,6 +16,6 @@ class BankName(Enum):
     @classmethod
     def from_value(cls, value: str):
         for member in cls:
-            if member.value == value:
+            if member.value == value or member.name == value:
                 return member
-        raise ValueError(f"No {cls.__name__} with value '{value}'")
+        raise ValueError(f"No {cls.__name__} with value or name '{value}'")
