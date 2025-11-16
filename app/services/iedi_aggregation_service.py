@@ -8,20 +8,12 @@ logger = logging.getLogger(__name__)
 
 
 class IEDIAggregationService:
-    def __init__(
-        self,
-        analysis_mention_repo: AnalysisMentionRepository,
-        bank_repo: BankRepository
-    ):
-        self.analysis_mention_repo = analysis_mention_repo
-        self.bank_repo = bank_repo
-
     def aggregate_by_period(self, analysis_id: str) -> List[Dict]:
-        banks = self.bank_repo.find_all()
+        banks = BankRepository.find_all()
         aggregated = []
         
         for bank in banks:
-            analysis_mentions = self.analysis_mention_repo.find_by_analysis_and_bank(
+            analysis_mentions = AnalysisMentionRepository.find_by_analysis_and_bank(
                 analysis_id=analysis_id,
                 bank_id=bank.id
             )

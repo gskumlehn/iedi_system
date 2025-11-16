@@ -1,12 +1,12 @@
-from datetime import datetime
 from typing import List, Optional
 from app.infra.bq_sa import get_session
-from app.models.analysis import Analysis, BankPeriod
+from app.models.analysis import Analysis
 from app.utils.uuid_generator import generate_uuid
 
-class AnalysisRepository:
 
-    def create(self, name: str, query: str, custom_period: bool) -> Analysis:
+class AnalysisRepository:
+    @staticmethod
+    def create(name: str, query: str, custom_period: bool) -> Analysis:
         session = get_session()
         analysis = Analysis(id=generate_uuid(), name=name, query=query, custom_period=custom_period)
         session.add(analysis)
@@ -14,39 +14,12 @@ class AnalysisRepository:
         session.refresh(analysis)
         return analysis
 
-    def find_by_id(self, analysis_id: str) -> Optional[Analysis]:
+    @staticmethod
+    def find_by_id(analysis_id: str) -> Optional[Analysis]:
         session = get_session()
         return session.query(Analysis).filter(Analysis.id == analysis_id).first()
 
-    def find_all(self) -> List[Analysis]:
+    @staticmethod
+    def find_all() -> List[Analysis]:
         session = get_session()
         return session.query(Analysis).order_by(Analysis.created_at.desc()).all()
-
-class BankPeriodRepository:
-
-    def create(self, analysis_id: str, bank_id: str, category_detail: str, 
-               start_date: datetime, end_date: datetime) -> BankPeriod:
-        session = get_session()
-        period = BankPeriod(
-            id=generate_uuid(),
-            analysis_id=analysis_id,
-            bank_id=bank_id,
-            category_detail=category_detail,
-            start_date=start_date,
-            end_date=end_date
-        )
-        session.add(period)
-        session.commit()
-        session.refresh(period)
-        return period
-
-    def find_by_analysis(self, analysis_id: str) -> List[BankPeriod]:
-        session = get_session()
-        return session.query(BankPeriod).filter(BankPeriod.analysis_id == analysis_id).all()
-
-    def find_by_analysis_and_bank(self, analysis_id: str, bank_id: str) -> Optional[BankPeriod]:
-        session = get_session()
-        return session.query(BankPeriod).filter(
-            BankPeriod.analysis_id == analysis_id,
-            BankPeriod.bank_id == bank_id
-        ).first()

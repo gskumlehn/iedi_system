@@ -11,14 +11,9 @@ from app.services.bank_detection_service import BankDetectionService
 from app.services.iedi_calculation_service import IEDICalculationService
 from app.services.iedi_aggregation_service import IEDIAggregationService
 from app.services.iedi_orchestrator import IEDIOrchestrator
-from app.repositories.mention_repository import MentionRepository, AnalysisMentionRepository
-from app.repositories.bank_repository import BankRepository
-from app.repositories.media_outlet_repository import MediaOutletRepository
 from app.repositories.analysis_repository import AnalysisRepository
-from app.repositories.bank_period_repository import BankPeriodRepository
-from app.repositories.iedi_result_repository import IEDIResultRepository
-from app.utils.uuid_generator import generate_uuid
 from app.enums.period_type import PeriodType
+from app.utils.uuid_generator import generate_uuid
 
 
 def test_outubro_bb():
@@ -39,26 +34,17 @@ def test_outubro_bb():
     
     print("Inicializando services...")
     brandwatch_service = BrandwatchService()
-    mention_repo = MentionRepository()
-    media_outlet_repo = MediaOutletRepository()
-    mention_service = MentionService(mention_repo, media_outlet_repo)
-    bank_repo = BankRepository()
-    bank_detection_service = BankDetectionService(bank_repo)
+    mention_service = MentionService()
+    bank_detection_service = BankDetectionService()
     iedi_calculation_service = IEDICalculationService()
-    analysis_mention_repo = AnalysisMentionRepository()
-    iedi_aggregation_service = IEDIAggregationService(analysis_mention_repo, bank_repo)
-    bank_period_repo = BankPeriodRepository()
-    iedi_result_repo = IEDIResultRepository()
+    iedi_aggregation_service = IEDIAggregationService()
     
     orchestrator = IEDIOrchestrator(
         brandwatch_service=brandwatch_service,
         mention_service=mention_service,
         bank_detection_service=bank_detection_service,
         iedi_calculation_service=iedi_calculation_service,
-        iedi_aggregation_service=iedi_aggregation_service,
-        analysis_mention_repo=analysis_mention_repo,
-        bank_period_repo=bank_period_repo,
-        iedi_result_repo=iedi_result_repo
+        iedi_aggregation_service=iedi_aggregation_service
     )
     print("✓ Services inicializados")
     print()
@@ -75,8 +61,7 @@ def test_outubro_bb():
     print()
     
     print("Criando registro de análise...")
-    analysis_repo = AnalysisRepository()
-    analysis_repo.create(
+    AnalysisRepository.create(
         id=analysis_id,
         period_type=PeriodType.MONTHLY,
         start_date=start_date,

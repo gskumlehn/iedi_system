@@ -3,9 +3,10 @@ from app.infra.bq_sa import get_session
 from app.models.iedi_result import IEDIResult
 from app.utils.uuid_generator import generate_uuid
 
-class IEDIResultRepository:
 
-    def create(self, **kwargs) -> IEDIResult:
+class IEDIResultRepository:
+    @staticmethod
+    def create(**kwargs) -> IEDIResult:
         session = get_session()
         if 'id' not in kwargs:
             kwargs['id'] = generate_uuid()
@@ -15,13 +16,15 @@ class IEDIResultRepository:
         session.refresh(result)
         return result
 
-    def find_by_analysis(self, analysis_id: str) -> List[IEDIResult]:
+    @staticmethod
+    def find_by_analysis(analysis_id: str) -> List[IEDIResult]:
         session = get_session()
         return session.query(IEDIResult).filter(
             IEDIResult.analysis_id == analysis_id
         ).order_by(IEDIResult.final_iedi.desc()).all()
 
-    def find_by_analysis_and_bank(self, analysis_id: str, bank_id: str) -> Optional[IEDIResult]:
+    @staticmethod
+    def find_by_analysis_and_bank(analysis_id: str, bank_id: str) -> Optional[IEDIResult]:
         session = get_session()
         return session.query(IEDIResult).filter(
             IEDIResult.analysis_id == analysis_id,

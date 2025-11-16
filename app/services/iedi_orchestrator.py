@@ -21,19 +21,13 @@ class IEDIOrchestrator:
         mention_service: MentionService,
         bank_detection_service: BankDetectionService,
         iedi_calculation_service: IEDICalculationService,
-        iedi_aggregation_service: IEDIAggregationService,
-        analysis_mention_repo: AnalysisMentionRepository,
-        bank_period_repo: BankPeriodRepository,
-        iedi_result_repo: IEDIResultRepository
+        iedi_aggregation_service: IEDIAggregationService
     ):
-        self.brandwatch = brandwatch_service
+        self.brandwatch_service = brandwatch_service
         self.mention_service = mention_service
-        self.bank_detection = bank_detection_service
-        self.iedi_calculation = iedi_calculation_service
-        self.iedi_aggregation = iedi_aggregation_service
-        self.analysis_mention_repo = analysis_mention_repo
-        self.bank_period_repo = bank_period_repo
-        self.iedi_result_repo = iedi_result_repo
+        self.bank_detection_service = bank_detection_service
+        self.iedi_calculation_service = iedi_calculation_service
+        self.iedi_aggregation_service = iedi_aggregation_service
 
     def process_analysis(
         self,
@@ -42,12 +36,9 @@ class IEDIOrchestrator:
         end_date: datetime,
         query_name: str
     ) -> Dict:
-        logger.info(
-            f"Iniciando processamento: {analysis_id} "
-            f"({start_date} - {end_date})"
-        )
+        logger.info(f"Iniciando processamento da análise {analysis_id}")
         
-        mentions_data = self.brandwatch.extract_mentions(
+        mentions_data = self.brandwatch_service.extract_mentions(
             start_date=start_date,
             end_date=end_date,
             query_name=query_name
@@ -55,22 +46,59 @@ class IEDIOrchestrator:
         logger.info(f"Coletadas {len(mentions_data)} menções da Brandwatch")
         
         processed_count = 0
+        bank_mention_counts = {}
+        
         for mention_data in mentions_data:
-            try:
-                self._process_single_mention(analysis_id, mention_data)
-                processed_count += 1
-            except Exception as e:
-                logger.error(
-                    f"Erro ao processar menção {mention_data.get('id')}: {e}"
-                )
+            mention = self.mention_service.process_mention(mention_data)
+            
+            detected_banks = self.bank_detection_service.detect_banks(mention_data)
+            
+            if not detected_banks:
                 continue
+            
+            for bank in detected_banks:
+                iedi_result = self.iedi_calculation_service.calculate_iedi(
+                    mention_data=mention_data,
+                    bank=bank
+                )
+                
+                AnalysisMentionRepository.create(
+                    analysis_id=analysis_id,
+                    mention_id=mention.id,
+                    bank_id=bank.id,
+                    **iedi_result
+                )
+                
+                bank_mention_counts[bank.id] = bank_mention_counts.get(bank.id, 0) + 1
+            
+            processed_count += 1
         
         logger.info(f"Processadas {processed_count} menções")
         
-        aggregated = self.iedi_aggregation.aggregate_by_period(analysis_id)
+        for bank_id, count in bank_mention_counts.items():
+            BankPeriodRepository.create(
+                analysis_id=analysis_id,
+                bank_id=bank_id,
+                category_detail="Bancos",
+                start_date=start_date,
+                end_date=end_date
+            )
+        
+        aggregated = self.iedi_aggregation_service.aggregate_by_period(analysis_id)
         logger.info(f"Agregação concluída: {len(aggregated)} bancos")
         
-        ranking = self._generate_ranking(analysis_id, aggregated)
+        for agg in aggregated:
+            IEDIResultRepository.create(
+                analysis_id=analysis_id,
+                bank_id=agg['bank_id'],
+                total_mentions=agg['total_mentions'],
+                final_iedi=agg['iedi_final']
+            )
+        
+        ranking = sorted(aggregated, key=lambda x: x['iedi_final'], reverse=True)
+        for idx, item in enumerate(ranking, 1):
+            item['position'] = idx
+        
         logger.info(f"Ranking gerado: {len(ranking)} bancos")
         
         return {
@@ -79,41 +107,3 @@ class IEDIOrchestrator:
             'processed_mentions': processed_count,
             'ranking': ranking
         }
-
-    def _process_single_mention(self, analysis_id: str, mention_data: Dict):
-        mention = self.mention_service.process_mention(mention_data)
-        
-        detected_banks = self.bank_detection.detect_banks(mention_data)
-        
-        if not detected_banks:
-            logger.debug(f"Nenhum banco detectado: {mention.url}")
-            return
-        
-        for bank in detected_banks:
-            iedi_result = self.iedi_calculation.calculate_iedi(
-                mention_data=mention_data,
-                bank=bank
-            )
-            
-            self.analysis_mention_repo.create(
-                analysis_id=analysis_id,
-                mention_id=mention.id,
-                bank_id=bank.id,
-                **iedi_result
-            )
-
-    def _generate_ranking(
-        self,
-        analysis_id: str,
-        aggregated: List[Dict]
-    ) -> List[Dict]:
-        ranking = sorted(
-            aggregated,
-            key=lambda x: x['iedi_final'],
-            reverse=True
-        )
-        
-        for idx, item in enumerate(ranking, start=1):
-            item['position'] = idx
-        
-        return ranking
