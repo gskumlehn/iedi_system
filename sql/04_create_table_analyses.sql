@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS iedi.analyses (
   start_date TIMESTAMP NOT NULL,
   end_date TIMESTAMP NOT NULL,
   query_name STRING(255) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
+  created_at TIMESTAMP NOT NULL
 );

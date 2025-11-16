@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS iedi.bank_periods (
   category_detail STRING(255) NOT NULL,
   start_date TIMESTAMP NOT NULL,
   end_date TIMESTAMP NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
+  created_at TIMESTAMP NOT NULL
 );

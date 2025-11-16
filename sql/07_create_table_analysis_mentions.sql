@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS iedi.analysis_mentions (
   iedi_normalized FLOAT64,
   numerator INT64,
   denominator INT64,
-  title_verified INT64 DEFAULT 0,
-  subtitle_verified INT64 DEFAULT 0,
-  relevant_outlet_verified INT64 DEFAULT 0,
-  niche_outlet_verified INT64 DEFAULT 0,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
+  title_verified INT64,
+  subtitle_verified INT64,
+  relevant_outlet_verified INT64,
+  niche_outlet_verified INT64,
+  created_at TIMESTAMP NOT NULL
 );
