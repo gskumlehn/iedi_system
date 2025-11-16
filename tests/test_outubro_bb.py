@@ -5,6 +5,9 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock
 from collections import Counter
+from dotenv import load_dotenv
+
+load_dotenv()
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
