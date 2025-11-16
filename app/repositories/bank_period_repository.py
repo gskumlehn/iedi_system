@@ -9,29 +9,29 @@ class BankPeriodRepository:
     @staticmethod
     def create(analysis_id: str, bank_id: str, category_detail: str, 
                start_date: datetime, end_date: datetime) -> BankPeriod:
-        session = get_session()
-        period = BankPeriod(
-            id=generate_uuid(),
-            analysis_id=analysis_id,
-            bank_id=bank_id,
-            category_detail=category_detail,
-            start_date=start_date,
-            end_date=end_date
-        )
-        session.add(period)
-        session.commit()
-        session.refresh(period)
-        return period
+        with get_session() as session:
+            period = BankPeriod(
+                id=generate_uuid(),
+                analysis_id=analysis_id,
+                bank_id=bank_id,
+                category_detail=category_detail,
+                start_date=start_date,
+                end_date=end_date
+            )
+            session.add(period)
+            session.commit()
+            session.refresh(period)
+            return period
 
     @staticmethod
     def find_by_analysis(analysis_id: str) -> List[BankPeriod]:
-        session = get_session()
-        return session.query(BankPeriod).filter(BankPeriod.analysis_id == analysis_id).all()
+        with get_session() as session:
+            return session.query(BankPeriod).filter(BankPeriod.analysis_id == analysis_id).all()
 
     @staticmethod
     def find_by_analysis_and_bank(analysis_id: str, bank_id: str) -> Optional[BankPeriod]:
-        session = get_session()
-        return session.query(BankPeriod).filter(
-            BankPeriod.analysis_id == analysis_id,
-            BankPeriod.bank_id == bank_id
-        ).first()
+        with get_session() as session:
+            return session.query(BankPeriod).filter(
+                BankPeriod.analysis_id == analysis_id,
+                BankPeriod.bank_id == bank_id
+            ).first()
