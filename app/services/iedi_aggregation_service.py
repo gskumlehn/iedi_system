@@ -1,7 +1,7 @@
 from typing import Dict, List
 import logging
 
-from app.repositories.analysis_mention_repository import AnalysisMentionRepository
+from app.repositories.mention_analysis_repository import MentionAnalysisRepository
 from app.repositories.bank_repository import BankRepository
 
 logger = logging.getLogger(__name__)
@@ -13,17 +13,17 @@ class IEDIAggregationService:
         aggregated = []
         
         for bank in banks:
-            analysis_mentions = AnalysisMentionRepository.find_by_analysis_and_bank(
+            mention_analyses = MentionAnalysisRepository.find_by_analysis_and_bank(
                 analysis_id=analysis_id,
                 bank_id=bank.id
             )
             
-            if not analysis_mentions:
+            if not mention_analyses:
                 continue
             
-            total_mentions = len(analysis_mentions)
-            sum_iedi = sum(am.iedi_score for am in analysis_mentions if am.iedi_score)
-            
+            total_mentions = len(mention_analyses)
+            sum_iedi = sum(ma.iedi_score for ma in mention_analyses if ma.iedi_score)
+
             avg_iedi = sum_iedi / total_mentions if total_mentions > 0 else 0
             
             iedi_normalized = (avg_iedi + 1) * 5

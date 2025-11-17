@@ -7,9 +7,8 @@ from zoneinfo import ZoneInfo
 
 Base = declarative_base()
 
-
-class AnalysisMention(Base):
-    __tablename__ = "analysis_mention"
+class MentionAnalysis(Base):
+    __tablename__ = "mention_analysis"
     __table_args__ = {"schema": "iedi"}
 
     analysis_id = Column(String(36), primary_key=True, nullable=False)

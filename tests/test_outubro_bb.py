@@ -87,7 +87,7 @@ def test_outubro_bb():
     start_date = datetime(2024, 10, 1)
     end_date = datetime(2024, 10, 31, 23, 59, 59)
     query_name = "OPERAÇÃO BB :: MONITORAMENTO"
-    
+
     print(f"ID da Análise: {analysis_id}")
     print(f"Período: {start_date.date()} a {end_date.date()}")
     print(f"Query Brandwatch: {query_name}")
@@ -130,22 +130,9 @@ def test_outubro_bb():
     )
     print("✓ Services inicializados")
     print()
-    
-    print("Testando conexão Brandwatch...")
-    if not brandwatch_service.test_connection():
-        print("✗ Falha na conexão com Brandwatch")
-        print("Verifique as variáveis de ambiente:")
-        print("  - BRANDWATCH_USERNAME")
-        print("  - BRANDWATCH_PASSWORD")
-        print("  - BRANDWATCH_PROJECT_ID")
-        return
-    print("✓ Conexão com Brandwatch OK")
-    print()
-    
+
     print("Criando registro de análise...")
     AnalysisRepository.create(
-        id=analysis_id,
-        period_type="MONTHLY",
         start_date=start_date,
         end_date=end_date,
         query_name=query_name

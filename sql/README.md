@@ -10,12 +10,11 @@ sql/
 ├── 02_create_table_banks.sql          # Tabela de bancos
 ├── 03_create_table_media_outlets.sql  # Tabela de veículos de mídia
 ├── 04_create_table_analyses.sql       # Tabela de análises
-├── 05_create_table_bank_periods.sql   # Tabela de períodos por banco
-├── 06_create_table_mentions.sql       # Tabela de menções
-├── 07_create_table_analysis_mentions.sql  # Relacionamento análise-menção-banco
-├── 08_create_table_iedi_results.sql   # Tabela de resultados IEDI
-├── 09_insert_banks.sql                # Inserir 4 bancos
-├── 10_insert_media_outlets.sql        # Inserir 62 veículos de mídia
+├── 05_create_table_mentions.sql       # Tabela de menções
+├── 06_create_table_analysis_mentions.sql  # Relacionamento análise-menção-banco
+├── 07_create_table_iedi_results.sql   # Tabela de resultados IEDI
+├── 08_insert_banks.sql                # Inserir 4 bancos
+├── 09_insert_media_outlets.sql        # Inserir 62 veículos de mídia
 ├── run_migrations.py                  # Script automatizado ⭐
 └── README.md                          # Este arquivo
 ```
@@ -72,9 +71,16 @@ MIGRATIONS BIGQUERY - Sistema IEDI
 Conectando ao BigQuery...
 ✓ Conectado ao projeto: seu-projeto-id
 
-Encontrados 10 arquivos SQL:
+Encontrados 9 arquivos SQL:
   - 01_create_dataset.sql
   - 02_create_table_banks.sql
+  - 03_create_table_media_outlets.sql
+  - 04_create_table_analyses.sql
+  - 05_create_table_mentions.sql
+  - 06_create_table_analysis_mentions.sql
+  - 07_create_table_iedi_results.sql
+  - 08_insert_banks.sql
+  - 09_insert_media_outlets.sql
   ...
 
 Pressione ENTER para continuar ou Ctrl+C para cancelar...
@@ -89,8 +95,8 @@ Executando: 01_create_dataset.sql
 ================================================================================
 RESUMO
 ================================================================================
-Total de arquivos: 10
-Executados com sucesso: 10
+Total de arquivos: 9
+Executados com sucesso: 9
 Erros: 0
 
 ✓ Todas as migrations foram executadas com sucesso!
@@ -115,12 +121,11 @@ bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 01_create_dataset.sql
 bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 02_create_table_banks.sql
 bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 03_create_table_media_outlets.sql
 bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 04_create_table_analyses.sql
-bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 05_create_table_bank_periods.sql
-bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 06_create_table_mentions.sql
-bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 07_create_table_analysis_mentions.sql
-bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 08_create_table_iedi_results.sql
-bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 09_insert_banks.sql
-bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 10_insert_media_outlets.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 05_create_table_mentions.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 06_create_table_analysis_mentions.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 07_create_table_iedi_results.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 08_insert_banks.sql
+bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 09_insert_media_outlets.sql
 ```
 
 ## Ordem de Execução
@@ -128,8 +133,8 @@ bq query --project_id=$PROJECT_ID --use_legacy_sql=false < 10_insert_media_outle
 **IMPORTANTE**: Execute na ordem correta para respeitar dependências:
 
 1. **Dataset** (01) - Criar namespace `iedi`
-2. **Tabelas** (02-08) - Criar estrutura
-3. **Inserts** (09-10) - Popular dados iniciais
+2. **Tabelas** (02-07) - Criar estrutura
+3. **Inserts** (08-09) - Popular dados iniciais
 
 ## Estrutura do Schema
 
@@ -138,7 +143,6 @@ iedi/
 ├── banks                    (Bancos)
 ├── media_outlets            (Veículos de mídia)
 ├── analyses                 (Análises)
-├── bank_periods             (Períodos por banco)
 ├── mentions                 (Menções da Brandwatch)
 ├── analysis_mentions        (Relacionamento N:N)
 └── iedi_results             (Resultados IEDI)
@@ -147,11 +151,9 @@ iedi/
 ## Relacionamentos
 
 ```
-analyses (1) ──→ (N) bank_periods
 analyses (1) ──→ (N) analysis_mentions ──→ (N) mentions  (N:N)
 analyses (1) ──→ (N) iedi_results
 
-bank_periods (N) ──→ (1) banks
 iedi_results (N) ──→ (1) banks
 analysis_mentions (N) ──→ (1) banks
 analysis_mentions (N) ──→ (1) mentions

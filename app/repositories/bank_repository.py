@@ -1,51 +1,11 @@
-from typing import List, Optional
+from typing import Optional
 from app.infra.bq_sa import get_session
 from app.models.bank import Bank
 from app.enums.bank_name import BankName
-from app.utils.uuid_generator import generate_uuid
-
 
 class BankRepository:
-    @staticmethod
-    def create(name: BankName, variations: List[str], active: bool = True) -> str:
-        with get_session() as session:
-            bank = Bank(
-                id=generate_uuid(),
-                name=name,
-                variations=variations,
-                active=active
-            )
-            session.add(bank)
-            session.commit()
-            return bank.id
 
     @staticmethod
-    def find_by_id(bank_id: str) -> Optional[Bank]:
+    def find_by_name(name: BankName) -> Optional[Bank]:
         with get_session() as session:
-            return session.query(Bank).filter(Bank.id == bank_id).first()
-
-    @staticmethod
-    def find_all() -> List[Bank]:
-        with get_session() as session:
-            banks = session.query(Bank).filter(Bank.active == True).order_by(Bank._name).all()
-            for bank in banks:
-                session.expunge(bank)
-            return banks
-
-    @staticmethod
-    def update(bank_id: str, name: BankName, variations: List[str], active: bool) -> None:
-        with get_session() as session:
-            bank = session.query(Bank).filter(Bank.id == bank_id).first()
-            if bank:
-                bank.name = name
-                bank.variations = variations
-                bank.active = active
-                session.commit()
-
-    @staticmethod
-    def delete(bank_id: str) -> None:
-        with get_session() as session:
-            bank = session.query(Bank).filter(Bank.id == bank_id).first()
-            if bank:
-                bank.active = False
-                session.commit()
+            return session.query(Bank).filter(Bank.name == name.name).one_or_none()

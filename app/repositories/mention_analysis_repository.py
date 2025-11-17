@@ -4,6 +4,7 @@ from app.infra.bq_sa import get_session
 from app.models.mention_analysis import MentionAnalysis
 
 class MentionAnalysisRepository:
+
     @staticmethod
     def create(analysis_id: str, mention_id: str, bank_id: str, **kwargs) -> MentionAnalysis:
         with get_session() as session:
@@ -20,21 +21,6 @@ class MentionAnalysisRepository:
             return mention_analysis
 
     @staticmethod
-    def find_by_analysis(analysis_id: str) -> List[MentionAnalysis]:
-        with get_session() as session:
-            return session.query(MentionAnalysis).filter(
-                MentionAnalysis.analysis_id == analysis_id
-            ).all()
-
-    @staticmethod
-    def find_by_analysis_and_bank(analysis_id: str, bank_id: str) -> List[MentionAnalysis]:
-        with get_session() as session:
-            return session.query(MentionAnalysis).filter(
-                MentionAnalysis.analysis_id == analysis_id,
-                MentionAnalysis.bank_id == bank_id
-            ).all()
-
-    @staticmethod
     def find_by_mention(mention_id: str) -> List[MentionAnalysis]:
         with get_session() as session:
             return session.query(MentionAnalysis).filter(
@@ -42,16 +28,7 @@ class MentionAnalysisRepository:
             ).all()
 
     @staticmethod
-    def find_by_key(analysis_id: str, mention_id: str, bank_id: str) -> Optional[MentionAnalysis]:
-        with get_session() as session:
-            return session.query(MentionAnalysis).filter(
-                MentionAnalysis.analysis_id == analysis_id,
-                MentionAnalysis.mention_id == mention_id,
-                MentionAnalysis.bank_id == bank_id
-            ).first()
-
-    @staticmethod
-    def update_iedi_scores(analysis_id: str, mention_id: str, bank_id: str, 
+    def update_iedi_scores(analysis_id: str, mention_id: str, bank_id: str,
                           iedi_score: float, numerator: int, denominator: int, **kwargs) -> Optional[MentionAnalysis]:
         with get_session() as session:
             mention_analysis = session.query(MentionAnalysis).filter(
@@ -59,10 +36,10 @@ class MentionAnalysisRepository:
                 MentionAnalysis.mention_id == mention_id,
                 MentionAnalysis.bank_id == bank_id
             ).first()
-            
+
             if not mention_analysis:
                 return None
-            
+
             mention_analysis.iedi_score = iedi_score
             mention_analysis.numerator = numerator
             mention_analysis.denominator = denominator

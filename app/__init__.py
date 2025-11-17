@@ -2,8 +2,6 @@ from flask import Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app.controllers.root_controller import root_bp
-from app.controllers.bank_controller import bank_bp
-from app.controllers.media_controller import media_bp
 from app.controllers.analysis_controller import analysis_bp
 
 def create_app():
@@ -18,8 +16,6 @@ def create_app():
     app.config['JSON_AS_ASCII'] = False
 
     app.register_blueprint(root_bp, url_prefix="/")
-    app.register_blueprint(bank_bp, url_prefix="/banks")
-    app.register_blueprint(media_bp, url_prefix="/media")
     app.register_blueprint(analysis_bp, url_prefix="/analyses")
 
     return app

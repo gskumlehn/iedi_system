@@ -1,75 +1,75 @@
-from typing import Dict
-from urllib.parse import urlparse
-import logging
-
 from app.models.mention import Mention
 from app.repositories.mention_repository import MentionRepository
-from app.repositories.media_outlet_repository import MediaOutletRepository
-
-logger = logging.getLogger(__name__)
-
+from app.services.brandwatch_service import BrandwatchService
+from app.utils.date_utils import DateUtils
 
 class MentionService:
-    def process_mention(self, mention_data: Dict) -> Mention:
-        unique_url = MentionRepository.extract_unique_url(mention_data)
-        
-        existing = MentionRepository.find_by_url(unique_url)
-        if existing:
-            logger.info(f"Menção já existe: {existing.id} - {unique_url}")
-            return existing
-        
-        enriched_data = self._enrich_mention_data(mention_data, unique_url)
-        
-        mention = MentionRepository.create(**enriched_data)
-        logger.info(f"Menção criada: {mention.id} - {unique_url}")
+
+    brandwatch_service = BrandwatchService()
+
+    def fetch_and_filter_mentions(self, start_date, end_date, query_name):
+        mentions_data = self.brandwatch_service.fetch(
+            start_date=start_date,
+            end_date=end_date,
+            query_name=query_name
+        )
+
+        filtered_mentions = []
+        for mention_data in mentions_data:
+            if self.passes_filter(mention_data):
+                mention = self.save_or_update(mention_data)
+                filtered_mentions.append(mention)
+
+        return filtered_mentions
+
+    def passes_filter(self, mention_data):
+        content_source = mention_data.get('contentSource')
+        return content_source == "News"
+
+    def extract_categories(self, category_details):
+        return [category['name'] for category in category_details if 'name' in category]
+
+    def extract_url(self, mention_data):
+        return mention_data.get('url') or mention_data.get('originalUrl')
+
+    def save_or_update(self, mention_data):
+        categories = self.extract_categories(mention_data.get('categoryDetails', []))
+        url = self.extract_url(mention_data)
+
+        existing_mention = MentionRepository.find_by_url(url)
+        if existing_mention:
+            return self.update(existing_mention, mention_data, categories)
+
+        return self.save(mention_data, categories)
+
+    def save(self, mention_data, categories):
+        url = self.extract_url(mention_data)
+        published_date = DateUtils.parse_date(mention_data.get('date'))
+        mention = Mention(
+            url=url,
+            brandwatch_id=mention_data.get('id'),
+            original_url=mention_data.get('originalUrl'),
+            title=mention_data.get('title'),
+            snippet=mention_data.get('snippet'),
+            full_text=mention_data.get('fullText'),
+            domain=mention_data.get('domain'),
+            published_date=published_date,
+            sentiment=mention_data.get('sentiment'),
+            categories=categories,
+            monthly_visitors=mention_data.get('monthlyVisitors', 0)
+        )
+
+        MentionRepository.save(mention)
         return mention
 
-    def _enrich_mention_data(self, mention_data: Dict, unique_url: str) -> Dict:
-        domain = self._extract_domain(unique_url)
-        
-        media_outlet = None
-        if domain:
-            media_outlet = MediaOutletRepository.find_by_domain(domain)
-        
-        enriched = {
-            'url': unique_url,
-            'brandwatch_id': mention_data.get('id'),
-            'original_url': mention_data.get('originalUrl'),
-            'title': mention_data.get('title'),
-            'snippet': mention_data.get('snippet'),
-            'full_text': mention_data.get('fullText'),
-            'domain': domain,
-            'published_date': mention_data.get('date'),
-            'sentiment': mention_data.get('sentiment', 'neutral'),
-            'media_outlet_id': media_outlet.id if media_outlet else None,
-            'monthly_visitors': media_outlet.monthly_visitors if media_outlet else 0,
-            'reach_group': self._determine_reach_group(media_outlet)
-        }
-        
-        return enriched
+    def update(self, existing_mention, mention_data, categories):
+        existing_mention.title = mention_data.get('title')
+        existing_mention.snippet = mention_data.get('snippet')
+        existing_mention.full_text = mention_data.get('fullText')
+        existing_mention.published_date = DateUtils.parse_date(mention_data.get('date'))
+        existing_mention.sentiment = mention_data.get('sentiment')
+        existing_mention.categories = categories
+        existing_mention.monthly_visitors = mention_data.get('monthlyVisitors', 0)
 
-    def _extract_domain(self, url: str) -> str:
-        try:
-            parsed = urlparse(url)
-            domain = parsed.netloc
-            if domain.startswith('www.'):
-                domain = domain[4:]
-            return domain
-        except Exception as e:
-            logger.warning(f"Erro ao extrair domínio de {url}: {e}")
-            return ''
-
-    def _determine_reach_group(self, media_outlet) -> str:
-        if not media_outlet:
-            return 'D'
-        
-        visitors = media_outlet.monthly_visitors
-        
-        if visitors > 29_000_000:
-            return 'A'
-        elif visitors > 11_000_000:
-            return 'B'
-        elif visitors >= 500_000:
-            return 'C'
-        else:
-            return 'D'
+        MentionRepository.update(existing_mention)
+        return existing_mention

@@ -1017,11 +1017,11 @@ Métricas agregadas por banco:
 
 ## Etapa 7: Geração de Resultados
 
-A sétima e última etapa cria os registros finais nas tabelas `bank_periods` e `iedi_results`, gera o ranking ordenado por IEDI final e atualiza as posições de cada banco.
+A sétima e última etapa cria os registros finais nas tabelas `iedi_results`, gera o ranking ordenado por IEDI final e atualiza as posições de cada banco.
 
 ### Responsável
 
-**Repositories**: `BankPeriodRepository` + `IEDIResultRepository`
+**Repositories**: `IEDIResultRepository`
 
 ### Entrada
 
@@ -1029,32 +1029,13 @@ Métricas agregadas por banco
 
 ### Processamento
 
-#### 7.1 Buscar/Criar Bank Period
+#### 7.1 Criar Resultado IEDI
 
 ```python
 for metrics in aggregated_metrics:
-    # Buscar ou criar bank_period
-    bank_period = bank_period_repo.find_by_analysis_and_bank(
-        analysis_id=analysis.id,
-        bank_id=metrics['bank_id']
-    )
-    
-    if not bank_period:
-        bank_period = bank_period_repo.create(
-            analysis_id=analysis.id,
-            bank_id=metrics['bank_id'],
-            start_date=analysis.start_date,
-            end_date=analysis.end_date
-        )
-        logger.info(f"Bank period criado: {bank_period.id}")
-```
-
-#### 7.2 Criar Resultado IEDI
-
-```python
     # Criar resultado IEDI
     iedi_result = iedi_result_repo.create(
-        bank_period_id=bank_period.id,
+        bank_id=metrics['bank_id'],
         volume_total=metrics['volume_total'],
         volume_positive=metrics['volume_positive'],
         volume_negative=metrics['volume_negative'],
@@ -1068,7 +1049,7 @@ for metrics in aggregated_metrics:
     logger.info(f"Resultado IEDI criado: {iedi_result.id}")
 ```
 
-#### 7.3 Gerar Ranking
+#### 7.2 Gerar Ranking
 
 ```python
 # Buscar todos os resultados da análise
@@ -1089,19 +1070,12 @@ for position, result in enumerate(ranking, start=1):
 
 Registros criados no BigQuery:
 
-#### Tabela `bank_periods`
-
-| id | analysis_id | bank_id | start_date | end_date |
-|----|-------------|---------|------------|----------|
-| uuid-bp1 | uuid-a1 | uuid-bb | 2024-11-01 | 2024-11-30 |
-| uuid-bp2 | uuid-a1 | uuid-itau | 2024-11-01 | 2024-11-30 |
-
 #### Tabela `iedi_results`
 
-| id | bank_period_id | volume_total | iedi_final | positividade | ranking_position |
-|----|----------------|--------------|------------|--------------|------------------|
-| uuid-r1 | uuid-bp1 | 312 | 5.89 | 75.0 | 2 |
-| uuid-r2 | uuid-bp2 | 245 | 6.44 | 82.0 | 1 |
+| id | bank_id | volume_total | iedi_final | positividade | ranking_position |
+|----|---------|--------------|------------|--------------|------------------|
+| uuid-r1 | uuid-bb | 312 | 5.89 | 75.0 | 2 |
+| uuid-r2 | uuid-itau | 245 | 6.44 | 82.0 | 1 |
 
 #### Ranking Final
 
@@ -1114,15 +1088,14 @@ Registros criados no BigQuery:
 
 ### Métricas
 
-- **Bank periods criados**: 4
 - **Resultados IEDI criados**: 4
 - **Ranking gerado**: Sim
 - **Tempo de processamento**: 3 segundos
 
 ### Dependências
 
-- **Repositories**: `BankPeriodRepository`, `IEDIResultRepository`
-- **Tabelas**: `bank_periods`, `iedi_results`
+- **Repositories**: `IEDIResultRepository`
+- **Tabelas**: `iedi_results`
 
 ---
 
@@ -1193,17 +1166,9 @@ logger.info(f"Bancos agregados: {len(aggregated_metrics)}")
 
 # 7. Geração de Resultados
 for metrics in aggregated_metrics:
-    # Criar bank_period
-    bank_period = bank_period_repo.find_or_create(
-        analysis_id=analysis.id,
-        bank_id=metrics['bank_id'],
-        start_date=analysis.start_date,
-        end_date=analysis.end_date
-    )
-    
     # Criar resultado IEDI
     iedi_result_repo.create(
-        bank_period_id=bank_period.id,
+        bank_id=metrics['bank_id'],
         **metrics
     )
 
@@ -1308,8 +1273,8 @@ logger.info("Processamento concluído!")
    │ detect_banks(mention)     │              │             │
    ├──────────────────────────────────────────>│            │
    │           │               │              │ find_all() │
-   │           │               │              ├────────────>│
-   │           │               │              │<────────────┤
+   │           │               ├────────────>│
+   │           │               │<────────────┤
    │           │               │              │             │
    │           │               │ return detected_banks     │
    │<──────────────────────────────────────────┤            │

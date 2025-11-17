@@ -826,7 +826,6 @@ class IEDIOrchestrator:
         aggregation_service: IEDIAggregationService,
         mention_repo: MentionRepository,
         analysis_mention_repo: AnalysisMentionRepository,
-        bank_period_repo: BankPeriodRepository,
         iedi_result_repo: IEDIResultRepository
     ):
         self.brandwatch = brandwatch_service
@@ -836,7 +835,6 @@ class IEDIOrchestrator:
         self.aggregation = aggregation_service
         self.mention_repo = mention_repo
         self.analysis_mention_repo = analysis_mention_repo
-        self.bank_period_repo = bank_period_repo
         self.iedi_result_repo = iedi_result_repo
     
     def process_analysis(
@@ -908,15 +906,8 @@ class IEDIOrchestrator:
         # 7. Geração de Resultados
         logger.info("Etapa 7: Geração de Resultados")
         for metrics in aggregated:
-            bank_period = self.bank_period_repo.find_or_create(
-                analysis_id=analysis_id,
-                bank_id=metrics['bank_id'],
-                start_date=start_date,
-                end_date=end_date
-            )
-            
             self.iedi_result_repo.create(
-                bank_period_id=bank_period.id,
+                bank_id=metrics['bank_id'],
                 **metrics
             )
         
