@@ -63,6 +63,27 @@ class MentionAnalysisRepository:
         """Busca todos os MentionAnalysis de um banco"""
         with get_session() as session:
             return session.query(MentionAnalysis).filter(
-                MentionAnalysis.bank_name == bank_name.name
+                MentionAnalysis._bank_name == bank_name.name
             ).all()
 
+    @staticmethod
+    def find_by_mention_id_and_bank_name(mention_id: str, bank_name: str) -> Optional[MentionAnalysis]:
+        with get_session() as session:
+            return session.query(MentionAnalysis).filter(
+                MentionAnalysis.mention_id == mention_id,
+                MentionAnalysis._bank_name == bank_name
+            ).first()
+
+    @staticmethod
+    def update(existing_analysis: MentionAnalysis, new_analysis: MentionAnalysis):
+        with get_session() as session:
+            for attr in vars(new_analysis):
+                if hasattr(existing_analysis, attr):
+                    setattr(existing_analysis, attr, getattr(new_analysis, attr))
+            session.commit()
+
+    @staticmethod
+    def save(analysis: MentionAnalysis):
+        with get_session() as session:
+            session.add(analysis)
+            session.commit()

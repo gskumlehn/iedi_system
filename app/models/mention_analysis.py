@@ -4,6 +4,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from app.enums.bank_name import BankName
 from app.enums.sentiment import Sentiment
 from app.enums.reach_group import ReachGroup
+import uuid
 
 Base = declarative_base()
 
@@ -11,7 +12,8 @@ class MentionAnalysis(Base):
     __tablename__ = "mention_analysis"
     __table_args__ = {"schema": "iedi"}
 
-    mention_id = Column(String(36), primary_key=True, nullable=False)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()), nullable=False)
+    mention_id = Column(String(36), nullable=False)
     _bank_name = Column("bank_name", String, nullable=False)
 
     _sentiment = Column("sentiment", String, nullable=True)
@@ -28,72 +30,36 @@ class MentionAnalysis(Base):
     denominator = Column(Integer, nullable=True)
 
     @hybrid_property
-    def bank_name(self) -> BankName:
+    def bank_name(self):
         return BankName[self._bank_name]
 
     @bank_name.setter
-    def bank_name(self, name):
-        # accept either BankName enum or a string that already is the enum name
-        if isinstance(name, BankName):
-            self._bank_name = name.name
-        elif isinstance(name, str):
-            self._bank_name = name
-        else:
-            raise ValueError("bank_name must be BankName or str")
+    def bank_name(self, value):
+        self._bank_name = value.name
+
+    @hybrid_property
+    def sentiment(self):
+        return Sentiment[self._sentiment] if self._sentiment else None
+
+    @sentiment.setter
+    def sentiment(self, value):
+        self._sentiment = value.name if value else None
+
+    @hybrid_property
+    def reach_group(self):
+        return ReachGroup[self._reach_group] if self._reach_group else None
+
+    @reach_group.setter
+    def reach_group(self, value):
+        self._reach_group = value.name if value else None
 
     @bank_name.expression
     def bank_name(cls):
         return cls._bank_name
 
-    @hybrid_property
-    def sentiment(self) -> Sentiment:
-        if self._sentiment:
-            return Sentiment[self._sentiment]
-        return None
-
-    @sentiment.setter
-    def sentiment(self, value):
-        # accept either Sentiment enum or string
-        if value is None:
-            self._sentiment = None
-        elif isinstance(value, Sentiment):
-            self._sentiment = value.name
-        elif isinstance(value, str):
-            self._sentiment = value
-        else:
-            raise ValueError("sentiment must be Sentiment or str")
-
     @sentiment.expression
     def sentiment(cls):
         return cls._sentiment
-
-    @hybrid_property
-    def reach_group(self) -> ReachGroup:
-        if self._reach_group:
-            return ReachGroup[self._reach_group]
-        return None
-
-    @reach_group.setter
-    def reach_group(self, value):
-        # accept ReachGroup enum or string (name or value)
-        if value is None:
-            self._reach_group = None
-            return
-        if isinstance(value, ReachGroup):
-            self._reach_group = value.name
-            return
-        if isinstance(value, str):
-            # accept name 'A' or value 'A'
-            val_up = value.upper()
-            if val_up in ReachGroup.__members__:
-                self._reach_group = val_up
-                return
-            # try match by enum value
-            for m in ReachGroup:
-                if m.value == value:
-                    self._reach_group = m.name
-                    return
-        raise ValueError("reach_group must be ReachGroup or str")
 
     @reach_group.expression
     def reach_group(cls):

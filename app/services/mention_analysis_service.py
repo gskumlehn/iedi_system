@@ -63,7 +63,14 @@ class MentionAnalysisService:
                 mention_analyses.append(mention_analysis)
 
         if mention_analyses:
-            MentionAnalysisRepository.bulk_save(mention_analyses)
+            for analysis in mention_analyses:
+                existing_analysis = MentionAnalysisRepository.find_by_mention_id_and_bank_name(
+                    analysis.mention_id, analysis.bank_name
+                )
+                if existing_analysis:
+                    MentionAnalysisRepository.update(existing_analysis, analysis)
+                else:
+                    MentionAnalysisRepository.save(analysis)
 
         return mention_analyses
 

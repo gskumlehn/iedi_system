@@ -5,7 +5,8 @@
 --   - Referencia bank via bank_name (enum)
 
 CREATE TABLE IF NOT EXISTS iedi.mention_analysis (
-  mention_id STRING(36) NOT NULL PRIMARY KEY,
+  id STRING(36) NOT NULL,
+  mention_id STRING(36) NOT NULL,
   bank_name STRING(255) NOT NULL,
   sentiment STRING(50),
   reach_group STRING(10),
@@ -20,7 +21,8 @@ CREATE TABLE IF NOT EXISTS iedi.mention_analysis (
 );
 
 -- Comentários dos campos:
--- mention_id: FK para mention (PK)
+-- mention_analysis_id: ID único para cada análise de menção (PK)
+-- mention_id: FK para mention
 -- bank_name: Nome do banco (enum BankName - ex: "BANCO_DO_BRASIL", "ITAU")
 -- sentiment: Sentimento da mention (enum Sentiment - "POSITIVE", "NEGATIVE", "NEUTRAL")
 -- reach_group: Grupo de alcance do veículo (enum ReachGroup - "A", "B", "C", "D")
