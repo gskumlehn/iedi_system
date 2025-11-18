@@ -1,18 +1,3 @@
-"""
-Teste End-to-End: Análise IEDI - Outubro 2024 - Banco do Brasil
-
-Este teste segue o fluxo REAL do sistema:
-1. Criar Analysis via AnalysisService.save()
-2. Aguardar processamento assíncrono (ou executar sincronamente para teste)
-3. Verificar BankAnalysis criados e métricas calculadas
-
-IMPORTANTE:
-- Requer variáveis de ambiente: BW_PROJECT, BW_EMAIL, BW_PASSWORD
-- Requer banco "Banco do Brasil" cadastrado no banco de dados
-- Requer media outlets cadastrados
-- Mentions da Brandwatch DEVEM ter categoryDetails com "Banco do Brasil"
-"""
-
 import os
 import sys
 import json
@@ -35,7 +20,6 @@ from app.enums.bank_name import BankName
 
 
 def extract_domain(url: str) -> str:
-    """Extrai domínio de uma URL"""
     from urllib.parse import urlparse
     try:
         parsed = urlparse(url)
@@ -48,7 +32,6 @@ def extract_domain(url: str) -> str:
 
 
 def save_analysis_results(analysis_id: str, bank_analyses: list, output_dir: str = "test_output"):
-    """Salva resultados da análise em arquivo JSON"""
     os.makedirs(output_dir, exist_ok=True)
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -81,17 +64,6 @@ def save_analysis_results(analysis_id: str, bank_analyses: list, output_dir: str
 
 
 def wait_for_processing(analysis_id: str, max_wait: int = 300, check_interval: int = 5):
-    """
-    Aguarda processamento assíncrono ser concluído
-    
-    Args:
-        analysis_id: ID da análise
-        max_wait: Tempo máximo de espera em segundos (padrão: 5 minutos)
-        check_interval: Intervalo entre verificações em segundos (padrão: 5s)
-    
-    Returns:
-        bool: True se processamento concluído, False se timeout
-    """
     print(f"\nAguardando processamento assíncrono (máx {max_wait}s)...")
     
     elapsed = 0
@@ -99,7 +71,6 @@ def wait_for_processing(analysis_id: str, max_wait: int = 300, check_interval: i
         bank_analyses = BankAnalysisRepository.find_by_analysis_id(analysis_id)
         
         if bank_analyses:
-            # Verificar se pelo menos um BankAnalysis tem métricas calculadas
             has_metrics = any(ba.total_mentions > 0 for ba in bank_analyses)
             
             if has_metrics:
@@ -115,19 +86,17 @@ def wait_for_processing(analysis_id: str, max_wait: int = 300, check_interval: i
 
 
 def test_outubro_bb():
-    """Teste end-to-end seguindo fluxo real do sistema"""
-    
     print("=" * 80)
     print("TESTE END-TO-END: Análise IEDI - Outubro 2024 - Banco do Brasil")
     print("=" * 80)
     print()
     
     # Configuração do teste
-    analysis_name = "Análise Outubro 2024 - Banco do Brasil"
+    analysis_name = "Análise Outubro 2025 - Banco do Brasil"
     query_name = "OPERAÇÃO BB :: MONITORAMENTO"
-    bank_name = "Banco do Brasil"
-    start_date = "2024-10-01T00:00:00"
-    end_date = "2024-10-31T23:59:59"
+    bank_name = "BANCO_DO_BRASIL"
+    start_date = "2025-10-01T00:00:00"
+    end_date = "2025-10-31T23:59:59"
     
     print(f"Nome da Análise: {analysis_name}")
     print(f"Query Brandwatch: {query_name}")
@@ -137,7 +106,7 @@ def test_outubro_bb():
     
     # Validar variáveis de ambiente
     print("Validando variáveis de ambiente...")
-    required_envs = ['BW_PROJECT', 'BW_EMAIL', 'BW_PASSWORD']
+    required_envs = ['BRANDWATCH_PROJECT_ID', 'BRANDWATCH_USERNAME', 'BRANDWATCH_PASSWORD']
     missing_envs = [env for env in required_envs if not os.getenv(env)]
     
     if missing_envs:
@@ -186,7 +155,7 @@ def test_outubro_bb():
         print(f"  ID: {analysis.id}")
         print(f"  Nome: {analysis.name}")
         print(f"  Query: {analysis.query_name}")
-        print(f"  Status: {analysis.status.value}")
+        print(f"  Status: {analysis.status}")
         print(f"  Custom Dates: {analysis.is_custom_dates}")
         print()
         
@@ -209,18 +178,35 @@ def test_outubro_bb():
     print("  5. Cálculo de IEDI para cada mention")
     print("  6. Cálculo de métricas agregadas por banco")
     print()
-    
-    # Aguardar processamento (máx 5 minutos)
-    if not wait_for_processing(analysis.id, max_wait=300, check_interval=5):
-        print()
-        print("✗ Processamento não concluído no tempo esperado")
-        print("Possíveis causas:")
-        print("  - Erro na conexão com Brandwatch")
-        print("  - Query não encontrada")
-        print("  - Nenhuma mention com categoria 'Banco do Brasil'")
-        print("  - Erro no processamento")
+
+    # Buscar BankAnalysis para alimentar o método
+    print("Buscando BankAnalysis para análise criada...")
+    try:
+        bank_analyses = BankAnalysisRepository.find_by_analysis_id(analysis.id)
+        if not bank_analyses:
+            print("✗ Nenhum BankAnalysis encontrado para a análise criada")
+            return
+        print(f"✓ BankAnalysis encontrados: {len(bank_analyses)}")
+    except Exception as e:
+        print(f"✗ Erro ao buscar BankAnalysis: {e}")
+        import traceback
+        traceback.print_exc()
         return
-    
+
+    # Processar análise sincronamente
+    print("Processando análise sincronamente...")
+    try:
+        from app.services.mention_analysis_service import MentionAnalysisService
+
+        mention_analysis_service = MentionAnalysisService()
+        mention_analysis_service.process_mention_analysis(analysis, bank_analyses)
+        print("✓ Processamento concluído com sucesso!")
+    except Exception as e:
+        print(f"✗ Erro ao processar análise: {e}")
+        import traceback
+        traceback.print_exc()
+        return
+
     # Buscar resultados
     print()
     print("=" * 80)
