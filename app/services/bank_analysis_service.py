@@ -43,7 +43,7 @@ class BankAnalysisService:
 
         bank_analyses = []
         for bank_name in bank_names:
-            if bank_name not in BankName._value2member_map_:
+            if bank_name not in BankName._member_names_:
                 raise ValueError(f"O banco '{bank_name}' não é válido.")
 
             bank_analyses.append(self.build(bank_name, start_date, end_date))
@@ -63,6 +63,7 @@ class BankAnalysisService:
             if bank["bank_name"] not in BankName._value2member_map_:
                 raise ValueError(f"O banco '{bank['bank_name']}' não é válido.")
 
+            bank_name = BankName[bank["bank_name"]]
             bank_analyses.append(self.build(bank["bank_name"], bank_start_date, bank_end_date))
         return bank_analyses
 
