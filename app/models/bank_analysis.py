@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, Float
+from sqlalchemy import Column, String, Float, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_bigquery import TIMESTAMP
 from zoneinfo import ZoneInfo
@@ -17,11 +17,14 @@ class BankAnalysis(Base):
     _bank_name = Column("bank_name", String, nullable=False)
     _start_date = Column("start_date", TIMESTAMP, nullable=False)
     _end_date = Column("end_date", TIMESTAMP, nullable=False)
+
+    total_mentions = Column(Integer, default=0, nullable=True)
     positive_volume = Column(Float, default=0.0, nullable=True)
     negative_volume = Column(Float, default=0.0, nullable=True)
+
+    iedi_mean = Column(Float, nullable=True)
     iedi_score = Column(Float, nullable=True)
 
-    UTC_TZ = ZoneInfo("UTC")
     BR_TZ = ZoneInfo("America/Sao_Paulo")
 
     @hybrid_property
@@ -73,17 +76,3 @@ class BankAnalysis(Base):
     @end_date.expression
     def end_date(cls):
         return cls._end_date
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'analysis_id': self.analysis_id,
-            'bank_name': self.bank_name,  # Changed from bank_id to bank_name
-            'start_date': self.start_date.isoformat() if self.start_date else None,
-            'end_date': self.end_date.isoformat() if self.end_date else None,
-            'positive_volume': self.positive_volume,
-            'negative_volume': self.negative_volume,
-            'iedi_score': self.iedi_score,
-            'created_at': self.created_at.isoformat() if self.created_at else None,
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None
-        }

@@ -1,3 +1,5 @@
+# NOTE: MediaOutlet.niche == True  -> outlet is a "niche" outlet
+#       MediaOutlet.niche == False -> outlet is a "relevant" (general) outlet
 from typing import List
 from app.infra.bq_sa import get_session
 from app.models.media_outlet import MediaOutlet

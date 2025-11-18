@@ -11,22 +11,12 @@ class MentionRepository:
             return mention
 
     @staticmethod
-    def update(mention: Mention) -> Mention:
+    def update(mention: Mention) -> Mention | None:
         with get_session() as session:
-            existing_mention = session.query(Mention).filter(Mention.url == mention.url).first()
-            if existing_mention:
-                existing_mention.title = mention.title
-                existing_mention.snippet = mention.snippet
-                existing_mention.full_text = mention.full_text
-                existing_mention.published_date = mention.published_date
-                existing_mention.sentiment = mention.sentiment
-                existing_mention.categories = mention.categories
-                existing_mention.monthly_visitors = mention.monthly_visitors
-                session.commit()
-                session.refresh(existing_mention)
-                return existing_mention
-            else:
-                raise ValueError("Mention not found for update")
+            merged = session.merge(mention)
+            session.commit()
+            session.refresh(merged)
+            return merged
 
     @staticmethod
     def find_by_url(url: str) -> Mention:

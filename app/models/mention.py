@@ -12,10 +12,10 @@ class Mention(Base):
     __tablename__ = "mention"
     __table_args__ = {"schema": "iedi"}
 
-    url = Column(String(500), unique=True, nullable=False)
+    url = Column(String(500), primary_key=True)
 
     _categories = Column("categories", ARRAY(String), nullable=True)
-    sentiment = Column(String(50), nullable=True)  # Matches the exact column name in the database
+    sentiment = Column(String(50), nullable=True)
 
     title = Column(Text, nullable=False)
     snippet = Column(Text, nullable=False)

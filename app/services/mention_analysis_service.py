@@ -2,16 +2,19 @@ from app.repositories.bank_repository import BankRepository
 from app.services.brandwatch_service import BrandwatchService
 from app.services.mention_service import MentionService
 from app.models.mention_analysis import MentionAnalysis
-from app.utils.date_utils import DateUtils
 from app.enums.sentiment import Sentiment
 from app.enums.reach_group import ReachGroup
 from app.constants.weights import TITLE_WEIGHT, SUBTITLE_WEIGHT, RELEVANT_OUTLET_WEIGHT, NICHE_OUTLET_WEIGHT
-from app.constants.weights import REACH_GROUP_THRESHOLDS
+from app.constants.weights import REACH_GROUP_THRESHOLDS, REACH_GROUP_WEIGHTS
+from app.repositories.media_outlet_repository import MediaOutletRepository
+from app.repositories.mention_analysis_repository import MentionAnalysisRepository
+from app.services.bank_analysis_service import BankAnalysisService
 
 class MentionAnalysisService:
 
     brandwatch_service = BrandwatchService()
     mention_service = MentionService()
+    bank_analysis_service = BankAnalysisService()
 
     def process_mention_analysis(self, analysis, bank_analyses):
         if analysis.is_custom_dates:
@@ -20,15 +23,21 @@ class MentionAnalysisService:
             self.process_standard_dates(analysis, bank_analyses)
 
     def process_custom_dates(self, analysis, bank_analyses):
+        results = {}
         for bank_analysis in bank_analyses:
             mentions = self.mention_service.fetch_and_filter_mentions(
                 start_date=bank_analysis.start_date,
                 end_date=bank_analysis.end_date,
                 query_name=analysis.query_name
             )
-            self.process_mentions(mentions, bank_analysis.bank_name)
+            processed = self.process_mentions(mentions, bank_analysis.bank_name)
+            results[bank_analysis.bank_name] = processed
+
+            self.bank_analysis_service.compute_and_persist_bank_metrics(bank_analysis, processed)
+        return results
 
     def process_standard_dates(self, analysis, bank_analyses):
+        results = {}
         if bank_analyses:
             start_date = bank_analyses[0].start_date
             end_date = bank_analyses[0].end_date
@@ -39,16 +48,23 @@ class MentionAnalysisService:
             )
 
             for bank_analysis in bank_analyses:
-                self.process_mentions(mentions, bank_analysis.bank_name)
+                processed = self.process_mentions(mentions, bank_analysis.bank_name)
+                results[bank_analysis.bank_name] = processed
+
+                self.bank_analysis_service.compute_and_persist_bank_metrics(bank_analysis, processed)
+        return results
 
     def process_mentions(self, mentions, bank_name):
         mention_analyses = []
-
         bank = BankRepository.find_by_name(bank_name)
         for mention in mentions:
             if self.is_valid_for_bank(mention, bank):
                 mention_analysis = self.create_mention_analysis(mention, bank)
                 mention_analyses.append(mention_analysis)
+
+        if mention_analyses:
+            MentionAnalysisRepository.bulk_save(mention_analyses)
+
         return mention_analyses
 
     def is_valid_for_bank(self, mention, bank):
@@ -83,16 +99,38 @@ class MentionAnalysisService:
                     mentions_analysis.subtitle_mentioned = True
                     break
 
-        mentions_analysis.numerator = (TITLE_WEIGHT if mentions_analysis.title_mentioned else 0) + (SUBTITLE_WEIGHT if mentions_analysis.subtitle_mentioned and mentions_analysis.subtitle_used else 0)
-        if mentions_analysis.subtitle_used:
-            mentions_analysis.denominator = TITLE_WEIGHT + SUBTITLE_WEIGHT
-        else:
-            mentions_analysis.denominator = TITLE_WEIGHT
+        relevant_domains = MediaOutletRepository.find_by_niche(False)
+        niche_domains = MediaOutletRepository.find_by_niche(True)
 
-        if mentions_analysis.sentiment_enum == Sentiment.POSITIVE or mentions_analysis.sentiment_enum == Sentiment.NEUTRAL:
-            sign = 1
-        elif mentions_analysis.sentiment_enum == Sentiment.NEGATIVE:
+        relevant_vehicle = mention.domain in relevant_domains
+        niche_vehicle = mention.domain in niche_domains
+        mentions_analysis.niche_vehicle = niche_vehicle
+
+        reach_weight = REACH_GROUP_WEIGHTS.get(mentions_analysis.reach_group.name, 0)
+
+        title_pts = TITLE_WEIGHT if mentions_analysis.title_mentioned else 0
+        subtitle_pts = SUBTITLE_WEIGHT if (mentions_analysis.subtitle_mentioned and mentions_analysis.subtitle_used) else 0
+        relevant_pts = RELEVANT_OUTLET_WEIGHT if relevant_vehicle else 0
+        niche_pts = NICHE_OUTLET_WEIGHT if niche_vehicle else 0
+
+        mentions_analysis.numerator = title_pts + subtitle_pts + reach_weight + relevant_pts + niche_pts
+
+        if mentions_analysis.subtitle_used:
+            if mentions_analysis.reach_group == ReachGroup.A:
+                mentions_analysis.denominator = TITLE_WEIGHT + SUBTITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT
+            else:
+                mentions_analysis.denominator = TITLE_WEIGHT + SUBTITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT + NICHE_OUTLET_WEIGHT
+        else:
+            if mentions_analysis.reach_group == ReachGroup.A:
+                mentions_analysis.denominator = TITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT
+            else:
+                mentions_analysis.denominator = TITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT + NICHE_OUTLET_WEIGHT
+
+
+        if mentions_analysis.sentiment == Sentiment.NEGATIVE:
             sign = -1
+        else:
+            sign = 1
 
         if mentions_analysis.denominator:
             mentions_analysis.iedi_score = (mentions_analysis.numerator / mentions_analysis.denominator) * sign

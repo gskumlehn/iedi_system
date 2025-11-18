@@ -2,6 +2,7 @@ from datetime import datetime
 from app.models.bank_analysis import BankAnalysis
 from app.enums.bank_name import BankName
 from app.repositories.bank_analysis_repository import BankAnalysisRepository
+from app.enums.sentiment import Sentiment
 
 class BankAnalysisService:
 
@@ -76,3 +77,31 @@ class BankAnalysisService:
         for bank_analysis in bank_analyses:
             bank_analysis.analysis_id = analysis_id
             BankAnalysisRepository.save(bank_analysis)
+
+    def compute_and_persist_bank_metrics(self, bank_analysis, mention_analyses):
+        total = len(mention_analyses)
+        positive = 0
+        negative = 0
+        normalized_vals = []
+
+        for mention_analysis in mention_analyses:
+            mention_analysis.sentiment
+
+            if mention_analysis.sentiment == Sentiment.NEGATIVE:
+                negative += 1
+            else:
+                positive += 1
+
+            normalized_vals.append(float(mention_analysis.iedi_normalized))
+
+        iedi_mean = (sum(normalized_vals) / len(normalized_vals)) if normalized_vals else 0.0
+        positivity_ratio = (positive / total) if total > 0 else 0.0
+        iedi_final = iedi_mean * positivity_ratio
+
+        bank_analysis.total_mentions = int(total)
+        bank_analysis.positive_volume = float(positive)
+        bank_analysis.negative_volume = float(negative)
+        bank_analysis.iedi_mean = float(iedi_mean)
+        bank_analysis.iedi_score = float(iedi_final)
+
+        BankAnalysisRepository.update(bank_analysis)

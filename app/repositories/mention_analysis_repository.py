@@ -51,3 +51,10 @@ class MentionAnalysisRepository:
             session.commit()
             session.refresh(mention_analysis)
             return mention_analysis
+
+    @staticmethod
+    def bulk_save(mention_analyses: List[MentionAnalysis]):
+       with get_session() as session:
+            session.add_all(mention_analyses)
+            session.commit()
+
