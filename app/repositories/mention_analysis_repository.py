@@ -58,3 +58,11 @@ class MentionAnalysisRepository:
             session.add_all(mention_analyses)
             session.commit()
 
+    @staticmethod
+    def find_by_bank_name(bank_name):
+        """Busca todos os MentionAnalysis de um banco"""
+        with get_session() as session:
+            return session.query(MentionAnalysis).filter(
+                MentionAnalysis.bank_name == bank_name.name
+            ).all()
+

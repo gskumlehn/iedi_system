@@ -16,3 +16,11 @@ class BankAnalysisRepository:
             session.commit()
             session.refresh(merged)
             return merged
+
+    @staticmethod
+    def find_by_analysis_id(analysis_id: str):
+        """Busca todos os BankAnalysis de uma análise"""
+        with get_session() as session:
+            return session.query(BankAnalysis).filter(
+                BankAnalysis.analysis_id == analysis_id
+            ).all()
