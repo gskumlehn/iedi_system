@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análises IEDI - Sistema de Gestão</title>
+    <link rel="stylesheet" href="css/analyses.css">
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>Análises IEDI</h1>
+            <button id="btnNewAnalysis" class="btn btn-primary">
+                <span class="icon">+</span> Nova Análise
+            </button>
+        </header>
+
+        <!-- Lista de Análises -->
+        <section id="analysesList" class="analyses-list">
+            <div class="section-header">
+                <h2>Análises Cadastradas</h2>
+                <div class="filters">
+                    <select id="filterStatus" class="filter-select">
+                        <option value="">Todos os status</option>
+                        <option value="pending">Pendente</option>
+                        <option value="processing">Processando</option>
+                        <option value="completed">Concluída</option>
+                        <option value="failed">Falha</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="analysesTableContainer">
+                <table class="analyses-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Query Brandwatch</th>
+                            <th>Período</th>
+                            <th>Status</th>
+                            <th>Bancos</th>
+                            <th>Criada em</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analysesTableBody">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <p>Nenhuma análise encontrada.</p>
+                    <button class="btn btn-secondary" onclick="document.getElementById('btnNewAnalysis').click()">
+                        Criar primeira análise
+                    </button>
+                </div>
+                <div id="loadingState" class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Carregando análises...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal: Nova Análise -->
+        <div id="modalNewAnalysis" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Nova Análise IEDI</h2>
+                    <button class="modal-close" onclick="closeModal('modalNewAnalysis')">&times;</button>
+                </div>
+                <form id="formNewAnalysis">
+                    <div class="form-section">
+                        <h3>Informações Gerais</h3>
+                        <div class="form-group">
+                            <label for="analysisName">Nome da Análise *</label>
+                            <input 
+                                type="text" 
+                                id="analysisName" 
+                                name="name" 
+                                placeholder="Ex: Análise Outubro 2024"
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="queryName">Query Brandwatch *</label>
+                            <input 
+                                type="text" 
+                                id="queryName" 
+                                name="query_name" 
+                                placeholder="Ex: OPERAÇÃO BB :: MONITORAMENTO"
+                                required
+                            >
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="customPeriod" name="custom_period">
+                                <span>Usar períodos customizados por banco</span>
+                            </label>
+                            <small class="help-text">
+                                Se marcado, cada banco pode ter datas de início e fim diferentes
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="globalPeriodSection">
+                        <h3>Período Global</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="globalStartDate">Data Início *</label>
+                                <input type="datetime-local" id="globalStartDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="globalEndDate">Data Fim *</label>
+                                <input type="datetime-local" id="globalEndDate" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header-inline">
+                            <h3>Bancos Monitorados</h3>
+                            <button type="button" id="btnAddBank" class="btn btn-small">
+                                + Adicionar Banco
+                            </button>
+                        </div>
+                        <div id="bankPeriodsContainer">
+                            <!-- Preenchido dinamicamente -->
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('modalNewAnalysis')">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Criar Análise
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal: Detalhes da Análise -->
+        <div id="modalAnalysisDetails" class="modal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h2 id="detailsTitle">Detalhes da Análise</h2>
+                    <button class="modal-close" onclick="closeModal('modalAnalysisDetails')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Informações da Análise -->
+                    <section class="details-section">
+                        <h3>Informações Gerais</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Nome:</label>
+                                <span id="detailName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Query:</label>
+                                <span id="detailQuery">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Período:</label>
+                                <span id="detailPeriod">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Status:</label>
+                                <span id="detailStatus" class="status-badge">-</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Períodos por Banco -->
+                    <section class="details-section">
+                        <h3>Períodos por Banco</h3>
+                        <table class="details-table">
+                            <thead>
+                                <tr>
+                                    <th>Banco</th>
+                                    <th>Categoria</th>
+                                    <th>Período</th>
+                                    <th>Mentions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailBankPeriods">
+                                <!-- Preenchido via JavaScript -->
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <!-- Resultados IEDI -->
+                    <section class="details-section">
+                        <h3>Resultados IEDI</h3>
+                        <table class="details-table">
+                            <thead>
+                                <tr>
+                                    <th>Banco</th>
+                                    <th>Total</th>
+                                    <th>Positivas</th>
+                                    <th>Negativas</th>
+                                    <th>Neutras</th>
+                                    <th>IEDI Médio</th>
+                                    <th>IEDI Final</th>
+                                    <th>Positividade</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailResults">
+                                <!-- Preenchido via JavaScript -->
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/analyses.js"></script>
+</body>
+</html>
