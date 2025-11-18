@@ -31,11 +31,3 @@ class Analysis(Base):
     def status(cls):
         return cls._status
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'query_name': self.query_name,
-            'status': self.status,
-            'is_custom_dates': self.is_custom_dates,
-        }
