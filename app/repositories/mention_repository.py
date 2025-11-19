@@ -1,5 +1,6 @@
 from app.infra.bq_sa import get_session
 from app.models.mention import Mention
+from sqlalchemy.orm import joinedload
 
 class MentionRepository:
     @staticmethod
@@ -21,4 +22,4 @@ class MentionRepository:
     @staticmethod
     def find_by_url(url: str) -> Mention:
         with get_session() as session:
-            return session.query(Mention).filter(Mention.url == url).first()
+            return session.query(Mention).options(joinedload('*')).filter(Mention.url == url).first()

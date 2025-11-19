@@ -2,6 +2,7 @@ from typing import List, Optional
 from datetime import datetime
 from app.infra.bq_sa import get_session
 from app.models.mention_analysis import MentionAnalysis
+from sqlalchemy.orm import joinedload
 
 class MentionAnalysisRepository:
 
@@ -23,7 +24,7 @@ class MentionAnalysisRepository:
     @staticmethod
     def find_by_mention(mention_id: str) -> List[MentionAnalysis]:
         with get_session() as session:
-            return session.query(MentionAnalysis).filter(
+            return session.query(MentionAnalysis).options(joinedload('*')).filter(
                 MentionAnalysis.mention_id == mention_id
             ).all()
 

@@ -5,6 +5,7 @@ from sqlalchemy_bigquery import TIMESTAMP
 from zoneinfo import ZoneInfo
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.enums.bank_name import BankName
+from uuid import uuid4
 
 Base = declarative_base()
 
@@ -12,7 +13,7 @@ class BankAnalysis(Base):
     __tablename__ = "bank_analysis"
     __table_args__ = {"schema": "iedi"}
 
-    id = Column(String, primary_key=True)
+    id = Column(String, primary_key=True, default=lambda: str(uuid4()))
     analysis_id = Column(String, nullable=False)
     _bank_name = Column("bank_name", String, nullable=False)
     _start_date = Column("start_date", TIMESTAMP, nullable=False)

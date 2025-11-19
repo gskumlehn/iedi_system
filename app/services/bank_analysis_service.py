@@ -15,6 +15,30 @@ class BankAnalysisService:
         else:
             return self.process_custom_bank_dates(custom_bank_dates)
 
+    def process_bank_names(self, bank_names, start_date, end_date):
+        start_date = self.validate_and_parse_date(start_date, "A data de início fornecida não está em um formato válido.", "data de início")
+        end_date = self.validate_and_parse_date(end_date, "A data de fim fornecida não está em um formato válido.", "data de fim")
+
+        self.validate_date_range(start_date, end_date)
+
+        processed = []
+        for bank_name in bank_names:
+            parsed = self.validate_and_parse_bank_name(bank_name)
+            processed.append(self.build(parsed, start_date, end_date))
+        return processed
+
+    def process_custom_bank_dates(self, custom_bank_dates):
+        bank_analyses = []
+        for bank in custom_bank_dates:
+            bank_start_date = self.validate_and_parse_date(bank["start_date"], "As datas personalizadas devem estar em um formato válido.", "data de início")
+            bank_end_date = self.validate_and_parse_date(bank["end_date"], "As datas personalizadas devem estar em um formato válido.", "data de fim")
+
+            self.validate_date_range(bank_start_date, bank_end_date)
+
+            bank_name = self.validate_and_parse_bank_name(bank.get("bank_name"))
+            bank_analyses.append(self.build(bank_name, bank_start_date, bank_end_date))
+        return bank_analyses
+
     def validate_and_parse_date(self, date_str, error_message, field_name=None):
         if date_str:
             try:
@@ -35,37 +59,14 @@ class BankAnalysisService:
         if end_date >= datetime.now():
             raise ValueError("A data de fim deve ser anterior à data atual para o banco.")
 
-    def process_bank_names(self, bank_names, start_date, end_date):
-        start_date = self.validate_and_parse_date(start_date, "A data de início fornecida não está em um formato válido.", "data de início")
-        end_date = self.validate_and_parse_date(end_date, "A data de fim fornecida não está em um formato válido.", "data de fim")
-
-        self.validate_date_range(start_date, end_date)
-
-        bank_analyses = []
-        for bank_name in bank_names:
-            if bank_name not in BankName._member_names_:
-                raise ValueError(f"O banco '{bank_name}' não é válido.")
-
-            bank_analyses.append(self.build(bank_name, start_date, end_date))
-        return bank_analyses
-
-    def process_custom_bank_dates(self, custom_bank_dates):
-        bank_analyses = []
-        for bank in custom_bank_dates:
-            bank_start_date = self.validate_and_parse_date(bank["start_date"], "As datas personalizadas devem estar em um formato válido.", "data de início")
-            bank_end_date = self.validate_and_parse_date(bank["end_date"], "As datas personalizadas devem estar em um formato válido.", "data de fim")
-
-            self.validate_date_range(bank_start_date, bank_end_date)
-
-            if not bank["bank_name"]:
-                raise ValueError("O nome do banco não foi fornecido.")
-
-            if bank["bank_name"] not in BankName._value2member_map_:
-                raise ValueError(f"O banco '{bank['bank_name']}' não é válido.")
-
-            bank_name = BankName[bank["bank_name"]]
-            bank_analyses.append(self.build(bank["bank_name"], bank_start_date, bank_end_date))
-        return bank_analyses
+    def validate_and_parse_bank_name(self, bank_name) -> BankName:
+        if isinstance(bank_name, BankName):
+            return bank_name
+        if not bank_name:
+            raise ValueError("O nome do banco não foi fornecido.")
+        if bank_name not in BankName._member_names_:
+            raise ValueError(f"O banco '{bank_name}' não é válido.")
+        return BankName[bank_name]
 
     def build(self, bank_name, start_date, end_date):
         return BankAnalysis(
