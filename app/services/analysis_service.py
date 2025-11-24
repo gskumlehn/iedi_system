@@ -19,7 +19,7 @@ class AnalysisService:
 
         self.bank_analysis_service.save_all(analysis_id=analysis.id, bank_analyses=validated_bank_analyses)
 
-        # threading.Thread(target=self.mention_analysis_service.process_mention_analysis, args=(analysis, validated_bank_analyses)).start()
+        threading.Thread(target=self.mention_analysis_service.process_mention_analysis, args=(analysis, validated_bank_analyses)).start()
 
         return analysis
 
