@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEDI - Análises</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="header-title">IEDI - Índice de Exposição Digital na Imprensa</h1>
+                <p class="header-subtitle">Sistema de Análise de Exposição de Bancos na Mídia</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Actions Bar -->
+            <div class="actions-bar">
+                <h2 class="page-title">Análises</h2>
+                <button class="btn btn-primary" onclick="window.location.href='create.html'">
+                    <span class="btn-icon">+</span>
+                    Nova Análise
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Carregando análises...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error" class="error-message" style="display: none;">
+                <p id="error-text"></p>
+                <button class="btn btn-secondary" onclick="loadAnalyses()">Tentar Novamente</button>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty" class="empty-state" style="display: none;">
+                <div class="empty-icon">📊</div>
+                <h3>Nenhuma análise encontrada</h3>
+                <p>Crie sua primeira análise para começar a monitorar a exposição dos bancos na mídia.</p>
+                <button class="btn btn-primary" onclick="window.location.href='create.html'">
+                    Criar Primeira Análise
+                </button>
+            </div>
+
+            <!-- Analyses Table -->
+            <div id="analyses-container" style="display: none;">
+                <div class="table-container">
+                    <table class="analyses-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Query Brandwatch</th>
+                                <th>Status</th>
+                                <th>Tipo</th>
+                                <th>Data de Criação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analyses-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 IEDI - Sistema de Análise de Exposição Digital</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>
