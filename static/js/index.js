@@ -78,7 +78,7 @@ function renderAnalysesTable(analyses) {
  * Navigate to analysis details page
  */
 function viewAnalysis(analysisId) {
-    window.location.href = `detail.html?id=${analysisId}`;
+    window.location.href = `/detail?id=${analysisId}`;
 }
 
 /**

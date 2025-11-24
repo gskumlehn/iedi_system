@@ -60,7 +60,7 @@ function renderBanksCheckboxes() {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.id = `bank-${bank.name}`;
-        checkbox.value = bank.display_name || bank.name;
+        checkbox.value = bank.name;  // Usar enum name (e.g., "BANCO_DO_BRASIL")
         
         const label = document.createElement('label');
         label.htmlFor = `bank-${bank.name}`;
@@ -122,7 +122,7 @@ function addCustomBank() {
             <select class="form-input custom-bank-select" required>
                 <option value="">Selecione um banco</option>
                 ${availableBanks.map(bank => `
-                    <option value="${bank.display_name || bank.name}">
+                    <option value="${bank.name}">
                         ${bank.display_name || formatBankName(bank.name)}
                     </option>
                 `).join('')}
@@ -185,7 +185,7 @@ async function handleFormSubmit(event) {
         await API.createAnalysis(formData);
         
         // Redirect to list page on success
-        window.location.href = 'index.html';
+        window.location.href = '/';
         
     } catch (error) {
         // Hide loading state
