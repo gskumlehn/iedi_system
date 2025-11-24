@@ -11,8 +11,8 @@ REACH_GROUP_WEIGHTS = {
 }
 
 REACH_GROUP_THRESHOLDS = {
-    "A": 29_000_000,
-    "B": 11_000_000,
+    "A": 50_000_000,
+    "B": 15_000_000,
     "C": 500_000,
     "D": 0
 }
