@@ -23,8 +23,8 @@ class MentionService:
         return filtered_mentions
 
     def passes_filter(self, mention_data):
-        content_source = mention_data.get('contentSource')
-        return content_source == "News"
+        content_source = mention_data.get('contentSourceName')
+        return content_source == "News" or content_source == "Online News"
 
     def extract_categories(self, category_details):
         return [category['name'] for category in category_details if 'name' in category]
@@ -47,8 +47,6 @@ class MentionService:
         published_date = DateUtils.parse_date(mention_data.get('date'))
         mention = Mention(
             url=url,
-            brandwatch_id=mention_data.get('id'),
-            original_url=mention_data.get('originalUrl'),
             title=mention_data.get('title'),
             snippet=mention_data.get('snippet'),
             full_text=mention_data.get('fullText'),
@@ -56,7 +54,7 @@ class MentionService:
             published_date=published_date,
             sentiment=mention_data.get('sentiment'),
             categories=categories,
-            monthly_visitors=mention_data.get('monthlyVisitors', 0)
+            monthly_visitors=mention_data.get('dailyVisitors', 0) * 30
         )
 
         MentionRepository.save(mention)
