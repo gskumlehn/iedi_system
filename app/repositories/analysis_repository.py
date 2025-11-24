@@ -19,3 +19,8 @@ class AnalysisRepository:
     def find_by_id(analysis_id: str) -> Optional[Analysis]:
         with get_session() as session:
             return session.query(Analysis).options(joinedload('*')).filter(Analysis.id == analysis_id).one_or_none()
+
+    @staticmethod
+    def find_all():
+        with get_session() as session:
+            return session.query(Analysis).order_by(Analysis.created_at.desc()).all()

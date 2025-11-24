@@ -32,3 +32,12 @@ class AnalysisService:
 
     def build(self, name, query, is_custom_dates):
         return Analysis(name=name, query_name=query, status=AnalysisStatus.PENDING, is_custom_dates=is_custom_dates)
+
+    def find_all(self):
+        return AnalysisRepository.find_all()
+
+    def find_by_id(self, analysis_id):
+        analysis = AnalysisRepository.find_by_id(analysis_id)
+        if not analysis:
+            raise ValueError("Análise não encontrada.")
+        return analysis

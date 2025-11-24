@@ -14,3 +14,8 @@ class BankRepository:
                 session.expunge(bank)
                 make_transient(bank)
             return bank
+
+    @staticmethod
+    def find_all():
+        with get_session() as session:
+            return session.query(Bank).filter(Bank.active == True).all()
