@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEDI - Nova Análise</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="header-title">IEDI - Índice de Exposição Digital na Imprensa</h1>
+                <p class="header-subtitle">Criar Nova Análise</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Back Button -->
+            <div class="actions-bar">
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">
+                    <span class="btn-icon">←</span>
+                    Voltar para Listagem
+                </button>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Dados da Análise</h2>
+                </div>
+                <div class="card-body">
+                    <form id="analysis-form">
+                        <!-- Analysis Name -->
+                        <div class="form-group">
+                            <label for="name" class="form-label">Nome da Análise *</label>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                name="name" 
+                                class="form-input" 
+                                placeholder="Ex: Análise Outubro 2024 - Banco do Brasil"
+                                required
+                            >
+                            <span class="form-hint">Nome descritivo para identificar a análise</span>
+                        </div>
+
+                        <!-- Brandwatch Query -->
+                        <div class="form-group">
+                            <label for="query" class="form-label">Query Brandwatch *</label>
+                            <input 
+                                type="text" 
+                                id="query" 
+                                name="query" 
+                                class="form-input" 
+                                placeholder="Ex: OPERAÇÃO BB :: MONITORAMENTO"
+                                required
+                            >
+                            <span class="form-hint">Nome exato da query configurada na Brandwatch</span>
+                        </div>
+
+                        <!-- Date Mode Toggle -->
+                        <div class="form-group">
+                            <label class="form-label">Modo de Datas</label>
+                            <div class="toggle-group">
+                                <button 
+                                    type="button" 
+                                    id="mode-standard" 
+                                    class="toggle-btn active"
+                                    onclick="setDateMode('standard')"
+                                >
+                                    Período Padrão
+                                </button>
+                                <button 
+                                    type="button" 
+                                    id="mode-custom" 
+                                    class="toggle-btn"
+                                    onclick="setDateMode('custom')"
+                                >
+                                    Períodos Customizados
+                                </button>
+                            </div>
+                            <span class="form-hint" id="mode-hint">
+                                Período Padrão: Todos os bancos usam o mesmo período de análise
+                            </span>
+                        </div>
+
+                        <!-- Standard Mode Fields -->
+                        <div id="standard-fields">
+                            <!-- Banks Selection -->
+                            <div class="form-group">
+                                <label for="banks" class="form-label">Bancos *</label>
+                                <div id="banks-loading" class="loading-small">
+                                    <div class="spinner-small"></div>
+                                    <span>Carregando bancos...</span>
+                                </div>
+                                <div id="banks-error" class="error-small" style="display: none;">
+                                    <span id="banks-error-text"></span>
+                                    <button type="button" class="btn-link" onclick="loadBanks()">Tentar novamente</button>
+                                </div>
+                                <div id="banks-container" style="display: none;">
+                                    <div class="checkbox-group" id="banks-checkboxes">
+                                        <!-- Populated by JavaScript -->
+                                    </div>
+                                </div>
+                                <span class="form-hint">Selecione um ou mais bancos para análise</span>
+                            </div>
+
+                            <!-- Date Range -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="start-date" class="form-label">Data Início *</label>
+                                    <input 
+                                        type="datetime-local" 
+                                        id="start-date" 
+                                        name="start_date" 
+                                        class="form-input"
+                                        required
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label for="end-date" class="form-label">Data Fim *</label>
+                                    <input 
+                                        type="datetime-local" 
+                                        id="end-date" 
+                                        name="end_date" 
+                                        class="form-input"
+                                        required
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Mode Fields -->
+                        <div id="custom-fields" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Períodos por Banco</label>
+                                <div id="custom-banks-container">
+                                    <!-- Populated by JavaScript -->
+                                </div>
+                                <button 
+                                    type="button" 
+                                    class="btn btn-secondary btn-sm"
+                                    onclick="addCustomBank()"
+                                >
+                                    <span class="btn-icon">+</span>
+                                    Adicionar Banco
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="form-error" class="error-message" style="display: none;">
+                            <p id="form-error-text"></p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submit-btn">
+                                <span id="submit-text">Criar Análise</span>
+                                <span id="submit-loading" class="btn-loading" style="display: none;">
+                                    <div class="spinner-small"></div>
+                                    Criando...
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card info-card">
+                <div class="card-header">
+                    <h3 class="card-title">ℹ️ Informações Importantes</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="info-list">
+                        <li><strong>Query Brandwatch:</strong> Certifique-se de que a query existe e está configurada corretamente na Brandwatch.</li>
+                        <li><strong>Período:</strong> A data de fim deve ser anterior à data atual.</li>
+                        <li><strong>Processamento:</strong> Após criar a análise, o processamento ocorrerá em segundo plano. Você pode acompanhar o status na listagem.</li>
+                        <li><strong>Categorias:</strong> As mentions devem ter a categoria do banco configurada na Brandwatch para serem contabilizadas.</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 IEDI - Sistema de Análise de Exposição Digital</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/create.js"></script>
+</body>
+</html>

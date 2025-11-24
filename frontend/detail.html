@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEDI - Detalhes da Análise</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="header-title">IEDI - Índice de Exposição Digital na Imprensa</h1>
+                <p class="header-subtitle">Detalhes da Análise</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Back Button -->
+            <div class="actions-bar">
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">
+                    <span class="btn-icon">←</span>
+                    Voltar para Listagem
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Carregando detalhes da análise...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error" class="error-message" style="display: none;">
+                <p id="error-text"></p>
+                <button class="btn btn-secondary" onclick="loadAnalysisDetails()">Tentar Novamente</button>
+            </div>
+
+            <!-- Analysis Details -->
+            <div id="details-container" style="display: none;">
+                <!-- Analysis Info Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Informações da Análise</h2>
+                        <span id="status-badge" class="badge"></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Nome:</span>
+                                <span class="info-value" id="analysis-name"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Query Brandwatch:</span>
+                                <span class="info-value" id="analysis-query"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Tipo:</span>
+                                <span class="info-value" id="analysis-type"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Data de Criação:</span>
+                                <span class="info-value" id="analysis-created"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processing Message (shown when PENDING/PROCESSING) -->
+                <div id="processing-message" class="info-message" style="display: none;">
+                    <div class="spinner-small"></div>
+                    <p>Processamento em andamento. Os resultados aparecerão aqui quando o processamento for concluído.</p>
+                    <button class="btn btn-secondary btn-sm" onclick="loadAnalysisDetails()">
+                        Atualizar
+                    </button>
+                </div>
+
+                <!-- Bank Results -->
+                <div id="results-container" style="display: none;">
+                    <h2 class="section-title">Resultados por Banco</h2>
+                    
+                    <!-- No Results Message -->
+                    <div id="no-results" class="info-message" style="display: none;">
+                        <p>Nenhum resultado disponível ainda. O processamento pode estar em andamento.</p>
+                    </div>
+
+                    <!-- Results Grid -->
+                    <div id="results-grid" class="results-grid">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 IEDI - Sistema de Análise de Exposição Digital</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/detail.js"></script>
+</body>
+</html>
