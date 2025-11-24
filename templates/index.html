@@ -1,99 +1,83 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEDI - Análises</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="header-title">IEDI - Índice de Exposição Digital na Imprensa</h1>
+                <p class="header-subtitle">Sistema de Análise de Exposição de Bancos na Mídia</p>
+            </div>
+        </header>
 
-{% block title %}Dashboard - IEDI{% endblock %}
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Actions Bar -->
+            <div class="actions-bar">
+                <h2 class="page-title">Análises</h2>
+                <button class="btn btn-primary" onclick="window.location.href='create.html'">
+                    <span class="btn-icon">+</span>
+                    Nova Análise
+                </button>
+            </div>
 
-{% block content %}
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-description">Sistema de Gestão IEDI - Índice de Exposição Digital na Imprensa</p>
+            <!-- Loading State -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Carregando análises...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error" class="error-message" style="display: none;">
+                <p id="error-text"></p>
+                <button class="btn btn-secondary" onclick="loadAnalyses()">Tentar Novamente</button>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty" class="empty-state" style="display: none;">
+                <div class="empty-icon">📊</div>
+                <h3>Nenhuma análise encontrada</h3>
+                <p>Crie sua primeira análise para começar a monitorar a exposição dos bancos na mídia.</p>
+                <button class="btn btn-primary" onclick="window.location.href='create.html'">
+                    Criar Primeira Análise
+                </button>
+            </div>
+
+            <!-- Analyses Table -->
+            <div id="analyses-container" style="display: none;">
+                <div class="table-container">
+                    <table class="analyses-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Query Brandwatch</th>
+                                <th>Status</th>
+                                <th>Tipo</th>
+                                <th>Data de Criação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analyses-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 IEDI - Sistema de Análise de Exposição Digital</p>
+        </footer>
     </div>
-</div>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-title">Bancos</span>
-            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-        </div>
-        <div class="stat-value" id="stat-bancos">0</div>
-        <p class="stat-description">Bancos cadastrados</p>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-title">Veículos Relevantes</span>
-            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-            </svg>
-        </div>
-        <div class="stat-value" id="stat-relevantes">0</div>
-        <p class="stat-description">Veículos de grande alcance</p>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-title">Veículos de Nicho</span>
-            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-            </svg>
-        </div>
-        <div class="stat-value" id="stat-nicho">0</div>
-        <p class="stat-description">Veículos especializados</p>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-title">Análises</span>
-            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="20" x2="12" y2="10"></line>
-                <line x1="18" y1="20" x2="18" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="16"></line>
-            </svg>
-        </div>
-        <div class="stat-value" id="stat-analises">0</div>
-        <p class="stat-description">Análises realizadas</p>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title">Bem-vindo ao Sistema IEDI</h2>
-        <p class="card-description">Gerencie bancos, veículos de imprensa e visualize análises de exposição digital</p>
-    </div>
-    <div class="card-content">
-        <p class="text-muted">
-            O sistema IEDI permite gerenciar e analisar a presença digital de bancos na imprensa brasileira.
-            Utilize o menu lateral para navegar entre as diferentes funcionalidades.
-        </p>
-    </div>
-</div>
-
-<script>
-// Carregar estatísticas
-async function loadStats() {
-    try {
-        const [bancos, relevantes, nicho, analises] = await Promise.all([
-            apiRequest('/bancos/api'),
-            apiRequest('/veiculos/api/relevantes'),
-            apiRequest('/veiculos/api/nicho'),
-            apiRequest('/analises/api')
-        ]);
-        
-        document.getElementById('stat-bancos').textContent = bancos.length;
-        document.getElementById('stat-relevantes').textContent = relevantes.length;
-        document.getElementById('stat-nicho').textContent = nicho.length;
-        document.getElementById('stat-analises').textContent = analises.length;
-    } catch (error) {
-        console.error('Erro ao carregar estatísticas:', error);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', loadStats);
-</script>
-{% endblock %}
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/index.js"></script>
+</body>
+</html>
