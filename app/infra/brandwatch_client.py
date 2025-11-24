@@ -6,9 +6,9 @@ class BrandwatchClient:
 
     def __init__(self):
         project = BWProject(
-            project=os.getenv("BW_PROJECT"),
-            username=os.getenv("BW_EMAIL"),
-            password=os.getenv("BW_PASSWORD")
+            project=os.getenv("BRANDWATCH_PROJECT_ID"),
+            username=os.getenv("BRANDWATCH_USERNAME"),
+            password=os.getenv("BRANDWATCH_PASSWORD")
         )
 
         self.queries = BWQueries(project)
