@@ -24,3 +24,9 @@ class AnalysisRepository:
     def find_all():
         with get_session() as session:
             return session.query(Analysis).order_by(Analysis.created_at.desc()).all()
+
+    @staticmethod
+    def update(analysis: Analysis):
+        with get_session() as session:
+            session.merge(analysis)
+            session.commit()

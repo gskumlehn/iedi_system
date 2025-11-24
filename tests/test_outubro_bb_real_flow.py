@@ -96,7 +96,7 @@ def test_outubro_bb():
     query_name = "OPERAÇÃO BB :: MONITORAMENTO"
     bank_name = "BANCO_DO_BRASIL"
     start_date = "2025-10-01T00:00:00"
-    end_date = "2025-10-31T23:59:59"
+    end_date = "2025-10-07T23:59:59"
     
     print(f"Nome da Análise: {analysis_name}")
     print(f"Query Brandwatch: {query_name}")
@@ -145,7 +145,7 @@ def test_outubro_bb():
         
         analysis = analysis_service.save(
             name=analysis_name,
-            query=query_name,
+            query_name=query_name,
             bank_names=[bank_name],
             start_date=start_date,
             end_date=end_date

@@ -82,14 +82,14 @@ def create_analysis():
     try:
         data = request.get_json()
         name = data.get("name")
-        query = data.get("query")
+        query_name = "BB | Monitoramento | + Lagos"
         bank_names = data.get("bank_names", [])
         start_date = data.get("start_date")
         end_date = data.get("end_date")
         custom_bank_dates = data.get("custom_bank_dates", [])
         analysis = analysis_service.save(
             name=name,
-            query=query,
+            query_name=query_name,
             bank_names=bank_names,
             start_date=start_date,
             end_date=end_date,

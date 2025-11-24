@@ -27,7 +27,12 @@ class MentionService:
         return content_source == "News" or content_source == "Online News"
 
     def extract_categories(self, category_details):
-        return [category['name'] for category in category_details if 'name' in category]
+        parent_category_name = "Análise de Resultado - Bancos"
+        return [
+            category['name']
+            for category in category_details
+            if category.get('parentName') == parent_category_name
+        ]
 
     def extract_url(self, mention_data):
         return mention_data.get('url') or mention_data.get('originalUrl')
