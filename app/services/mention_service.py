@@ -25,16 +25,19 @@ class MentionService:
         return filtered_mentions
 
     def passes_filter(self, mention_data, parent_name, category_names):
-        content_source = mention_data.get('contentSourceName')
-
-        if not (content_source == "News" or content_source == "Online News"):
-            return False
-
+        # Filtro de contentSource removido (já aplicado via pageType="news" na API)
+        
+        # Validar se mention tem categorias do parent_name
         categories = self.extract_categories(mention_data.get('categoryDetails', []), parent_name)
         if not categories:
             return False
 
-        return any(category in category_names for category in categories)
+        # Validar se mention pertence a alguma das categorias solicitadas
+        if category_names:
+            return any(category in category_names for category in categories)
+        
+        # Se category_names é None, aceitar todas as categorias do parent
+        return True
 
     def extract_categories(self, category_details, parent_name):
         return [

@@ -19,21 +19,28 @@ class BrandwatchService:
         max_retries = 5
         retry_delay = 10
 
-        parent_category_filter = [parent_name]
-        category_filter = {parent_name: category_names} if category_names else {}
+        # Construir kwargs com filtros
+        kwargs = {
+            "startDate": DateUtils.to_iso_format(start_date),
+            "endDate": DateUtils.to_iso_format(end_date),
+            "pageSize": 5000,
+            "iter_by_page": True,
+            "pageType": "news"  # Filtrar apenas notícias
+        }
+
+        # Adicionar filtro de categoria pai
+        if parent_name:
+            kwargs["parentCategory"] = [parent_name]
+
+        # Adicionar filtro de categorias específicas
+        if category_names:
+            kwargs["category"] = {parent_name: category_names}
 
         try:
             page_count = 0
             for page in client.queries.iter_mentions(
                 name=query_name,
-                startDate=DateUtils.to_iso_format(start_date),
-                endDate=DateUtils.to_iso_format(end_date),
-                pageSize=5000,
-                iter_by_page=True,
-                params={
-                    "parentCategory": parent_category_filter,
-                    "category": category_filter
-                }
+                **kwargs  # Passa filtros como kwargs
             ):
                 retries = 0
                 while retries < max_retries:
