@@ -103,7 +103,7 @@ class MentionAnalysisService:
         mentions_analysis.bank_name = bank.name
 
         mentions_analysis.sentiment = Sentiment.from_string(mention.sentiment) if mention.sentiment else None
-        mentions_analysis.reach_group = self.classify_reach_group(mention.monthlyVisitors)
+        mentions_analysis.reach_group = self.classify_reach_group(mention.monthly_visitors)
 
         mentions_analysis.title_mentioned = False
         for v in bank.variations:
