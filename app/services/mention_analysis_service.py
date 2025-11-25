@@ -28,7 +28,8 @@ class MentionAnalysisService:
             mentions = self.mention_service.fetch_and_filter_mentions(
                 start_date=bank_analysis.start_date,
                 end_date=bank_analysis.end_date,
-                query_name=analysis.query_name
+                query_name=analysis.query_name,
+                bank_names=[bank_analysis.bank_name]  # Filtrar por banco específico
             )
             processed = self.process_mentions(mentions, bank_analysis.bank_name)
             results[bank_analysis.bank_name] = processed
@@ -41,10 +42,13 @@ class MentionAnalysisService:
         if bank_analyses:
             start_date = bank_analyses[0].start_date
             end_date = bank_analyses[0].end_date
+            # Buscar mentions de todos os bancos de uma vez (mais eficiente)
+            bank_names = [ba.bank_name for ba in bank_analyses]
             mentions = self.mention_service.fetch_and_filter_mentions(
                 start_date=start_date,
                 end_date=end_date,
-                query_name=analysis.query_name
+                query_name=analysis.query_name,
+                bank_names=bank_names  # Filtrar por todos os bancos
             )
 
             for bank_analysis in bank_analyses:

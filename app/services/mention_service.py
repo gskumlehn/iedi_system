@@ -2,29 +2,73 @@ from app.models.mention import Mention
 from app.repositories.mention_repository import MentionRepository
 from app.services.brandwatch_service import BrandwatchService
 from app.utils.date_utils import DateUtils
+from typing import List, Optional
 
 class MentionService:
 
     brandwatch_service = BrandwatchService()
 
-    def fetch_and_filter_mentions(self, start_date, end_date, query_name):
+    def fetch_and_filter_mentions(
+        self,
+        start_date,
+        end_date,
+        query_name,
+        bank_names: Optional[List[str]] = None
+    ):
+        """
+        Busca mentions da Brandwatch já filtradas por categoria.
+        
+        Args:
+            start_date: Data de início
+            end_date: Data de fim
+            query_name: Nome da query Brandwatch
+            bank_names: Lista de nomes de bancos (enum names) para filtrar
+        
+        Returns:
+            Lista de mentions filtradas e salvas
+        """
+        # Converter bank_names para categorias Brandwatch
+        categories = None
+        if bank_names:
+            # Mapear enum names para nomes de categorias Brandwatch
+            categories = [self._map_bank_to_category(bank) for bank in bank_names]
+
+        # Buscar mentions com filtros aplicados na API
         mentions_data = self.brandwatch_service.fetch(
             start_date=start_date,
             end_date=end_date,
-            query_name=query_name
+            query_name=query_name,
+            parent_categories=["Bancos"],  # Filtrar apenas categoria pai "Bancos"
+            categories=categories,          # Filtrar por bancos específicos (se fornecido)
+            page_type="news"                # Filtrar apenas notícias
         )
 
+        # Salvar mentions (sem filtro adicional)
         filtered_mentions = []
         for mention_data in mentions_data:
-            if self.passes_filter(mention_data):
-                mention = self.save_or_update(mention_data)
-                filtered_mentions.append(mention)
+            mention = self.save_or_update(mention_data)
+            filtered_mentions.append(mention)
 
         return filtered_mentions
 
-    def passes_filter(self, mention_data):
-        content_source = mention_data.get('contentSourceName')
-        return content_source == "News" or content_source == "Online News"
+    def _map_bank_to_category(self, bank_name: str) -> str:
+        """
+        Mapeia enum name do banco para nome da categoria Brandwatch.
+        
+        Args:
+            bank_name: Enum name (ex: "BANCO_DO_BRASIL")
+        
+        Returns:
+            Nome da categoria Brandwatch (ex: "Banco do Brasil")
+        """
+        # Mapeamento de enum names para categorias Brandwatch
+        mapping = {
+            "BANCO_DO_BRASIL": "Banco do Brasil",
+            "ITAU": "Itaú",
+            "BRADESCO": "Bradesco",
+            "SANTANDER": "Santander"
+        }
+        return mapping.get(bank_name, bank_name)
 
     def extract_categories(self, category_details):
         parent_category_name = "Análise de Resultado - Bancos"
