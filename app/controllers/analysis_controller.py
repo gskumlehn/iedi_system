@@ -83,6 +83,7 @@ def create_analysis():
         data = request.get_json()
         name = data.get("name")
         query_name = "BB | Monitoramento | + Lagos"
+        parent_name = "Análise de Resultado - Bancos"
         bank_names = data.get("bank_names", [])
         start_date = data.get("start_date")
         end_date = data.get("end_date")
@@ -90,6 +91,7 @@ def create_analysis():
         analysis = analysis_service.save(
             name=name,
             query_name=query_name,
+            parent_name=parent_name,
             bank_names=bank_names,
             start_date=start_date,
             end_date=end_date,
@@ -125,5 +127,23 @@ def list_banks():
                 for b in banks
             ]
         }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@analysis_bp.route("/api/analyses/<analysis_id>/restart", methods=['POST'])
+def restart_analysis(analysis_id):
+    try:
+        analysis = AnalysisRepository.find_by_id(analysis_id)
+        if not analysis:
+            return jsonify({"error": "Análise não encontrada"}), 404
+
+        bank_analyses = BankAnalysisRepository.find_by_analysis_id(analysis_id)
+        if not bank_analyses:
+            return jsonify({"error": "Nenhuma análise de banco encontrada para esta análise"}), 404
+
+        parent_name = "Análise de Resultado - Bancos"
+
+        analysis_service.process_and_update_status(analysis, bank_analyses, parent_name)
+        return jsonify({"message": "Processamento reiniciado com sucesso."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

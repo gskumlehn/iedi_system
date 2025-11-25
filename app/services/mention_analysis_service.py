@@ -16,46 +16,47 @@ class MentionAnalysisService:
     mention_service = MentionService()
     bank_analysis_service = BankAnalysisService()
 
-    def process_mention_analysis(self, analysis, bank_analyses):
+    def process_mention_analysis(self, analysis, bank_analyses, parent_name):
         if analysis.is_custom_dates:
-            self.process_custom_dates(analysis, bank_analyses)
+            self.process_custom_dates(analysis, bank_analyses, parent_name)
         else:
-            self.process_standard_dates(analysis, bank_analyses)
+            self.process_standard_dates(analysis, bank_analyses, parent_name)
 
-    def process_custom_dates(self, analysis, bank_analyses):
+    def process_standard_dates(self, analysis, bank_analyses, parent_name):
+        results = {}
+        if bank_analyses:
+            start_date = bank_analyses[0].start_date
+            end_date = bank_analyses[0].end_date
+            category_names = [bank.bank_name.value for bank in bank_analyses]  # List of categories for banks
+            mentions = self.mention_service.fetch_and_filter_mentions(
+                start_date=start_date,
+                end_date=end_date,
+                query_name=analysis.query_name,
+                parent_name=parent_name,
+                category_names=category_names
+            )
+
+            for bank_analysis in bank_analyses:
+                processed = self.process_mentions(mentions, bank_analysis.bank_name)
+                results[bank_analysis.bank_name.value] = processed
+
+                self.bank_analysis_service.compute_and_persist_bank_metrics(bank_analysis, processed)
+        return results
+
+    def process_custom_dates(self, analysis, bank_analyses, parent_name):
         results = {}
         for bank_analysis in bank_analyses:
             mentions = self.mention_service.fetch_and_filter_mentions(
                 start_date=bank_analysis.start_date,
                 end_date=bank_analysis.end_date,
                 query_name=analysis.query_name,
-                bank_names=[bank_analysis.bank_name]  # Filtrar por banco específico
+                parent_name=parent_name,
+                category_names=[bank_analysis.bank_name.value]  # Specific category for the bank
             )
             processed = self.process_mentions(mentions, bank_analysis.bank_name)
-            results[bank_analysis.bank_name] = processed
+            results[bank_analysis.bank_name.value] = processed
 
             self.bank_analysis_service.compute_and_persist_bank_metrics(bank_analysis, processed)
-        return results
-
-    def process_standard_dates(self, analysis, bank_analyses):
-        results = {}
-        if bank_analyses:
-            start_date = bank_analyses[0].start_date
-            end_date = bank_analyses[0].end_date
-            # Buscar mentions de todos os bancos de uma vez (mais eficiente)
-            bank_names = [ba.bank_name for ba in bank_analyses]
-            mentions = self.mention_service.fetch_and_filter_mentions(
-                start_date=start_date,
-                end_date=end_date,
-                query_name=analysis.query_name,
-                bank_names=bank_names  # Filtrar por todos os bancos
-            )
-
-            for bank_analysis in bank_analyses:
-                processed = self.process_mentions(mentions, bank_analysis.bank_name)
-                results[bank_analysis.bank_name] = processed
-
-                self.bank_analysis_service.compute_and_persist_bank_metrics(bank_analysis, processed)
         return results
 
     def process_mentions(self, mentions, bank_name):
@@ -79,15 +80,11 @@ class MentionAnalysisService:
         return mention_analyses
 
     def is_valid_for_bank(self, mention, bank):
-        try:
-            categories = mention.categories
-        except AttributeError:
-            categories = None
-        return (categories is not None) and (bank in categories)
+        return bank.name.value in mention.categories
 
     def create_mention_analysis(self, mention, bank):
         mentions_analysis = MentionAnalysis()
-        mentions_analysis.mention_id = mention.id
+        mentions_analysis.mention_id = mention.url
         mentions_analysis.bank_name = bank.name
 
         mentions_analysis.sentiment = Sentiment.from_string(mention.sentiment) if mention.sentiment else None

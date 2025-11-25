@@ -10,7 +10,7 @@ class AnalysisService:
     bank_analysis_service = BankAnalysisService()
     mention_analysis_service = MentionAnalysisService()
 
-    def save(self, name=None, query_name=None, bank_names=None, start_date=None, end_date=None, custom_bank_dates=None):
+    def save(self, name, query_name, parent_name, bank_names=None, start_date=None, end_date=None, custom_bank_dates=None):
         self.validate(name, query_name)
         validated_bank_analyses = self.bank_analysis_service.validate(bank_names, start_date, end_date, custom_bank_dates)
 
@@ -19,7 +19,7 @@ class AnalysisService:
 
         self.bank_analysis_service.save_all(analysis_id=analysis.id, bank_analyses=validated_bank_analyses)
 
-        threading.Thread(target=self.process_and_update_status, args=(analysis, validated_bank_analyses)).start()
+        threading.Thread(target=self.process_and_update_status, args=(analysis, validated_bank_analyses, parent_name)).start()
 
         return analysis
 
@@ -50,6 +50,6 @@ class AnalysisService:
         AnalysisRepository.update(analysis)
         return analysis
 
-    def process_and_update_status(self, analysis, bank_analyses):
-        self.mention_analysis_service.process_mention_analysis(analysis, bank_analyses)
+    def process_and_update_status(self, analysis, bank_analyses, parent_name):
+        self.mention_analysis_service.process_mention_analysis(analysis, bank_analyses, parent_name)
         self.update_status(analysis.id, AnalysisStatus.DONE)

@@ -1,7 +1,7 @@
 from app.infra.brandwatch_client import BrandwatchClient
 from app.utils.date_utils import DateUtils
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List
 from time import sleep
 
 class BrandwatchService:
@@ -11,54 +11,29 @@ class BrandwatchService:
         start_date: datetime,
         end_date: datetime,
         query_name: str,
-        parent_categories: Optional[List[str]] = None,
-        categories: Optional[List[str]] = None,
-        page_type: Optional[str] = "news"
+        parent_name: str,
+        category_names: List[str] = None
     ) -> List[Dict]:
-        """
-        Busca mentions da Brandwatch com filtros aplicados na API.
-        
-        Args:
-            start_date: Data de início
-            end_date: Data de fim
-            query_name: Nome da query Brandwatch
-            parent_categories: Lista de categorias pai (ex: ["Bancos"])
-            categories: Lista de categorias específicas (ex: ["Banco do Brasil", "Itaú"])
-            page_type: Tipo de página (padrão: "news")
-        
-        Returns:
-            Lista de mentions filtradas
-        """
         client = BrandwatchClient()
         all_mentions = []
-        max_retries = 5  # Maximum number of retries
-        retry_delay = 10  # Initial delay in seconds
+        max_retries = 5
+        retry_delay = 10
 
-        # Construir kwargs com filtros
-        kwargs = {
-            "startDate": DateUtils.to_iso_format(start_date),
-            "endDate": DateUtils.to_iso_format(end_date),
-            "pageSize": 5000,
-            "iter_by_page": True
-        }
-
-        # Adicionar filtro de tipo de página
-        if page_type:
-            kwargs["pageType"] = page_type
-
-        # Adicionar filtro de categoria pai
-        if parent_categories:
-            kwargs["parentCategory"] = parent_categories
-
-        # Adicionar filtro de categorias específicas
-        if categories:
-            kwargs["category"] = categories
+        parent_category_filter = [parent_name]
+        category_filter = {parent_name: category_names} if category_names else {}
 
         try:
-            page_count = 0  # Track the number of pages fetched
+            page_count = 0
             for page in client.queries.iter_mentions(
                 name=query_name,
-                **kwargs  # Passa filtros para a API
+                startDate=DateUtils.to_iso_format(start_date),
+                endDate=DateUtils.to_iso_format(end_date),
+                pageSize=5000,
+                iter_by_page=True,
+                params={
+                    "parentCategory": parent_category_filter,
+                    "category": category_filter
+                }
             ):
                 retries = 0
                 while retries < max_retries:
@@ -66,19 +41,18 @@ class BrandwatchService:
                         if page:
                             all_mentions.extend(page)
                             page_count += 1
-                            print(f"Fetched page {page_count} with {len(page)} mentions.")  # Log progress
-                        break  # Exit retry loop if successful
+                            print(f"Fetched page {page_count} with {len(page)} mentions.")
+                        break
                     except Exception as e:
                         if "rate limit exceeded" in str(e).lower():
                             retries += 1
-                            wait_time = retry_delay * (2 ** (retries - 1))  # Exponential backoff
+                            wait_time = retry_delay * (2 ** (retries - 1))
                             print(f"Rate limit exceeded. Retrying in {wait_time} seconds... (Attempt {retries}/{max_retries})")
                             sleep(wait_time)
                         else:
-                            raise  # Raise other exceptions immediately
+                            raise
 
             print(f"Total pages fetched: {page_count}")
-            print(f"Total mentions fetched: {len(all_mentions)}")
             return all_mentions
 
         except Exception as e:

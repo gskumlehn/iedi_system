@@ -13,7 +13,7 @@ class MentionAnalysis(Base):
     __table_args__ = {"schema": "iedi"}
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()), nullable=False)
-    mention_id = Column(String(36), nullable=False)
+    mention_url = Column(String(500), nullable=False)  # Replace mention_id with mention_url
     _bank_name = Column("bank_name", String, nullable=False)
 
     _sentiment = Column("sentiment", String, nullable=True)

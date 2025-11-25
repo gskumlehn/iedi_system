@@ -18,7 +18,10 @@ class AnalysisRepository:
     @staticmethod
     def find_by_id(analysis_id: str) -> Optional[Analysis]:
         with get_session() as session:
-            return session.query(Analysis).options(joinedload('*')).filter(Analysis.id == analysis_id).one_or_none()
+            analysis = session.query(Analysis).options(joinedload('*')).filter(Analysis.id == analysis_id).one_or_none()
+            if analysis:
+                session.expunge(analysis)  # Detach the object from the session
+            return analysis
 
     @staticmethod
     def find_all():
