@@ -8,6 +8,7 @@ from app.constants.weights import TITLE_WEIGHT, SUBTITLE_WEIGHT, RELEVANT_OUTLET
 from app.constants.weights import REACH_GROUP_THRESHOLDS, REACH_GROUP_WEIGHTS
 from app.repositories.media_outlet_repository import MediaOutletRepository
 from app.repositories.mention_analysis_repository import MentionAnalysisRepository
+from app.repositories.mention_repository import MentionRepository
 from app.services.bank_analysis_service import BankAnalysisService
 
 class MentionAnalysisService:
@@ -17,10 +18,19 @@ class MentionAnalysisService:
     bank_analysis_service = BankAnalysisService()
 
     def process_mention_analysis(self, analysis, bank_analyses, parent_name):
-        if analysis.is_custom_dates:
-            self.process_custom_dates(analysis, bank_analyses, parent_name)
-        else:
-            self.process_standard_dates(analysis, bank_analyses, parent_name)
+        # Definir contexto da análise para batch save em CSV
+        MentionRepository.set_analysis_context(analysis.id)
+        MentionAnalysisRepository.set_analysis_context(analysis.id)
+        
+        try:
+            if analysis.is_custom_dates:
+                self.process_custom_dates(analysis, bank_analyses, parent_name)
+            else:
+                self.process_standard_dates(analysis, bank_analyses, parent_name)
+        finally:
+            # Persistir batches em CSV
+            MentionRepository.flush_batch()
+            MentionAnalysisRepository.flush_batch()
 
     def process_standard_dates(self, analysis, bank_analyses, parent_name):
         results = {}
@@ -35,6 +45,8 @@ class MentionAnalysisService:
                 parent_name=parent_name,
                 category_names=category_names
             )
+            
+            print(f"[MentionAnalysisService] Processando {len(mentions)} mentions (modo padrão)")
 
             for bank_analysis in bank_analyses:
                 processed = self.process_mentions(mentions, bank_analysis.bank_name)
@@ -53,6 +65,9 @@ class MentionAnalysisService:
                 parent_name=parent_name,
                 category_names=[bank_analysis.bank_name.value]  # Specific category for the bank
             )
+            
+            print(f"[MentionAnalysisService] Processando {len(mentions)} mentions para {bank_analysis.bank_name.value} (modo customizado)")
+            
             processed = self.process_mentions(mentions, bank_analysis.bank_name)
             results[bank_analysis.bank_name.value] = processed
 
