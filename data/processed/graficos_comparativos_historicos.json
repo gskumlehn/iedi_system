@@ -1,0 +1,80 @@
+{
+  "Ita\u00fa": [
+    {
+      "trimestre": "4T24",
+      "bb_iedi": 5.723496762257169,
+      "ita\u00fa_iedi": 5.814357262103505,
+      "media_setor_iedi": 5.695985797270288
+    },
+    {
+      "trimestre": "1T25",
+      "bb_iedi": 5.6338513962765955,
+      "ita\u00fa_iedi": 5.8527614024201045,
+      "media_setor_iedi": 5.759045719326659
+    },
+    {
+      "trimestre": "2T25",
+      "bb_iedi": 5.270366433216609,
+      "ita\u00fa_iedi": 6.015342960288809,
+      "media_setor_iedi": 5.692082248933236
+    },
+    {
+      "trimestre": "3T25",
+      "bb_iedi": 5.6213028764805415,
+      "ita\u00fa_iedi": 5.585323417987933,
+      "media_setor_iedi": 5.686266104014452
+    }
+  ],
+  "Bradesco": [
+    {
+      "trimestre": "4T24",
+      "bb_iedi": 5.723496762257169,
+      "bradesco_iedi": 5.5225382932166305,
+      "media_setor_iedi": 5.695985797270288
+    },
+    {
+      "trimestre": "1T25",
+      "bb_iedi": 5.6338513962765955,
+      "bradesco_iedi": 5.744065281899109,
+      "media_setor_iedi": 5.759045719326659
+    },
+    {
+      "trimestre": "2T25",
+      "bb_iedi": 5.270366433216609,
+      "bradesco_iedi": 5.688166268894192,
+      "media_setor_iedi": 5.692082248933236
+    },
+    {
+      "trimestre": "3T25",
+      "bb_iedi": 5.6213028764805415,
+      "bradesco_iedi": 5.757681465821001,
+      "media_setor_iedi": 5.686266104014452
+    }
+  ],
+  "Santander": [
+    {
+      "trimestre": "4T24",
+      "bb_iedi": 5.723496762257169,
+      "santander_iedi": 5.723550871503851,
+      "media_setor_iedi": 5.695985797270288
+    },
+    {
+      "trimestre": "1T25",
+      "bb_iedi": 5.6338513962765955,
+      "santander_iedi": 5.805504796710827,
+      "media_setor_iedi": 5.759045719326659
+    },
+    {
+      "trimestre": "2T25",
+      "bb_iedi": 5.270366433216609,
+      "santander_iedi": 5.794453333333332,
+      "media_setor_iedi": 5.692082248933236
+    },
+    {
+      "trimestre": "3T25",
+      "bb_iedi": 5.6213028764805415,
+      "santander_iedi": 5.780756655768332,
+      "media_setor_iedi": 5.686266104014452
+    }
+  ]
+}

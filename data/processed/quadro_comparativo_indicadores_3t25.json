@@ -1,0 +1,52 @@
+[
+  {
+    "banco": "Santander",
+    "trimestre": "3T25",
+    "iedi_mean": 5.780756655768332,
+    "volume_positivo": 472,
+    "volume_positivo_titulo": 70,
+    "positividade_pct": 22.0457730032695,
+    "presenca_positiva_titulo_pct": 14.83050847457627,
+    "media_variaveis_positivas": 0.2097457627118644
+  },
+  {
+    "banco": "Bradesco",
+    "trimestre": "3T25",
+    "iedi_mean": 5.757681465821001,
+    "volume_positivo": 586,
+    "volume_positivo_titulo": 83,
+    "positividade_pct": 20.648343904157855,
+    "presenca_positiva_titulo_pct": 14.163822525597269,
+    "media_variaveis_positivas": 0.23037542662116042
+  },
+  {
+    "banco": "Banco do Brasil",
+    "trimestre": "3T25",
+    "iedi_mean": 5.6213028764805415,
+    "volume_positivo": 966,
+    "volume_positivo_titulo": 191,
+    "positividade_pct": 16.34517766497462,
+    "presenca_positiva_titulo_pct": 19.772256728778466,
+    "media_variaveis_positivas": 0.2546583850931677
+  },
+  {
+    "banco": "Ita\u00fa",
+    "trimestre": "3T25",
+    "iedi_mean": 5.585323417987933,
+    "volume_positivo": 1229,
+    "volume_positivo_titulo": 99,
+    "positividade_pct": 17.24428230672092,
+    "presenca_positiva_titulo_pct": 8.0553295362083,
+    "media_variaveis_positivas": 0.13262815296989422
+  },
+  {
+    "banco": "M\u00e9dia 3T25",
+    "trimestre": "3T25",
+    "iedi_mean": 5.686266104014452,
+    "volume_positivo": 813.25,
+    "volume_positivo_titulo": 110.75,
+    "positividade_pct": 19.070894219780723,
+    "presenca_positiva_titulo_pct": 14.205479316290075,
+    "media_variaveis_positivas": 0.20685193184902168
+  }
+]

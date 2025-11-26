@@ -1,0 +1,671 @@
+{
+  "metadata": {
+    "titulo": "Relatório IEDI - 3T25",
+    "periodo": "4T24 a 3T25",
+    "bancos": [
+      "Banco do Brasil",
+      "Itaú",
+      "Bradesco",
+      "Santander"
+    ],
+    "metodologia": "IEDI Mean (sem balizamento por positividade)",
+    "data_geracao": "2025-11-26"
+  },
+  "dados_brutos": {
+    "4T24": {
+      "total_analyses": 15264,
+      "banks": {
+        "Banco do Brasil": {
+          "volume_total": 5405,
+          "iedi_mean": 5.723496762257169,
+          "iedi_median": 5.35,
+          "iedi_std": 1.3134105816093067,
+          "positividade": 16.762257169287697,
+          "negatividade": 18.79740980573543,
+          "neutralidade": 64.44033302497687,
+          "volume_positivo": 906,
+          "volume_negativo": 1016,
+          "volume_neutro": 3483,
+          "volume_positivo_titulo": 179,
+          "presenca_positiva_titulo_pct": 19.757174392935983,
+          "media_variaveis_positivas": 0.2571743929359823,
+          "reach_groups": {
+            "A": 79,
+            "B": 199,
+            "C": 1071,
+            "D": 4056
+          }
+        },
+        "Itaú": {
+          "volume_total": 4193,
+          "iedi_mean": 5.814357262103505,
+          "iedi_median": 5.35,
+          "iedi_std": 1.501133532644423,
+          "positividade": 15.812067731934176,
+          "negatividade": 25.661817314571906,
+          "neutralidade": 58.52611495349392,
+          "volume_positivo": 663,
+          "volume_negativo": 1076,
+          "volume_neutro": 2454,
+          "volume_positivo_titulo": 98,
+          "presenca_positiva_titulo_pct": 14.781297134238311,
+          "media_variaveis_positivas": 0.2609351432880845,
+          "reach_groups": {
+            "A": 65,
+            "B": 174,
+            "C": 1148,
+            "D": 2806
+          }
+        },
+        "Bradesco": {
+          "volume_total": 3199,
+          "iedi_mean": 5.5225382932166305,
+          "iedi_median": 5.35,
+          "iedi_std": 1.4385494906255658,
+          "positividade": 14.660831509846828,
+          "negatividade": 34.22944670209441,
+          "neutralidade": 51.10972178805877,
+          "volume_positivo": 469,
+          "volume_negativo": 1095,
+          "volume_neutro": 1635,
+          "volume_positivo_titulo": 73,
+          "presenca_positiva_titulo_pct": 15.56503198294243,
+          "media_variaveis_positivas": 0.2835820895522388,
+          "reach_groups": {
+            "A": 57,
+            "B": 159,
+            "C": 890,
+            "D": 2093
+          }
+        },
+        "Santander": {
+          "volume_total": 2467,
+          "iedi_mean": 5.723550871503851,
+          "iedi_median": 5.35,
+          "iedi_std": 1.4635233257057034,
+          "positividade": 16.74098094852047,
+          "negatividade": 25.942440210782326,
+          "neutralidade": 57.316578840697204,
+          "volume_positivo": 413,
+          "volume_negativo": 640,
+          "volume_neutro": 1414,
+          "volume_positivo_titulo": 79,
+          "presenca_positiva_titulo_pct": 19.128329297820823,
+          "media_variaveis_positivas": 0.31476997578692495,
+          "reach_groups": {
+            "A": 70,
+            "B": 95,
+            "C": 897,
+            "D": 1405
+          }
+        }
+      },
+      "media_setor": {
+        "iedi_mean": 5.695985797270288,
+        "positividade": 15.994034339897294,
+        "negatividade": 26.157778508296015,
+        "volume_positivo": 612.75,
+        "volume_positivo_titulo": 107.25,
+        "presenca_positiva_titulo_pct": 17.307958201984388,
+        "media_variaveis_positivas": 0.2791154003908076
+      }
+    },
+    "1T25": {
+      "total_analyses": 14124,
+      "banks": {
+        "Banco do Brasil": {
+          "volume_total": 6016,
+          "iedi_mean": 5.6338513962765955,
+          "iedi_median": 5.35,
+          "iedi_std": 1.2773617906961803,
+          "positividade": 13.846409574468085,
+          "negatividade": 17.71941489361702,
+          "neutralidade": 68.4341755319149,
+          "volume_positivo": 833,
+          "volume_negativo": 1066,
+          "volume_neutro": 4117,
+          "volume_positivo_titulo": 139,
+          "presenca_positiva_titulo_pct": 16.686674669867948,
+          "media_variaveis_positivas": 0.23169267707082833,
+          "reach_groups": {
+            "A": 60,
+            "B": 167,
+            "C": 1128,
+            "D": 4661
+          }
+        },
+        "Itaú": {
+          "volume_total": 3223,
+          "iedi_mean": 5.8527614024201045,
+          "iedi_median": 5.35,
+          "iedi_std": 1.3456392571573552,
+          "positividade": 20.353707725721378,
+          "negatividade": 13.000310269934841,
+          "neutralidade": 66.64598200434378,
+          "volume_positivo": 656,
+          "volume_negativo": 419,
+          "volume_neutro": 2148,
+          "volume_positivo_titulo": 124,
+          "presenca_positiva_titulo_pct": 18.902439024390244,
+          "media_variaveis_positivas": 0.3094512195121951,
+          "reach_groups": {
+            "A": 40,
+            "B": 132,
+            "C": 870,
+            "D": 2181
+          }
+        },
+        "Bradesco": {
+          "volume_total": 2696,
+          "iedi_mean": 5.744065281899109,
+          "iedi_median": 5.35,
+          "iedi_std": 1.4597265157370982,
+          "positividade": 19.102373887240358,
+          "negatividade": 22.143916913946587,
+          "neutralidade": 58.753709198813056,
+          "volume_positivo": 515,
+          "volume_negativo": 597,
+          "volume_neutro": 1584,
+          "volume_positivo_titulo": 120,
+          "presenca_positiva_titulo_pct": 23.300970873786408,
+          "media_variaveis_positivas": 0.35145631067961164,
+          "reach_groups": {
+            "A": 36,
+            "B": 106,
+            "C": 601,
+            "D": 1953
+          }
+        },
+        "Santander": {
+          "volume_total": 2189,
+          "iedi_mean": 5.805504796710827,
+          "iedi_median": 5.35,
+          "iedi_std": 1.4288601405594392,
+          "positividade": 22.33896756509822,
+          "negatividade": 15.806304248515305,
+          "neutralidade": 61.854728186386474,
+          "volume_positivo": 489,
+          "volume_negativo": 346,
+          "volume_neutro": 1354,
+          "volume_positivo_titulo": 71,
+          "presenca_positiva_titulo_pct": 14.519427402862986,
+          "media_variaveis_positivas": 0.2249488752556237,
+          "reach_groups": {
+            "A": 43,
+            "B": 73,
+            "C": 800,
+            "D": 1273
+          }
+        }
+      },
+      "media_setor": {
+        "iedi_mean": 5.759045719326659,
+        "positividade": 18.91036468813201,
+        "negatividade": 17.16748658150344,
+        "volume_positivo": 623.25,
+        "volume_positivo_titulo": 113.5,
+        "presenca_positiva_titulo_pct": 18.352377992726897,
+        "media_variaveis_positivas": 0.2793872706295647
+      }
+    },
+    "2T25": {
+      "total_analyses": 15709,
+      "banks": {
+        "Banco do Brasil": {
+          "volume_total": 7996,
+          "iedi_mean": 5.270366433216609,
+          "iedi_median": 5.35,
+          "iedi_std": 1.4094251142803977,
+          "positividade": 14.507253626813407,
+          "negatividade": 29.927463731865934,
+          "neutralidade": 55.56528264132066,
+          "volume_positivo": 1160,
+          "volume_negativo": 2393,
+          "volume_neutro": 4443,
+          "volume_positivo_titulo": 173,
+          "presenca_positiva_titulo_pct": 14.913793103448276,
+          "media_variaveis_positivas": 0.23793103448275862,
+          "reach_groups": {
+            "A": 160,
+            "B": 231,
+            "C": 1417,
+            "D": 6188
+          }
+        },
+        "Itaú": {
+          "volume_total": 3324,
+          "iedi_mean": 6.015342960288809,
+          "iedi_median": 5.35,
+          "iedi_std": 1.4254661727017883,
+          "positividade": 17.749699157641395,
+          "negatividade": 14.500601684717207,
+          "neutralidade": 67.7496991576414,
+          "volume_positivo": 590,
+          "volume_negativo": 482,
+          "volume_neutro": 2252,
+          "volume_positivo_titulo": 128,
+          "presenca_positiva_titulo_pct": 21.694915254237287,
+          "media_variaveis_positivas": 0.32033898305084746,
+          "reach_groups": {
+            "A": 41,
+            "B": 70,
+            "C": 1006,
+            "D": 2207
+          }
+        },
+        "Bradesco": {
+          "volume_total": 2514,
+          "iedi_mean": 5.688166268894192,
+          "iedi_median": 5.35,
+          "iedi_std": 1.3548773292067475,
+          "positividade": 17.70087509944312,
+          "negatividade": 20.405727923627683,
+          "neutralidade": 61.893396976929196,
+          "volume_positivo": 445,
+          "volume_negativo": 513,
+          "volume_neutro": 1556,
+          "volume_positivo_titulo": 68,
+          "presenca_positiva_titulo_pct": 15.280898876404494,
+          "media_variaveis_positivas": 0.2449438202247191,
+          "reach_groups": {
+            "A": 38,
+            "B": 44,
+            "C": 595,
+            "D": 1837
+          }
+        },
+        "Santander": {
+          "volume_total": 1875,
+          "iedi_mean": 5.794453333333332,
+          "iedi_median": 5.35,
+          "iedi_std": 1.4531003755865268,
+          "positividade": 20.8,
+          "negatividade": 15.626666666666667,
+          "neutralidade": 63.57333333333334,
+          "volume_positivo": 390,
+          "volume_negativo": 293,
+          "volume_neutro": 1192,
+          "volume_positivo_titulo": 111,
+          "presenca_positiva_titulo_pct": 28.46153846153846,
+          "media_variaveis_positivas": 0.4025641025641026,
+          "reach_groups": {
+            "A": 38,
+            "B": 52,
+            "C": 562,
+            "D": 1223
+          }
+        }
+      },
+      "media_setor": {
+        "iedi_mean": 5.692082248933236,
+        "positividade": 17.68945697097448,
+        "negatividade": 20.11511500171937,
+        "volume_positivo": 646.25,
+        "volume_positivo_titulo": 120.0,
+        "presenca_positiva_titulo_pct": 20.08778642390713,
+        "media_variaveis_positivas": 0.30144448508060695
+      }
+    },
+    "3T25": {
+      "total_analyses": 18016,
+      "banks": {
+        "Banco do Brasil": {
+          "volume_total": 5910,
+          "iedi_mean": 5.6213028764805415,
+          "iedi_median": 5.35,
+          "iedi_std": 1.2569137261775347,
+          "positividade": 16.34517766497462,
+          "negatividade": 18.087986463620982,
+          "neutralidade": 65.5668358714044,
+          "volume_positivo": 966,
+          "volume_negativo": 1069,
+          "volume_neutro": 3875,
+          "volume_positivo_titulo": 191,
+          "presenca_positiva_titulo_pct": 19.772256728778466,
+          "media_variaveis_positivas": 0.2546583850931677,
+          "reach_groups": {
+            "A": 76,
+            "B": 139,
+            "C": 930,
+            "D": 4765
+          }
+        },
+        "Itaú": {
+          "volume_total": 7127,
+          "iedi_mean": 5.585323417987933,
+          "iedi_median": 5.35,
+          "iedi_std": 0.9956796815641844,
+          "positividade": 17.24428230672092,
+          "negatividade": 13.694401571488704,
+          "neutralidade": 69.06131612179037,
+          "volume_positivo": 1229,
+          "volume_negativo": 976,
+          "volume_neutro": 4922,
+          "volume_positivo_titulo": 99,
+          "presenca_positiva_titulo_pct": 8.0553295362083,
+          "media_variaveis_positivas": 0.13262815296989422,
+          "reach_groups": {
+            "A": 58,
+            "B": 98,
+            "C": 900,
+            "D": 6071
+          }
+        },
+        "Bradesco": {
+          "volume_total": 2838,
+          "iedi_mean": 5.757681465821001,
+          "iedi_median": 5.35,
+          "iedi_std": 1.3333937375638059,
+          "positividade": 20.648343904157855,
+          "negatividade": 17.441860465116278,
+          "neutralidade": 61.90979563072586,
+          "volume_positivo": 586,
+          "volume_negativo": 495,
+          "volume_neutro": 1757,
+          "volume_positivo_titulo": 83,
+          "presenca_positiva_titulo_pct": 14.163822525597269,
+          "media_variaveis_positivas": 0.23037542662116042,
+          "reach_groups": {
+            "A": 43,
+            "B": 70,
+            "C": 648,
+            "D": 2077
+          }
+        },
+        "Santander": {
+          "volume_total": 2141,
+          "iedi_mean": 5.780756655768332,
+          "iedi_median": 5.35,
+          "iedi_std": 1.3815696366268955,
+          "positividade": 22.0457730032695,
+          "negatividade": 15.973843998131715,
+          "neutralidade": 61.980382998598785,
+          "volume_positivo": 472,
+          "volume_negativo": 342,
+          "volume_neutro": 1327,
+          "volume_positivo_titulo": 70,
+          "presenca_positiva_titulo_pct": 14.83050847457627,
+          "media_variaveis_positivas": 0.2097457627118644,
+          "reach_groups": {
+            "A": 34,
+            "B": 48,
+            "C": 640,
+            "D": 1419
+          }
+        }
+      },
+      "media_setor": {
+        "iedi_mean": 5.686266104014452,
+        "positividade": 19.070894219780723,
+        "negatividade": 16.29952312458942,
+        "volume_positivo": 813.25,
+        "volume_positivo_titulo": 110.75,
+        "presenca_positiva_titulo_pct": 14.205479316290075,
+        "media_variaveis_positivas": 0.20685193184902168
+      }
+    }
+  },
+  "graficos": {
+    "1_ranking_e_linha_tempo": {
+      "descricao": "Ranking IEDI 3T25 + Linha do Tempo BB (4T24-3T25)",
+      "tipo": "barras_verticais + linhas",
+      "dados": {
+        "ranking_3t25": [
+          {
+            "banco": "Santander",
+            "iedi_mean": 5.780756655768332,
+            "positividade": 22.0457730032695,
+            "negatividade": 15.973843998131715,
+            "posicao": 1
+          },
+          {
+            "banco": "Bradesco",
+            "iedi_mean": 5.757681465821001,
+            "positividade": 20.648343904157855,
+            "negatividade": 17.441860465116278,
+            "posicao": 2
+          },
+          {
+            "banco": "Banco do Brasil",
+            "iedi_mean": 5.6213028764805415,
+            "positividade": 16.34517766497462,
+            "negatividade": 18.087986463620982,
+            "posicao": 3
+          },
+          {
+            "banco": "Itaú",
+            "iedi_mean": 5.585323417987933,
+            "positividade": 17.24428230672092,
+            "negatividade": 13.694401571488704,
+            "posicao": 4
+          },
+          {
+            "banco": "Média do Setor",
+            "posicao": null,
+            "iedi_mean": 5.686266104014452,
+            "positividade": 19.070894219780723,
+            "negatividade": 16.29952312458942
+          }
+        ],
+        "linha_tempo_bb": [
+          {
+            "trimestre": "4T24",
+            "iedi_mean": 5.723496762257169,
+            "positividade": 16.762257169287697,
+            "negatividade": 18.79740980573543
+          },
+          {
+            "trimestre": "1T25",
+            "iedi_mean": 5.6338513962765955,
+            "positividade": 13.846409574468085,
+            "negatividade": 17.71941489361702
+          },
+          {
+            "trimestre": "2T25",
+            "iedi_mean": 5.270366433216609,
+            "positividade": 14.507253626813407,
+            "negatividade": 29.927463731865934
+          },
+          {
+            "trimestre": "3T25",
+            "iedi_mean": 5.6213028764805415,
+            "positividade": 16.34517766497462,
+            "negatividade": 18.087986463620982
+          }
+        ]
+      }
+    },
+    "2_quadro_comparativo": {
+      "descricao": "Quadro Comparativo de Indicadores (3T25)",
+      "tipo": "tabela",
+      "dados": [
+        {
+          "banco": "Santander",
+          "trimestre": "3T25",
+          "iedi_mean": 5.780756655768332,
+          "volume_positivo": 472,
+          "volume_positivo_titulo": 70,
+          "positividade_pct": 22.0457730032695,
+          "presenca_positiva_titulo_pct": 14.83050847457627,
+          "media_variaveis_positivas": 0.2097457627118644
+        },
+        {
+          "banco": "Bradesco",
+          "trimestre": "3T25",
+          "iedi_mean": 5.757681465821001,
+          "volume_positivo": 586,
+          "volume_positivo_titulo": 83,
+          "positividade_pct": 20.648343904157855,
+          "presenca_positiva_titulo_pct": 14.163822525597269,
+          "media_variaveis_positivas": 0.23037542662116042
+        },
+        {
+          "banco": "Banco do Brasil",
+          "trimestre": "3T25",
+          "iedi_mean": 5.6213028764805415,
+          "volume_positivo": 966,
+          "volume_positivo_titulo": 191,
+          "positividade_pct": 16.34517766497462,
+          "presenca_positiva_titulo_pct": 19.772256728778466,
+          "media_variaveis_positivas": 0.2546583850931677
+        },
+        {
+          "banco": "Itaú",
+          "trimestre": "3T25",
+          "iedi_mean": 5.585323417987933,
+          "volume_positivo": 1229,
+          "volume_positivo_titulo": 99,
+          "positividade_pct": 17.24428230672092,
+          "presenca_positiva_titulo_pct": 8.0553295362083,
+          "media_variaveis_positivas": 0.13262815296989422
+        },
+        {
+          "banco": "Média 3T25",
+          "trimestre": "3T25",
+          "iedi_mean": 5.686266104014452,
+          "volume_positivo": 813.25,
+          "volume_positivo_titulo": 110.75,
+          "positividade_pct": 19.070894219780723,
+          "presenca_positiva_titulo_pct": 14.205479316290075,
+          "media_variaveis_positivas": 0.20685193184902168
+        }
+      ]
+    },
+    "3_comparativos_historicos": {
+      "descricao": "Gráficos Comparativos BB vs. Concorrentes (4T24-3T25)",
+      "tipo": "linhas_multiplas",
+      "dados": {
+        "Itaú": [
+          {
+            "trimestre": "4T24",
+            "bb_iedi": 5.723496762257169,
+            "itaú_iedi": 5.814357262103505,
+            "media_setor_iedi": 5.695985797270288
+          },
+          {
+            "trimestre": "1T25",
+            "bb_iedi": 5.6338513962765955,
+            "itaú_iedi": 5.8527614024201045,
+            "media_setor_iedi": 5.759045719326659
+          },
+          {
+            "trimestre": "2T25",
+            "bb_iedi": 5.270366433216609,
+            "itaú_iedi": 6.015342960288809,
+            "media_setor_iedi": 5.692082248933236
+          },
+          {
+            "trimestre": "3T25",
+            "bb_iedi": 5.6213028764805415,
+            "itaú_iedi": 5.585323417987933,
+            "media_setor_iedi": 5.686266104014452
+          }
+        ],
+        "Bradesco": [
+          {
+            "trimestre": "4T24",
+            "bb_iedi": 5.723496762257169,
+            "bradesco_iedi": 5.5225382932166305,
+            "media_setor_iedi": 5.695985797270288
+          },
+          {
+            "trimestre": "1T25",
+            "bb_iedi": 5.6338513962765955,
+            "bradesco_iedi": 5.744065281899109,
+            "media_setor_iedi": 5.759045719326659
+          },
+          {
+            "trimestre": "2T25",
+            "bb_iedi": 5.270366433216609,
+            "bradesco_iedi": 5.688166268894192,
+            "media_setor_iedi": 5.692082248933236
+          },
+          {
+            "trimestre": "3T25",
+            "bb_iedi": 5.6213028764805415,
+            "bradesco_iedi": 5.757681465821001,
+            "media_setor_iedi": 5.686266104014452
+          }
+        ],
+        "Santander": [
+          {
+            "trimestre": "4T24",
+            "bb_iedi": 5.723496762257169,
+            "santander_iedi": 5.723550871503851,
+            "media_setor_iedi": 5.695985797270288
+          },
+          {
+            "trimestre": "1T25",
+            "bb_iedi": 5.6338513962765955,
+            "santander_iedi": 5.805504796710827,
+            "media_setor_iedi": 5.759045719326659
+          },
+          {
+            "trimestre": "2T25",
+            "bb_iedi": 5.270366433216609,
+            "santander_iedi": 5.794453333333332,
+            "media_setor_iedi": 5.692082248933236
+          },
+          {
+            "trimestre": "3T25",
+            "bb_iedi": 5.6213028764805415,
+            "santander_iedi": 5.780756655768332,
+            "media_setor_iedi": 5.686266104014452
+          }
+        ]
+      }
+    }
+  },
+  "resumo_executivo": {
+    "3t25": {
+      "ranking": [
+        {
+          "posicao": 1,
+          "banco": "Santander",
+          "iedi": 5.78
+        },
+        {
+          "posicao": 2,
+          "banco": "Bradesco",
+          "iedi": 5.76
+        },
+        {
+          "posicao": 3,
+          "banco": "Banco do Brasil",
+          "iedi": 5.62
+        },
+        {
+          "posicao": 4,
+          "banco": "Itaú",
+          "iedi": 5.59
+        }
+      ],
+      "media_setor": 5.69,
+      "bb_posicao": 3,
+      "bb_gap_vs_lider": 0.16,
+      "bb_gap_vs_media": -0.07
+    },
+    "evolucao_bb": {
+      "4T24": {
+        "iedi": 5.72,
+        "positividade": 16.8,
+        "negatividade": 18.8
+      },
+      "1T25": {
+        "iedi": 5.63,
+        "positividade": 13.8,
+        "negatividade": 17.7
+      },
+      "2T25": {
+        "iedi": 5.27,
+        "positividade": 14.5,
+        "negatividade": 29.9
+      },
+      "3T25": {
+        "iedi": 5.62,
+        "positividade": 16.3,
+        "negatividade": 18.1
+      }
+    }
+  }
+}

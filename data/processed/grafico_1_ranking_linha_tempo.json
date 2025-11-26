@@ -1,0 +1,65 @@
+{
+  "ranking_3t25": [
+    {
+      "banco": "Santander",
+      "iedi_mean": 5.780756655768332,
+      "positividade": 22.0457730032695,
+      "negatividade": 15.973843998131715,
+      "posicao": 1
+    },
+    {
+      "banco": "Bradesco",
+      "iedi_mean": 5.757681465821001,
+      "positividade": 20.648343904157855,
+      "negatividade": 17.441860465116278,
+      "posicao": 2
+    },
+    {
+      "banco": "Banco do Brasil",
+      "iedi_mean": 5.6213028764805415,
+      "positividade": 16.34517766497462,
+      "negatividade": 18.087986463620982,
+      "posicao": 3
+    },
+    {
+      "banco": "Ita\u00fa",
+      "iedi_mean": 5.585323417987933,
+      "positividade": 17.24428230672092,
+      "negatividade": 13.694401571488704,
+      "posicao": 4
+    },
+    {
+      "banco": "M\u00e9dia do Setor",
+      "posicao": null,
+      "iedi_mean": 5.686266104014452,
+      "positividade": 19.070894219780723,
+      "negatividade": 16.29952312458942
+    }
+  ],
+  "linha_tempo_bb": [
+    {
+      "trimestre": "4T24",
+      "iedi_mean": 5.723496762257169,
+      "positividade": 16.762257169287697,
+      "negatividade": 18.79740980573543
+    },
+    {
+      "trimestre": "1T25",
+      "iedi_mean": 5.6338513962765955,
+      "positividade": 13.846409574468085,
+      "negatividade": 17.71941489361702
+    },
+    {
+      "trimestre": "2T25",
+      "iedi_mean": 5.270366433216609,
+      "positividade": 14.507253626813407,
+      "negatividade": 29.927463731865934
+    },
+    {
+      "trimestre": "3T25",
+      "iedi_mean": 5.6213028764805415,
+      "positividade": 16.34517766497462,
+      "negatividade": 18.087986463620982
+    }
+  ]
+}
