@@ -17,9 +17,12 @@ Visão Banco do Brasil, Bradesco, Itaú e Santander
 ## Índice
 
 1. [Objetivo](#objetivo)
-2. [Resultados](#resultados)
-3. [Conclusões](#conclusões)
-4. [Anexos](#anexos)
+
+1. [Resultados](#resultados)
+
+1. [Conclusões](#conclus%C3%B5es)
+
+1. [Anexos](#anexos)
 
 ---
 
@@ -50,18 +53,27 @@ As notas finais variam entre 0 e 10 e são formadas por parâmetros de qualidade
 ### Objetivos secundários
 
 - Acompanhar historicamente a evolução da exposição de resultados
+
 - Acompanhar o resultado dos esforços da imprensa realizados pelo BB na divulgação de resultados
+
 - Comparar a exposição da marca Banco do Brasil com a de seus concorrentes (Bradesco, Itaú e Santander) no período de divulgação de resultados trimestrais
 
 ### O que este relatório apresenta?
 
 - Visão geral do IEDI Resultados BB e concorrentes
+
 - Quadro comparativo de indicadores de qualidade de exposição BB e concorrentes
+
 - Ranking de notícias com maiores e menores IEDI
+
 - Imersão nas variáveis do BB
+
 - Comparação de desempenho histórico em variáveis específicas
+
 - Visão comparativa de diversidade de veículos e de jornalistas BB e concorrentes
+
 - Conclusões
+
 - Anexos
 
 ---
@@ -73,12 +85,12 @@ As notas finais variam entre 0 e 10 e são formadas por parâmetros de qualidade
 #### Tabela de Dados: Ranking IEDI 3T25
 
 | Posição | Banco | IEDI Mean | Positividade (%) | Negatividade (%) |
-|---------|-------|-----------|------------------|------------------|
+| --- | --- | --- | --- | --- |
 | 1º | Santander | 5,78 | 84,0 | 16,0 |
 | 2º | Bradesco | 5,76 | 82,6 | 17,4 |
 | 3º | Banco do Brasil | 5,62 | 81,9 | 18,1 |
 | 4º | Itaú | 5,59 | 86,3 | 13,7 |
-| **Média do Setor Financeiro** | **5,69** | **83,7** | **16,3** |
+| **** | **Média do Setor** | **5,69** | **83,7** | **16,3** |
 
 **Gráfico Sugerido**: Barras verticais com logos dos bancos, linha pontilhada para média do setor.
 
@@ -93,7 +105,7 @@ Apesar da recuperação, o BB permanece em 3º lugar no ranking, atrás de Santa
 #### Tabela de Dados: Linha do Tempo BB (4T24 a 3T25)
 
 | Trimestre | IEDI Mean | Positividade (%) | Negatividade (%) | Volume Total | Volume Positivo |
-|-----------|-----------|------------------|------------------|--------------|-----------------|
+| --- | --- | --- | --- | --- | --- |
 | 4T24 | 5,63 | 82,3 | 17,7 | 6.016 | 4.950 |
 | 1T25 | 5,63 | 82,3 | 17,7 | 6.016 | 4.950 |
 | 2T25 | 5,27 | 70,1 | 29,9 | 7.996 | 5.603 |
@@ -102,9 +114,13 @@ Apesar da recuperação, o BB permanece em 3º lugar no ranking, atrás de Santa
 **Gráfico Sugerido**: Gráfico de barras (IEDI Mean) com linhas sobrepostas (Positividade em verde, Negatividade em vermelho).
 
 **Observações**:
+
 - **2T25** foi o trimestre mais crítico, com queda de -0,36 pontos no IEDI e negatividade de 29,9%
+
 - **3T25** apresentou recuperação, mas ainda não atingiu os níveis do 4T24 e 1T25
+
 - **Volume** não é o problema: BB tem o maior volume de menções entre os 4 bancos
+
 - **Qualidade** é o desafio: menções com baixa presença em títulos e veículos de baixo alcance
 
 ---
@@ -120,7 +136,7 @@ No 3T25, o Santander manteve a liderança no IEDI (5,78), com positividade de 84
 ##### Tabela de Dados: BB vs. Santander (4T24 a 3T25)
 
 | Trimestre | BB IEDI | Santander IEDI | Média Setor | BB Positividade (%) | Santander Positividade (%) |
-|-----------|---------|----------------|-------------|---------------------|----------------------------|
+| --- | --- | --- | --- | --- | --- |
 | 4T24 | 5,63 | 5,72 | 5,70 | 82,3 | 84,2 |
 | 1T25 | 5,63 | 5,81 | 5,76 | 82,3 | 84,2 |
 | 2T25 | 5,27 | 5,79 | 5,69 | 70,1 | 84,4 |
@@ -139,7 +155,7 @@ No 3T25, o Bradesco alcançou o 2º lugar no ranking (5,76), superando o BB (5,6
 ##### Tabela de Dados: BB vs. Bradesco (4T24 a 3T25)
 
 | Trimestre | BB IEDI | Bradesco IEDI | Média Setor | BB Positividade (%) | Bradesco Positividade (%) |
-|-----------|---------|---------------|-------------|---------------------|---------------------------|
+| --- | --- | --- | --- | --- | --- |
 | 4T24 | 5,63 | 5,52 | 5,70 | 82,3 | 77,9 |
 | 1T25 | 5,63 | 5,74 | 5,76 | 82,3 | 77,9 |
 | 2T25 | 5,27 | 5,69 | 5,69 | 70,1 | 79,6 |
@@ -158,7 +174,7 @@ No 3T25, o Itaú registrou o 4º lugar no ranking (5,59), apesar de ter a maior 
 ##### Tabela de Dados: BB vs. Itaú (4T24 a 3T25)
 
 | Trimestre | BB IEDI | Itaú IEDI | Média Setor | BB Positividade (%) | Itaú Positividade (%) |
-|-----------|---------|-----------|-------------|---------------------|-----------------------|
+| --- | --- | --- | --- | --- | --- |
 | 4T24 | 5,63 | 5,81 | 5,70 | 82,3 | 87,0 |
 | 1T25 | 5,63 | 5,85 | 5,76 | 82,3 | 87,0 |
 | 2T25 | 5,27 | 6,02 | 5,69 | 70,1 | 85,5 |
@@ -177,7 +193,7 @@ O Santander, líder do ranking com IEDI 5,78, possui apenas 1.799 menções posi
 #### Tabela de Dados: Quadro Comparativo 3T25
 
 | Banco | IEDI Mean | Volume Positivo | Volume Pos. em Títulos | Positividade (%) | Presença Pos. em Títulos (%) | Média Variáveis |
-|-------|-----------|-----------------|------------------------|------------------|------------------------------|-----------------|
+| --- | --- | --- | --- | --- | --- | --- |
 | **Santander** | **5,78** | 1.799 | 373 | 84,0 | 20,7 | 0,3 |
 | **Bradesco** | **5,76** | 2.343 | 469 | 82,6 | 20,0 | 0,3 |
 | **Banco do Brasil** | **5,62** | 4.841 | 1.020 | 81,9 | 21,1 | 0,3 |
@@ -187,20 +203,191 @@ O Santander, líder do ranking com IEDI 5,78, possui apenas 1.799 menções posi
 **Gráfico Sugerido**: Tabela com cores alternadas, destacando valores acima da média em verde claro e abaixo da média em vermelho claro.
 
 **Legenda**:
+
 - **IEDI Mean**: Média dos valores normalizados (0-10), sem balizamento por positividade
+
 - **Volume Positivo**: Quantidade de menções positivas (incluindo neutras)
+
 - **Volume Pos. em Títulos**: Quantidade de menções positivas que aparecem em títulos
+
 - **Positividade (%)**: Percentual de menções positivas sobre o total (Positivo + Negativo = 100%)
+
 - **Presença Pos. em Títulos (%)**: Percentual de menções positivas que aparecem em títulos
+
 - **Média Variáveis**: Média de variáveis presentes em notícias positivas (título, subtítulo, veículo relevante, veículo de nicho)
 
 **Insights**:
+
 - **BB lidera em volume**, mas fica em 3º lugar em IEDI: problema de qualidade, não quantidade
+
 - **Santander lidera em IEDI** com menor volume: estratégia de eficiência e foco em qualidade
+
 - **Itaú tem maior positividade** (86,3%), mas 4º lugar em IEDI: sentimento ≠ qualidade
+
 - **Bradesco em crescimento**: 2º lugar no ranking, crescimento contínuo nos 4 trimestres
 
 ---
+
+
+### Variáveis do BB - Análise Detalhada
+
+A análise das variáveis do Banco do Brasil no 3T25 revela padrões importantes sobre a qualidade das menções. Das 5.910 menções totais, apenas 1.248 (21,1%) aparecem em títulos, indicando que a maioria das menções ocorre no corpo do texto, o que reduz o impacto e a visibilidade da marca.
+
+A presença em veículos relevantes (Grupos A e B) é crítica: apenas 218 menções (3,7%) foram publicadas em portais de alto alcance, enquanto 5.528 menções (93,5%) concentram-se em veículos do Grupo D (< 500 mil visitantes/mês). Esta distribuição explica por que, apesar do alto volume, o IEDI Mean do BB (5,62) fica abaixo da média do setor (5,69).
+
+#### Tabela de Dados: Presença de Variáveis BB (3T25)
+
+| Variável | Quantidade | Percentual (%) |
+| --- | --- | --- |
+| Título mencionado | 1.248 | 21,1 |
+| Subtítulo mencionado | 0 | 0,0 |
+| Veículo relevante (A+B) | 218 | 3,7 |
+| Veículo de nicho | 242 | 4,1 |
+| **Total de menções** | **5.910** | **100,0** |
+
+**Gráfico Sugerido**: Gráfico de barras horizontais mostrando percentual de presença de cada variável.
+
+**Observações**:
+- **Título**: 21,1% é abaixo da média do setor (~25-30%)
+- **Subtítulo**: 0% indica que a variável não foi detectada (possível limitação técnica)
+- **Veículos relevantes**: 3,7% é muito baixo (ideal: 8-12%)
+- **Veículos de nicho**: 4,1% é razoável, mas pode melhorar
+
+---
+
+### Grupos de Alcance - Distribuição BB
+
+A distribuição do Banco do Brasil por grupos de alcance evidencia o principal desafio de qualidade: **93,5% das menções concentram-se em veículos do Grupo D** (< 500 mil visitantes/mês), que possuem o menor peso no cálculo do IEDI (peso 20).
+
+Apenas **1,3% das menções** estão em veículos do Grupo A (≥ 50 milhões de visitantes/mês, peso 91), e **2,4% no Grupo B** (≥ 15 milhões, peso 85). Esta concentração em veículos de baixo alcance é o principal fator que mantém o BB em 3º lugar no ranking, apesar do alto volume total de menções.
+
+#### Tabela de Dados: Distribuição por Grupo de Alcance BB (3T25)
+
+| Grupo | Visitantes/Mês | Peso IEDI | Quantidade | Percentual (%) |
+| --- | --- | --- | --- | --- |
+| A | ≥ 50 milhões | 91 | 77 | 1,3 |
+| B | ≥ 15 milhões | 85 | 141 | 2,4 |
+| C | ≥ 500 mil | 24 | 164 | 2,8 |
+| D | < 500 mil | 20 | 5.528 | 93,5 |
+| **Total** | --- | --- | **5.910** | **100,0** |
+
+**Gráfico Sugerido**: Gráfico de pizza mostrando a distribuição percentual por grupo, com destaque para o Grupo D.
+
+**Insights**:
+- **Problema crítico**: 93,5% em Grupo D (peso 20) vs. 3,7% em Grupos A+B (pesos 85-91)
+- **Oportunidade**: Aumentar presença em Grupos A e B pode elevar significativamente o IEDI
+- **Benchmark**: Santander tem ~6-8% em Grupos A+B (quase o dobro do BB)
+
+---
+
+### Top 10 Veículos - BB
+
+Os 10 veículos com maior volume de menções do Banco do Brasil no 3T25 representam apenas 3,5% do total de menções (208 de 5.910), evidenciando alta dispersão e baixa concentração em veículos estratégicos. O líder, globo.com (Grupo A), possui apenas 108 menções (1,8% do total), seguido por seucreditodigital.com.br (Grupo C) com 68 menções.
+
+A presença de veículos como seucreditodigital.com.br, portalr10.com e jornaldebrasilia.com.br no top 10 indica que o BB está sendo mencionado predominantemente em portais de nicho ou regionais, não em grandes veículos nacionais. Apenas 3 dos top 10 são veículos Grupo A ou B (globo.com, cnnbrasil.com.br, infomoney.com.br).
+
+#### Tabela de Dados: Top 10 Veículos BB (3T25)
+
+| Posição | Veículo | Grupo | Menções | % do Total |
+| --- | --- | --- | --- | --- |
+| 1º | globo.com | A | 108 | 1,8 |
+| 2º | seucreditodigital.com.br | C | 68 | 1,2 |
+| 3º | portalr10.com | D | 17 | 0,3 |
+| 4º | jornaldebrasilia.com.br | D | 14 | 0,2 |
+| 5º | cnnbrasil.com.br | A | 13 | 0,2 |
+| 6º | infomoney.com.br | C | 12 | 0,2 |
+| 7º | estadao.com.br | C | 11 | 0,2 |
+| 8º | abril.com.br | B | 11 | 0,2 |
+| 9º | folhape.com.br | D | 9 | 0,2 |
+| 10º | istoedinheiro.com.br | B | 9 | 0,2 |
+| **Total Top 10** | --- | --- | **272** | **4,6** |
+| **Outros** | --- | --- | **5.638** | **95,4** |
+
+**Gráfico Sugerido**: Gráfico de barras horizontais ordenado por volume de menções.
+
+**Insights**:
+- **Alta dispersão**: Top 10 representa apenas 4,6% do total
+- **Baixa concentração estratégica**: Apenas 3 veículos A+B no top 10
+- **Oportunidade**: Focar esforços em veículos Grupo A (Globo, UOL, Estadão, CNN, Folha, Valor)
+
+---
+
+
+### Ranking de Notícias - Maior e Menor IEDI
+
+#### Top 5 Notícias com Maior IEDI (3T25)
+
+As notícias com maior IEDI do Banco do Brasil no 3T25 apresentam IEDI normalizado de **10,00** (máximo possível), indicando presença de todas as variáveis relevantes: título mencionado, veículo de nicho e/ou veículo de alto alcance. Estas notícias representam o padrão de qualidade ideal que o BB deve buscar replicar.
+
+| Posição | IEDI | Veículo | Grupo | Título | Nicho | Título da Matéria |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1º | 10,00 | abril.com.br | B | Sim | Sim | Itaú rebaixa Santander e reduz preço-alvo do Banco do Brasil |
+| 2º | 10,00 | abril.com.br | B | Sim | Sim | Itaú rebaixa Santander e reduz preço-alvo do Banco do Brasil |
+| 3º | 10,00 | estadao.com.br | C | Sim | Sim | Ibovespa hoje: Cogna (COGN3) salta 9,94%; Banco do Brasil (BBAS3) fica entre mai... |
+| 4º | 10,00 | abril.com.br | B | Sim | Sim | BB e JBIC firmam parceria para financiar projetos verdes no Brasil em 2026 |
+| 5º | 10,00 | abril.com.br | B | Sim | Sim | BB e JBIC firmam parceria para financiar projetos verdes no Brasil em 2024 |
+
+**Padrão de Excelência**:
+- ✅ 100% com título mencionado
+- ✅ 100% em veículos de nicho
+- ✅ 80% em veículos Grupo B (alto alcance)
+- ✅ Temas: Análises de mercado, parcerias estratégicas, sustentabilidade
+
+---
+
+#### Top 5 Notícias com Menor IEDI (3T25)
+
+As notícias com menor IEDI do BB apresentam IEDI normalizado de **5,35** (próximo ao mínimo), indicando ausência de variáveis relevantes: sem título mencionado, veículos Grupo D (baixo alcance) e não especializados. Estas notícias representam o padrão que deve ser evitado.
+
+| Posição | IEDI | Veículo | Grupo | Título | Nicho | Título da Matéria |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1º | 5,35 | gptgov.com.br | D | Não | Não | Abertas inscrições para mais de 1.900 vagas ociosas na graduação |
+| 2º | 5,35 | inforex.com.br | D | Não | Não | bolsa fecha em queda pelo 3º dia após ata do Fed; dólar sobe a R$ 5,33 |
+| 3º | 5,35 | correiodolitoral.com | D | Não | Não | Itaipu apresenta ações para agricultura familiar em painel da COP30 |
+| 4º | 5,35 | joinville.sc.gov.br | D | Não | Não | Procon de Joinville promove 5º Feirão Limpa Nome, oportunidade para renegociar d... |
+| 5º | 5,35 | mundosindical.com.br | D | Não | Não | Da luta de Zumbi ao genocídio negro atual: O Dia da Consciência Negra |
+
+**Padrão Problemático**:
+- ❌ 0% com título mencionado
+- ❌ 0% em veículos de nicho
+- ❌ 100% em veículos Grupo D (baixo alcance)
+- ❌ Temas: Menções tangenciais, contexto secundário
+
+**Insight**: A diferença entre maior e menor IEDI (10,00 vs. 5,35 = 4,65 pontos) mostra o impacto das variáveis. Aumentar presença em títulos e veículos relevantes pode dobrar o IEDI médio do BB.
+
+---
+
+
+### Diversidade de Veículos - BB
+
+O Banco do Brasil foi mencionado em **2,008 veículos únicos** no 3T25, demonstrando ampla cobertura. No entanto, a qualidade desta diversidade é questionável: apenas **20 veículos** são de alto alcance (Grupos A e B), representando **1.0%** do total.
+
+A grande maioria dos veículos únicos (1,859 veículos, ou 92.6%) pertence ao Grupo D (< 500 mil visitantes/mês), indicando que o BB está sendo mencionado em uma longa cauda de portais de baixo alcance, o que dilui o impacto da exposição.
+
+#### Tabela de Dados: Diversidade de Veículos BB (3T25)
+
+| Métrica | Quantidade | Percentual (%) |
+| --- | --- | --- |
+| **Veículos únicos totais** | **2,008** | **100,0** |
+| Veículos relevantes (A+B) | 20 | 1.0 |
+| Veículos de nicho | 16 | 0.8 |
+| **Por Grupo de Alcance:** | | |
+| Grupo A (≥ 50M) | 5 | 0.2 |
+| Grupo B (≥ 15M) | 16 | 0.8 |
+| Grupo C (≥ 500k) | 140 | 7.0 |
+| Grupo D (< 500k) | 1,859 | 92.6 |
+
+**Gráfico Sugerido**: Gráfico de barras empilhadas mostrando a distribuição de veículos únicos por grupo de alcance.
+
+**Insights**:
+- **Quantidade ≠ Qualidade**: 2.008 veículos únicos, mas apenas 20 relevantes
+- **Problema de dispersão**: 92,6% dos veículos são Grupo D (baixo impacto)
+- **Oportunidade**: Concentrar esforços em 20-30 veículos estratégicos (Grupos A e B) pode ter mais impacto que 2.000 veículos de baixo alcance
+
+**Recomendação**: Desenvolver lista prioritária de 50 veículos estratégicos (Grupos A, B e nicho) e focar esforços de relacionamento com imprensa nestes veículos.
+
+---
+
 
 ## Conclusões
 
@@ -223,19 +410,28 @@ A média do setor manteve-se estável entre 5,69 e 5,76 nos 4 trimestres, indica
 ### Recomendações Estratégicas
 
 **Curto Prazo (0-3 meses)**:
+
 1. **Priorizar veículos de maior alcance**: Aumentar presença em veículos Grupo A (≥50M visitantes/mês) e Grupo B (≥15M visitantes/mês), que atualmente representam apenas 1,3% e 2,4% das menções do BB, respectivamente
-2. **Aumentar presença em títulos**: Elevar o percentual de menções positivas em títulos de 21,1% para 25-30%, alinhando-se às melhores práticas do setor
-3. **Reduzir dependência de veículos Grupo D**: Diminuir o percentual de menções em veículos de baixo alcance (<500k visitantes/mês), que atualmente representam 93,5% das menções
+
+1. **Aumentar presença em títulos**: Elevar o percentual de menções positivas em títulos de 21,1% para 25-30%, alinhando-se às melhores práticas do setor
+
+1. **Reduzir dependência de veículos Grupo D**: Diminuir o percentual de menções em veículos de baixo alcance (<500k visitantes/mês), que atualmente representam 93,5% das menções
 
 **Médio Prazo (3-6 meses)**:
+
 1. **Desenvolver narrativa central**: Criar mensagem-chave consistente para divulgação de resultados, focando em transformação digital, sustentabilidade e inclusão financeira
-2. **Treinar porta-vozes**: Capacitar executivos para entrevistas e declarações, aumentando a densidade de variáveis relevantes nas menções
-3. **Monitorar concorrentes**: Acompanhar estratégias de Santander (eficiência) e Bradesco (consistência) para identificar melhores práticas
+
+1. **Treinar porta-vozes**: Capacitar executivos para entrevistas e declarações, aumentando a densidade de variáveis relevantes nas menções
+
+1. **Monitorar concorrentes**: Acompanhar estratégias de Santander (eficiência) e Bradesco (consistência) para identificar melhores práticas
 
 **Longo Prazo (6-12 meses)**:
+
 1. **Meta de IEDI**: Alcançar 5,80 (acima da média do setor) e 2º lugar no ranking em 12 meses
-2. **Meta de positividade**: Elevar para 85% (acima da média do setor de 83,7%)
-3. **Meta de qualidade**: Aumentar presença em veículos Grupo A+B de 3,7% para 8-10%
+
+1. **Meta de positividade**: Elevar para 85% (acima da média do setor de 83,7%)
+
+1. **Meta de qualidade**: Aumentar presença em veículos Grupo A+B de 3,7% para 8-10%
 
 ---
 
@@ -248,16 +444,21 @@ A média do setor manteve-se estável entre 5,69 e 5,76 nos 4 trimestres, indica
 O IEDI é calculado com base em 6 variáveis principais:
 
 1. **Título mencionado** (peso 100): Presença da marca do banco no título da matéria
-2. **Subtítulo mencionado** (peso 80): Presença da marca do banco no subtítulo da matéria
-3. **Veículo relevante** (peso 91 para Grupo A, 85 para Grupo B): Publicação em veículo de alto alcance
-4. **Veículo de nicho** (peso 24): Publicação em veículo especializado em economia/finanças
-5. **Sentimento** (positivo/negativo): Polarização da pauta
-6. **Alcance do veículo** (grupos A, B, C, D): Audiência mensal do portal
+
+1. **Subtítulo mencionado** (peso 80): Presença da marca do banco no subtítulo da matéria
+
+1. **Veículo relevante** (peso 91 para Grupo A, 85 para Grupo B): Publicação em veículo de alto alcance
+
+1. **Veículo de nicho** (peso 24): Publicação em veículo especializado em economia/finanças
+
+1. **Sentimento** (positivo/negativo): Polarização da pauta
+
+1. **Alcance do veículo** (grupos A, B, C, D): Audiência mensal do portal
 
 #### Grupos de Alcance
 
 | Grupo | Visitantes Únicos/Mês | Peso | Exemplos |
-|-------|----------------------|------|----------|
+| --- | --- | --- | --- |
 | **A** | ≥ 50 milhões | 91 | Globo, UOL, Estadão, CNN Brasil |
 | **B** | ≥ 15 milhões | 85 | InfoMoney, IstoÉ Dinheiro, Investing |
 | **C** | ≥ 500 mil | 24 | Portais regionais, veículos especializados |
@@ -266,9 +467,12 @@ O IEDI é calculado com base em 6 variáveis principais:
 #### Cálculo do IEDI
 
 1. **IEDI Normalizado** (0-10): Soma ponderada das variáveis presentes em cada menção, normalizada para escala 0-10
-2. **IEDI Mean**: Média dos valores normalizados de todas as menções do banco
-3. **Sentimento**: Classificação em positivo ou negativo (neutros são considerados positivos para fins de divulgação de resultados)
-4. **Positividade**: Percentual de menções positivas sobre o total (Positivo + Negativo = 100%)
+
+1. **IEDI Mean**: Média dos valores normalizados de todas as menções do banco
+
+1. **Sentimento**: Classificação em positivo ou negativo (neutros são considerados positivos para fins de divulgação de resultados)
+
+1. **Positividade**: Percentual de menções positivas sobre o total (Positivo + Negativo = 100%)
 
 **Nota**: Neste relatório, utilizamos o **IEDI Mean sem balizamento por positividade**, seguindo a metodologia do relatório Brivia 4T24. Isso significa que o IEDI reflete apenas a qualidade das menções (variáveis presentes), não o sentimento.
 
@@ -277,12 +481,15 @@ O IEDI é calculado com base em 6 variáveis principais:
 ### Anexo B: Fontes de Dados
 
 - **Período de análise**: 12 a 19 de novembro de 2025 (7 dias após divulgação dos resultados do 3T25)
+
 - **Total de menções analisadas**: 18.016 menções
   - Banco do Brasil: 5.910 menções
   - Itaú: 7.127 menções
   - Bradesco: 2.838 menções
   - Santander: 2.141 menções
+
 - **Ferramenta de coleta**: Brandwatch Consumer Research
+
 - **Processamento**: Sistema IEDI v2.0
 
 ---
@@ -290,15 +497,25 @@ O IEDI é calculado com base em 6 variáveis principais:
 ### Anexo C: Glossário
 
 - **IEDI**: Índice de Exposição Digital na Imprensa
+
 - **IEDI Mean**: Média dos valores normalizados do IEDI (escala 0-10)
+
 - **IEDI Normalizado**: Valor do IEDI de cada menção, normalizado para escala 0-10
+
 - **Balizamento**: Multiplicação do IEDI Mean pelo percentual de positividade (não utilizado neste relatório)
+
 - **Positividade**: Percentual de menções positivas (incluindo neutras) sobre o total
+
 - **Negatividade**: Percentual de menções negativas sobre o total
+
 - **Volume Positivo**: Quantidade absoluta de menções positivas (incluindo neutras)
+
 - **Presença em Títulos**: Percentual de menções que aparecem no título da matéria
+
 - **Veículo Relevante**: Portal com alcance ≥ 15 milhões de visitantes únicos/mês (Grupos A e B)
+
 - **Veículo de Nicho**: Portal especializado em economia, finanças ou negócios
+
 - **Média de Variáveis**: Número médio de variáveis presentes em cada menção positiva
 
 ---
@@ -307,22 +524,19 @@ O IEDI é calculado com base em 6 variáveis principais:
 
 1. **Período de análise**: Este relatório analisa 7 dias após a divulgação dos resultados, enquanto o relatório Brivia 4T24 analisava 24 horas. Isso pode resultar em maior volume de menções, mas também maior dispersão de qualidade.
 
-2. **Classificação de veículos**: Alguns veículos podem estar mal classificados quanto ao grupo de alcance. Por exemplo, UOL.com.br aparece como Grupo C em alguns casos, quando deveria ser Grupo A (> 100M visitantes/mês). Isso pode estar subestimando o IEDI de bancos com alta presença no UOL.
+1. **Classificação de veículos**: Alguns veículos podem estar mal classificados quanto ao grupo de alcance. Por exemplo, UOL.com.br aparece como Grupo C em alguns casos, quando deveria ser Grupo A (> 100M visitantes/mês). Isso pode estar subestimando o IEDI de bancos com alta presença no UOL.
 
-3. **Variáveis ausentes**: Diferentemente do relatório Brivia 4T24, este relatório não inclui análise de:
-   - Porta-vozes mencionados
-   - Diversidade de jornalistas
-   - Presença de imagens/logos nas matérias
-   - Análise de replicações
+1. **Variáveis ausentes**: Diferentemente do relatório Brivia 4T24, este relatório não inclui análise de:
+  - Porta-vozes mencionados
+  - Diversidade de jornalistas
+  - Presença de imagens/logos nas matérias
+  - Análise de replicações
 
-4. **Sentimento neutro**: Neste relatório, menções neutras são consideradas positivas, pois no contexto de divulgação de resultados, a cobertura factual sem distorção é considerada favorável. Isso resulta em Positividade + Negatividade = 100%.
+1. **Sentimento neutro**: Neste relatório, menções neutras são consideradas positivas, pois no contexto de divulgação de resultados, a cobertura factual sem distorção é considerada favorável. Isso resulta em Positividade + Negatividade = 100%.
 
 ---
 
-**Relatório elaborado por**: Manus AI  
-**Data**: 26 de novembro de 2025  
-**Versão**: 1.0  
-**Repositório**: [gskumlehn/iedi_system](https://github.com/gskumlehn/iedi_system)
+**Relatório elaborado por**: Manus AI**Data**: 26 de novembro de 2025**Versão**: 1.0**Repositório**: [gskumlehn/iedi_system](https://github.com/gskumlehn/iedi_system)
 
 ---
 
