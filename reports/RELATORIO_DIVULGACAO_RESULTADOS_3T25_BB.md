@@ -97,28 +97,28 @@ Este relatório analisa a **cobertura de imprensa** da divulgação de resultado
 
 ### 2.3 Top 20 Veículos
 
-| Ranking | Veículo | Menções | Tipo | Alcance |
-|---------|---------|---------|------|---------|
-| 1º | **globo.com** | 108 | Relevante | Alto |
-| 2º | **uol.com.br** | 68 | Relevante | Alto |
-| 3º | seucreditodigital.com.br | 58 | Outros | Baixo |
-| 4º | moneytimes.com.br | 54 | Outros | Médio |
-| 5º | **infomoney.com.br** | 47 | Nicho | Alto |
-| 6º | **estadao.com.br** | 38 | Relevante | Alto |
-| 7º | gazeta24h.com | 37 | Outros | Baixo |
-| 8º | visaonews.com.br | 36 | Outros | Baixo |
-| 9º | **investing.com** | 35 | Nicho | Médio |
-| 10º | bolsaemercado.com.br | 32 | Outros | Baixo |
-| 11º | **istoedinheiro.com.br** | 31 | Nicho | Alto |
-| 12º | 55invest.com.br | 31 | Outros | Baixo |
-| 13º | **metropoles.com** | 29 | Relevante | Médio |
-| 14º | financenews.com.br | 27 | Outros | Baixo |
-| 15º | **cnnbrasil.com.br** | 26 | Relevante | Alto |
-| 16º | marcalegal.com.br | 26 | Outros | Baixo |
-| 17º | portalnoticiasmt.com.br | 26 | Outros | Baixo |
-| 18º | seudinheiro.com | 24 | Outros | Baixo |
-| 19º | dfpost.com.br | 24 | Outros | Baixo |
-| 20º | politicanopontocerto.com.br | 24 | Outros | Baixo |
+| Ranking | Veículo | Menções | Tipo | Grupo de Alcance |
+|---------|---------|---------|------|------------------|
+| 1º | **globo.com** | 108 | Relevante | A (≥ 50M) |
+| 2º | **uol.com.br** | 68 | Relevante | A (≥ 50M) |
+| 3º | seucreditodigital.com.br | 58 | Outros | D (< 500k) |
+| 4º | moneytimes.com.br | 54 | Outros | C (≥ 500k) |
+| 5º | **infomoney.com.br** | 47 | Nicho | B (≥ 15M) |
+| 6º | **estadao.com.br** | 38 | Relevante | A (≥ 50M) |
+| 7º | gazeta24h.com | 37 | Outros | D (< 500k) |
+| 8º | visaonews.com.br | 36 | Outros | D (< 500k) |
+| 9º | **investing.com** | 35 | Nicho | B (≥ 15M) |
+| 10º | bolsaemercado.com.br | 32 | Outros | D (< 500k) |
+| 11º | **istoedinheiro.com.br** | 31 | Nicho | B (≥ 15M) |
+| 12º | 55invest.com.br | 31 | Outros | D (< 500k) |
+| 13º | **metropoles.com** | 29 | Relevante | B (≥ 15M) |
+| 14º | financenews.com.br | 27 | Outros | D (< 500k) |
+| 15º | **cnnbrasil.com.br** | 26 | Relevante | A (≥ 50M) |
+| 16º | marcalegal.com.br | 26 | Outros | D (< 500k) |
+| 17º | portalnoticiasmt.com.br | 26 | Outros | D (< 500k) |
+| 18º | seudinheiro.com | 24 | Outros | D (< 500k) |
+| 19º | dfpost.com.br | 24 | Outros | D (< 500k) |
+| 20º | politicanopontocerto.com.br | 24 | Outros | D (< 500k) |
 
 **Análise**:
 - ✅ **Presença forte** em veículos mainstream (Globo, UOL, Estadão, CNN)
@@ -669,13 +669,14 @@ Multiplicador de Sentimento = +1 (positivo/neutro), -1 (negativo)
 
 | Componente | Peso | Critério |
 |------------|------|----------|
-| **Alcance Alto** | 100 | > 1 milhão de visitantes/mês |
-| **Alcance Médio** | 80 | 100 mil - 1 milhão |
-| **Alcance Baixo** | 24 | < 100 mil |
+| **Alcance Grupo A** | 91 | ≥ 50 milhões de visitantes únicos/mês |
+| **Alcance Grupo B** | 85 | ≥ 15 milhões de visitantes únicos/mês |
+| **Alcance Grupo C** | 24 | ≥ 500 mil visitantes únicos/mês |
+| **Alcance Grupo D** | 20 | < 500 mil visitantes únicos/mês |
 | **Veículo Relevante** | 95 | Mainstream (G1, Folha, Estadão) |
 | **Veículo de Nicho** | 54 | Especializado (InfoMoney, Valor) |
-| **Título Mencionado** | 40 | Banco citado no título |
-| **Subtítulo Usado** | 20 | Banco citado no subtítulo |
+| **Título Mencionado** | 100 | Banco citado no título |
+| **Subtítulo Usado** | 80 | Banco citado no subtítulo |
 
 **Nota Metodológica**: Para contexto de **divulgação de resultados**, menções **neutras são consideradas positivas** (Multiplicador = +1), pois cobertura factual representa exposição favorável.
 
@@ -686,6 +687,10 @@ Multiplicador de Sentimento = +1 (positivo/neutro), -1 (negativo)
 - **IEDI Mean**: Pontuação média sem considerar sentimento
 - **Veículo Relevante**: Mídia mainstream de grande alcance
 - **Veículo de Nicho**: Mídia especializada em finanças/negócios
+- **Grupo de Alcance A**: Veículos com ≥ 50 milhões de visitantes únicos mensais (peso 91)
+- **Grupo de Alcance B**: Veículos com ≥ 15 milhões de visitantes únicos mensais (peso 85)
+- **Grupo de Alcance C**: Veículos com ≥ 500 mil visitantes únicos mensais (peso 24)
+- **Grupo de Alcance D**: Veículos com < 500 mil visitantes únicos mensais (peso 20)
 - **Taxa de Aprovação**: % de menções positivas/neutras
 - **Enquadramento**: Forma como a notícia apresenta o tema (positivo, neutro, negativo)
 - **Thought Leadership**: Posicionamento de executivos como referências intelectuais do setor
