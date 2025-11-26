@@ -138,6 +138,8 @@ def restart_analysis(analysis_id):
             return jsonify({"error": "Análise não encontrada"}), 404
 
         bank_analyses = BankAnalysisRepository.find_by_analysis_id(analysis_id)
+        # Remove bank analyses where IEDI is not null
+        bank_analyses = [ba for ba in bank_analyses if ba.iedi_score is None]
         if not bank_analyses:
             return jsonify({"error": "Nenhuma análise de banco encontrada para esta análise"}), 404
 

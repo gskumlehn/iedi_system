@@ -4,6 +4,7 @@ from sqlalchemy.orm import joinedload
 from app.infra.csv_storage import CSVStorage
 from datetime import datetime
 import uuid
+from typing import List
 
 class MentionRepository:
     
@@ -50,25 +51,13 @@ class MentionRepository:
     @classmethod
     def save(cls, mention: Mention) -> Mention:
         """
-        Salva mention em batch (memória).
-        Chame flush_batch() para persistir em CSV.
+        Salva mention em memória para processamento em lote.
         """
         if not cls._current_analysis_id:
             raise ValueError("Analysis context não definido. Chame set_analysis_context() primeiro.")
-        
-        # Garantir que mention tem ID
-        if not mention.id:
-            mention.id = str(uuid.uuid4())
-        
-        # Garantir timestamps
-        if not mention.created_at:
-            mention.created_at = datetime.utcnow()
-        if not mention.updated_at:
-            mention.updated_at = datetime.utcnow()
-        
+
         # Converter mention para dict
         mention_dict = {
-            'id': mention.id,
             'url': mention.url,
             'title': mention.title,
             'snippet': mention.snippet,
@@ -77,9 +66,7 @@ class MentionRepository:
             'published_date': mention.published_date.isoformat() if mention.published_date else None,
             'sentiment': mention.sentiment,
             'categories': ','.join(mention.categories) if mention.categories else '',
-            'monthly_visitors': mention.monthly_visitors,
-            'created_at': mention.created_at.isoformat() if mention.created_at else None,
-            'updated_at': mention.updated_at.isoformat() if mention.updated_at else None
+            'monthly_visitors': mention.monthly_visitors
         }
         
         # Adicionar ao batch
@@ -126,14 +113,14 @@ class MentionRepository:
     @classmethod
     def flush_batch(cls):
         """
-        Persiste batch de mentions em CSV.
+        Salva todas as mentions em memória para um arquivo CSV.
         """
         if not cls._current_analysis_id:
             print("[MentionRepository] Analysis context não definido. Nada para salvar.")
             return
         
         if not cls._batch_mentions:
-            print(f"[MentionRepository] Nenhuma mention no batch (analysis_id={cls._current_analysis_id})")
+            print(f"[MentionRepository] Nenhuma mention para salvar (analysis_id={cls._current_analysis_id})")
             return
         
         # Salvar em CSV
@@ -142,3 +129,25 @@ class MentionRepository:
         # Limpar batch
         print(f"[MentionRepository] Batch flushed: {len(cls._batch_mentions)} mentions")
         cls._batch_mentions = []
+
+    @classmethod
+    def bulk_save(cls, mentions: List[Mention]):
+        """
+        Save a list of mentions in memory for batch processing.
+        """
+        if not cls._current_analysis_id:
+            raise ValueError("Analysis context not defined. Call set_analysis_context() first.")
+
+        for mention in mentions:
+            mention_dict = {
+                'url': mention.url,
+                'title': mention.title,
+                'snippet': mention.snippet,
+                'full_text': mention.full_text,
+                'domain': mention.domain,
+                'published_date': mention.published_date.isoformat() if mention.published_date else None,
+                'sentiment': mention.sentiment,
+                'categories': ','.join(mention.categories) if mention.categories else '',
+                'monthly_visitors': mention.monthly_visitors
+            }
+            cls._batch_mentions.append(mention_dict)

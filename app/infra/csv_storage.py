@@ -37,7 +37,7 @@ class CSVStorage:
         
         # Garantir que colunas existam (mesmo que vazias)
         expected_columns = [
-            'id', 'url', 'title', 'snippet', 'full_text', 'domain',
+            'url', 'title', 'snippet', 'full_text', 'domain',
             'published_date', 'sentiment', 'categories', 'monthly_visitors',
             'created_at', 'updated_at'
         ]
@@ -60,9 +60,9 @@ class CSVStorage:
             # Concatenar com novos dados
             df = pd.concat([existing_df, df], ignore_index=True)
             
-            # Remover duplicatas por 'id'
-            df = df.drop_duplicates(subset=['id'], keep='last')
-        
+            # Remover duplicatas por 'url'
+            df = df.drop_duplicates(subset=['url'], keep='last')
+
         # Salvar CSV
         df.to_csv(file_path, index=False, encoding='utf-8')
         
@@ -78,31 +78,35 @@ class CSVStorage:
             analysis_id: ID da análise (para nomear o arquivo)
         """
         cls.ensure_data_dir()
-        
+
         if not mention_analyses:
             print(f"[CSVStorage] Nenhuma mention_analysis para salvar (analysis_id={analysis_id})")
             return
-        
+
         # Converter para DataFrame
         df = pd.DataFrame(mention_analyses)
-        
-        # Garantir que colunas existam (mesmo que vazias)
+
+        # Garantir que colunas esperadas existam
         expected_columns = [
-            'mention_id', 'bank_name', 'sentiment', 'reach_group',
+            'mention_url', 'bank_name', 'sentiment', 'reach_group',
             'niche_vehicle', 'title_mentioned', 'subtitle_used', 'subtitle_mentioned',
-            'iedi_score', 'created_at', 'updated_at'
+            'iedi_score', 'iedi_normalized', 'numerator', 'denominator'
         ]
-        
         for col in expected_columns:
             if col not in df.columns:
                 df[col] = None
-        
+
+        # Lidar com valores None em colunas numéricas
+        numeric_columns = ['iedi_score', 'iedi_normalized', 'numerator', 'denominator']
+        for col in numeric_columns:
+            df[col] = df[col].fillna(0)
+
         # Reordenar colunas
         df = df[expected_columns]
-        
+
         # Caminho do arquivo
         file_path = cls.DATA_DIR / f"mention_analysis_{analysis_id}.csv"
-        
+
         # Salvar CSV (append se já existir)
         if file_path.exists():
             # Ler CSV existente
@@ -111,9 +115,9 @@ class CSVStorage:
             # Concatenar com novos dados
             df = pd.concat([existing_df, df], ignore_index=True)
             
-            # Remover duplicatas por 'mention_id' e 'bank_name'
-            df = df.drop_duplicates(subset=['mention_id', 'bank_name'], keep='last')
-        
+            # Remover duplicatas por combinação de 'mention_url' e 'bank_name'
+            df = df.drop_duplicates(subset=['mention_url', 'bank_name'], keep='last')
+
         # Salvar CSV
         df.to_csv(file_path, index=False, encoding='utf-8')
         

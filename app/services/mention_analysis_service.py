@@ -1,3 +1,4 @@
+import pandas as pd
 from app.repositories.bank_repository import BankRepository
 from app.services.brandwatch_service import BrandwatchService
 from app.services.mention_service import MentionService
@@ -75,31 +76,29 @@ class MentionAnalysisService:
         return results
 
     def process_mentions(self, mentions, bank_name):
-        mention_analyses = []
+        """
+        Process mentions in bulk and create mention analyses.
+        """
         bank = BankRepository.find_by_name(bank_name)
-        for mention in mentions:
-            if self.is_valid_for_bank(mention, bank):
-                mention_analysis = self.create_mention_analysis(mention, bank)
-                mention_analyses.append(mention_analysis)
 
-        if mention_analyses:
-            for analysis in mention_analyses:
-                existing_analysis = MentionAnalysisRepository.find_by_mention_id_and_bank_name(
-                    analysis.mention_id, analysis.bank_name
-                )
-                if existing_analysis:
-                    MentionAnalysisRepository.update(existing_analysis, analysis)
-                else:
-                    MentionAnalysisRepository.save(analysis)
+        # Use the bulk creation method
+        df_mention_analyses = self.create_mention_analysis_bulk(mentions, bank)
 
-        return mention_analyses
+        # Convert DataFrame to list of dictionaries for CSV storage
+        mention_analyses_dicts = df_mention_analyses.to_dict(orient='records')
+
+        # Save to CSV
+        MentionAnalysisRepository.bulk_save(mention_analyses_dicts)
+
+        # Return the DataFrame for further processing if needed
+        return df_mention_analyses
 
     def is_valid_for_bank(self, mention, bank):
         return bank.name.value in mention.categories
 
     def create_mention_analysis(self, mention, bank):
         mentions_analysis = MentionAnalysis()
-        mentions_analysis.mention_id = mention.url
+        mentions_analysis.mention_url = mention.url
         mentions_analysis.bank_name = bank.name
 
         mentions_analysis.sentiment = Sentiment.from_string(mention.sentiment) if mention.sentiment else None
@@ -122,14 +121,16 @@ class MentionAnalysisService:
                     mentions_analysis.subtitle_mentioned = True
                     break
 
-        relevant_domains = MediaOutletRepository.find_by_niche(False)
-        niche_domains = MediaOutletRepository.find_by_niche(True)
+        relevant_domains = [media_outlet.domain for media_outlet in MediaOutletRepository.find_by_niche(False)]
+        niche_domains = [media_outlet.domain for media_outlet in MediaOutletRepository.find_by_niche(True)]
 
         relevant_vehicle = mention.domain in relevant_domains
         niche_vehicle = mention.domain in niche_domains
         mentions_analysis.niche_vehicle = niche_vehicle
 
-        reach_weight = REACH_GROUP_WEIGHTS.get(mentions_analysis.reach_group.name, 0)
+        # Ensure reach_group is initialized before accessing
+        reach_group = mentions_analysis.reach_group if mentions_analysis.reach_group else ReachGroup.D
+        reach_weight = REACH_GROUP_WEIGHTS.get(reach_group.name, 0)
 
         title_pts = TITLE_WEIGHT if mentions_analysis.title_mentioned else 0
         subtitle_pts = SUBTITLE_WEIGHT if (mentions_analysis.subtitle_mentioned and mentions_analysis.subtitle_used) else 0
@@ -138,29 +139,27 @@ class MentionAnalysisService:
 
         mentions_analysis.numerator = title_pts + subtitle_pts + reach_weight + relevant_pts + niche_pts
 
-        if mentions_analysis.subtitle_used:
-            if mentions_analysis.reach_group == ReachGroup.A:
-                mentions_analysis.denominator = TITLE_WEIGHT + SUBTITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT
-            else:
-                mentions_analysis.denominator = TITLE_WEIGHT + SUBTITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT + NICHE_OUTLET_WEIGHT
+        # Ensure reach_group is initialized before comparison
+        if reach_group == ReachGroup.A:
+            mentions_analysis.denominator = TITLE_WEIGHT + SUBTITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT
         else:
-            if mentions_analysis.reach_group == ReachGroup.A:
-                mentions_analysis.denominator = TITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT
-            else:
-                mentions_analysis.denominator = TITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT + NICHE_OUTLET_WEIGHT
+            mentions_analysis.denominator = TITLE_WEIGHT + SUBTITLE_WEIGHT + reach_weight + RELEVANT_OUTLET_WEIGHT + NICHE_OUTLET_WEIGHT
 
-
-        if mentions_analysis.sentiment == Sentiment.NEGATIVE:
+        # Ensure sentiment is initialized before comparison
+        sentiment = mentions_analysis.sentiment if mentions_analysis.sentiment else Sentiment.NEUTRAL
+        if sentiment == Sentiment.NEGATIVE:
             sign = -1
         else:
             sign = 1
 
-        if mentions_analysis.denominator:
-            mentions_analysis.iedi_score = (mentions_analysis.numerator / mentions_analysis.denominator) * sign
-            mentions_analysis.iedi_normalized = ((mentions_analysis.iedi_score + 1) / 2) * 10
+        if mentions_analysis.numerator is not None and mentions_analysis.denominator:
+            raw_score = (mentions_analysis.numerator / mentions_analysis.denominator) * sign
+            raw_normalized = ((raw_score + 1) / 2) * 10
         else:
-            mentions_analysis.iedi_score = 0
-            mentions_analysis.iedi_normalized = 0
+            raw_score = 0
+            raw_normalized = 0
+        mentions_analysis.iedi_score = round(raw_score, 2)
+        mentions_analysis.iedi_normalized = round(raw_normalized, 2)
 
         return mentions_analysis
 
@@ -185,3 +184,85 @@ class MentionAnalysisService:
         if mv >= REACH_GROUP_THRESHOLDS["C"]:
             return ReachGroup.C
         return ReachGroup.D
+
+    def create_mention_analysis_bulk(self, mentions, bank):
+        """
+        Create mention analyses in bulk using a pandas DataFrame.
+        Args:
+            mentions: List of Mention objects.
+            bank: Bank object for analysis.
+        Returns:
+            DataFrame with mention analyses.
+        """
+        # Convert mentions to a DataFrame
+        df = pd.DataFrame([{
+            'mention_url': mention.url,
+            'title': mention.title,
+            'snippet': mention.snippet,
+            'full_text': mention.full_text,
+            'domain': mention.domain,
+            'published_date': mention.published_date,
+            'sentiment': mention.sentiment,
+            'categories': mention.categories,
+            'monthly_visitors': mention.monthly_visitors or 0  # Default to 0 if None
+        } for mention in mentions])
+
+        # Add bank name
+        df['bank_name'] = bank.name.value
+
+        # Calculate sentiment
+        df['sentiment'] = df['sentiment'].apply(lambda s: Sentiment.from_string(s) if s else None)
+
+        # Classify reach group
+        df['reach_group'] = df['monthly_visitors'].apply(self.classify_reach_group)
+
+        # Check if title mentions the bank
+        df['title_mentioned'] = df['title'].apply(
+            lambda title: any(v.lower() in title.lower() for v in bank.variations if v)
+        )
+
+        # Check if subtitle is used and mentioned
+        df['subtitle_used'] = df['snippet'] != df['full_text']
+        df['subtitle_mentioned'] = df.apply(
+            lambda row: any(
+                v.lower() in self.extract_first_paragraph(row['full_text']).lower()
+                for v in bank.variations if v
+            ) if row['subtitle_used'] else False,
+            axis=1
+        )
+
+        # Check if the domain is relevant or niche
+        relevant_domains = [media_outlet.domain for media_outlet in MediaOutletRepository.find_by_niche(False)]
+        niche_domains = [media_outlet.domain for media_outlet in MediaOutletRepository.find_by_niche(True)]
+        df['relevant_vehicle'] = df['domain'].isin(relevant_domains)
+        df['niche_vehicle'] = df['domain'].isin(niche_domains)
+
+        # Calculate numerator
+        # Ensure all components are not None before calculations
+        df['numerator'] = (
+            df['title_mentioned'].fillna(0).astype(int) * TITLE_WEIGHT +
+            df['subtitle_mentioned'].fillna(0).astype(int) * df['subtitle_used'].fillna(0).astype(int) * SUBTITLE_WEIGHT +
+            df['reach_group'].apply(lambda rg: REACH_GROUP_WEIGHTS.get(rg.name, 0) if rg else 0) +
+            df['relevant_vehicle'].fillna(0).astype(int) * RELEVANT_OUTLET_WEIGHT +
+            df['niche_vehicle'].fillna(0).astype(int) * NICHE_OUTLET_WEIGHT
+        )
+
+        def calculate_denominator(row):
+            base = TITLE_WEIGHT + REACH_GROUP_WEIGHTS.get(row['reach_group'].name, 0) if row['reach_group'] else 0
+            if row['subtitle_used']:
+                base += SUBTITLE_WEIGHT
+            if row['reach_group'] != ReachGroup.A:
+                base += NICHE_OUTLET_WEIGHT
+            return base
+
+        df['denominator'] = df.apply(calculate_denominator, axis=1)
+
+        df['iedi_score'] = df.apply(
+            lambda row: round((row['numerator'] / row['denominator']) * (-1 if row['sentiment'] == Sentiment.NEGATIVE else 1), 2)
+            if row['denominator'] > 0 else 0,
+            axis=1
+        )
+        df['iedi_normalized'] = df['iedi_score'].apply(lambda score: round(((score + 1) / 2) * 10, 2))
+
+        # Return the DataFrame
+        return df

@@ -14,7 +14,6 @@ class MediaOutlet(Base):
     id = Column(String, primary_key=True)
     name = Column(String(255), nullable=False)
     domain = Column(String(255), nullable=False, unique=True)
-    category = Column(String(100), nullable=True)
     monthly_visitors = Column(Integer, nullable=True)
     is_niche = Column(Boolean, default=False, nullable=False)
     active = Column(Boolean, default=True, nullable=False)

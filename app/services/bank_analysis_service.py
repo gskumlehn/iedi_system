@@ -3,6 +3,7 @@ from app.models.bank_analysis import BankAnalysis
 from app.enums.bank_name import BankName
 from app.repositories.bank_analysis_repository import BankAnalysisRepository
 from app.enums.sentiment import Sentiment
+import pandas as pd
 
 class BankAnalysisService:
 
@@ -80,30 +81,45 @@ class BankAnalysisService:
             bank_analysis.analysis_id = analysis_id
             BankAnalysisRepository.save(bank_analysis)
 
-    def compute_and_persist_bank_metrics(self, bank_analysis, mention_analyses):
-        total = len(mention_analyses)
-        positive = 0
-        negative = 0
-        normalized_vals = []
+    def compute_and_persist_bank_metrics(self, bank_analysis, df_mention_analyses: pd.DataFrame):
+        """
+        Compute and persist bank metrics using a pandas DataFrame.
 
-        for mention_analysis in mention_analyses:
-            mention_analysis.sentiment
+        Args:
+            bank_analysis: The bank analysis object to update.
+            df_mention_analyses: DataFrame containing mention analyses.
+        """
+        if df_mention_analyses.empty:
+            print(f"[BankAnalysisService] No data to process for {bank_analysis.bank_name.value}")
+            return
 
-            if mention_analysis.sentiment == Sentiment.NEGATIVE:
-                negative += 1
-            else:
-                positive += 1
+        # Compute metrics
+        total_mentions = len(df_mention_analyses)
+        negative_mentions = len(df_mention_analyses[
+            df_mention_analyses['sentiment'].str.lower() == Sentiment.NEGATIVE.name.lower()
+        ])  # Negative sentiment is considered negative
+        positive_mentions = total_mentions - negative_mentions  # All other mentions are considered positive
 
-            normalized_vals.append(float(mention_analysis.iedi_normalized))
+        average_iedi_normalized = df_mention_analyses['iedi_normalized'].mean()
+        positivity_proportion = positive_mentions / total_mentions if total_mentions > 0 else 0
+        adjusted_iedi_normalized = average_iedi_normalized * positivity_proportion
 
-        iedi_mean = (sum(normalized_vals) / len(normalized_vals)) if normalized_vals else 0.0
-        positivity_ratio = (positive / total) if total > 0 else 0.0
-        iedi_final = iedi_mean * positivity_ratio
+        # Populate the BankAnalysis fields
+        bank_analysis.total_mentions = total_mentions
+        bank_analysis.positive_volume = positive_mentions
+        bank_analysis.negative_volume = negative_mentions
+        bank_analysis.iedi_mean = round(average_iedi_normalized, 2) if not pd.isna(average_iedi_normalized) else None
+        bank_analysis.iedi_score = round(adjusted_iedi_normalized, 2) if not pd.isna(adjusted_iedi_normalized) else None
 
-        bank_analysis.total_mentions = int(total)
-        bank_analysis.positive_volume = float(positive)
-        bank_analysis.negative_volume = float(negative)
-        bank_analysis.iedi_mean = float(iedi_mean)
-        bank_analysis.iedi_score = float(iedi_final)
+        # Persist metrics (e.g., save to BigQuery)
+        self.persist_bank_analysis(bank_analysis)
 
-        BankAnalysisRepository.update(bank_analysis)
+    def persist_bank_analysis(self, bank_analysis):
+        """
+        Persist the bank analysis object to BigQuery using the repository's update method.
+        """
+        updated_bank_analysis = BankAnalysisRepository.update(bank_analysis)
+        if updated_bank_analysis:
+            print(f"[BankAnalysisService] Successfully persisted metrics for {bank_analysis.bank_name.value}")
+        else:
+            print(f"[BankAnalysisService] Failed to persist metrics for {bank_analysis.bank_name.value}")

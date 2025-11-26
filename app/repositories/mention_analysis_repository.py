@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 from app.infra.bq_sa import get_session
 from app.models.mention_analysis import MentionAnalysis
@@ -110,15 +110,14 @@ class MentionAnalysisRepository:
         cls._batch_mention_analyses = []
     
     @classmethod
-    def create(cls, analysis_id: str, mention_id: str, bank_id: str, **kwargs) -> MentionAnalysis:
+    def create(cls, analysis_id: str, mention_url: str, bank_id: str, **kwargs) -> MentionAnalysis:
         """
         Cria mention_analysis (não usado no fluxo atual, mas mantido para compatibilidade).
         """
         mention_analysis = MentionAnalysis(
             analysis_id=analysis_id,
-            mention_id=mention_id,
+            mention_url=mention_url,
             bank_id=bank_id,
-            created_at=datetime.now(),
             **kwargs
         )
         return cls.save(mention_analysis)
@@ -132,15 +131,9 @@ class MentionAnalysisRepository:
         if not cls._current_analysis_id:
             raise ValueError("Analysis context não definido. Chame set_analysis_context() primeiro.")
         
-        # Garantir timestamps
-        if not analysis.created_at:
-            analysis.created_at = datetime.utcnow()
-        if not analysis.updated_at:
-            analysis.updated_at = datetime.utcnow()
-        
         # Converter mention_analysis para dict
         analysis_dict = {
-            'mention_id': analysis.mention_id,
+            'mention_url': analysis.mention_url,
             'bank_name': analysis.bank_name.name if hasattr(analysis.bank_name, 'name') else str(analysis.bank_name),
             'sentiment': analysis.sentiment.name if hasattr(analysis.sentiment, 'name') else str(analysis.sentiment) if analysis.sentiment else None,
             'reach_group': analysis.reach_group.name if hasattr(analysis.reach_group, 'name') else str(analysis.reach_group) if analysis.reach_group else None,
@@ -148,54 +141,43 @@ class MentionAnalysisRepository:
             'title_mentioned': analysis.title_mentioned,
             'subtitle_used': analysis.subtitle_used,
             'subtitle_mentioned': analysis.subtitle_mentioned,
-            'iedi_score': analysis.iedi_score,
-            'created_at': analysis.created_at.isoformat() if analysis.created_at else None,
-            'updated_at': analysis.updated_at.isoformat() if analysis.updated_at else None
+            'iedi_score': analysis.iedi_score
         }
         
-        # Adicionar ao batch
         cls._batch_mention_analyses.append(analysis_dict)
         
         return analysis
     
     @classmethod
-    def bulk_save(cls, mention_analyses: List[MentionAnalysis]):
+    def bulk_save(cls, mention_analyses: List[Dict[str, Any]]):
         """
-        Salva múltiplas mention_analysis em batch.
+        Save a list of mention analyses in memory for batch processing.
         """
-        for analysis in mention_analyses:
-            cls.save(analysis)
-    
+        if not cls._current_analysis_id:
+            raise ValueError("Analysis context not defined. Call set_analysis_context() first.")
+
+        cls._batch_mention_analyses.extend(mention_analyses)
+
     @classmethod
     def update(cls, existing_analysis: MentionAnalysis, new_analysis: MentionAnalysis):
-        """
-        Atualiza mention_analysis (mesmo comportamento de save para CSV).
-        """
         new_analysis.updated_at = datetime.utcnow()
         return cls.save(new_analysis)
     
     @classmethod
-    def find_by_mention(cls, mention_id: str) -> List[MentionAnalysis]:
-        """
-        Busca mention_analysis por mention_id no batch em memória.
-        Retorna lista vazia se não encontrar (para evitar leitura de CSV).
-        """
+    def find_by_mention(cls, mention_url: str) -> List[MentionAnalysis]:
         results = []
         for analysis_dict in cls._batch_mention_analyses:
-            if analysis_dict['mention_id'] == mention_id:
-                # Reconstruir objeto MentionAnalysis (simplificado)
+            if analysis_dict.get('mention_url') == mention_url:
                 analysis = MentionAnalysis(
-                    mention_id=analysis_dict['mention_id'],
-                    bank_name=analysis_dict['bank_name'],
-                    sentiment=analysis_dict['sentiment'],
-                    reach_group=analysis_dict['reach_group'],
-                    niche_vehicle=analysis_dict['niche_vehicle'],
-                    title_mentioned=analysis_dict['title_mentioned'],
-                    subtitle_used=analysis_dict['subtitle_used'],
-                    subtitle_mentioned=analysis_dict['subtitle_mentioned'],
-                    iedi_score=analysis_dict['iedi_score'],
-                    created_at=datetime.fromisoformat(analysis_dict['created_at']) if analysis_dict['created_at'] else None,
-                    updated_at=datetime.fromisoformat(analysis_dict['updated_at']) if analysis_dict['updated_at'] else None
+                    mention_url=analysis_dict.get('mention_url'),
+                    bank_name=analysis_dict.get('bank_name'),
+                    sentiment=analysis_dict.get('sentiment'),
+                    reach_group=analysis_dict.get('reach_group'),
+                    niche_vehicle=analysis_dict.get('niche_vehicle'),
+                    title_mentioned=analysis_dict.get('title_mentioned'),
+                    subtitle_used=analysis_dict.get('subtitle_used'),
+                    subtitle_mentioned=analysis_dict.get('subtitle_mentioned'),
+                    iedi_score=analysis_dict.get('iedi_score'),
                 )
                 results.append(analysis)
         
@@ -210,45 +192,46 @@ class MentionAnalysisRepository:
         
         results = []
         for analysis_dict in cls._batch_mention_analyses:
-            if analysis_dict['bank_name'] == bank_name_str:
+            if analysis_dict.get('bank_name') == bank_name_str:
                 # Reconstruir objeto MentionAnalysis (simplificado)
                 analysis = MentionAnalysis(
-                    mention_id=analysis_dict['mention_id'],
-                    bank_name=analysis_dict['bank_name'],
-                    sentiment=analysis_dict['sentiment'],
-                    reach_group=analysis_dict['reach_group'],
-                    niche_vehicle=analysis_dict['niche_vehicle'],
-                    title_mentioned=analysis_dict['title_mentioned'],
-                    subtitle_used=analysis_dict['subtitle_used'],
-                    subtitle_mentioned=analysis_dict['subtitle_mentioned'],
-                    iedi_score=analysis_dict['iedi_score'],
-                    created_at=datetime.fromisoformat(analysis_dict['created_at']) if analysis_dict['created_at'] else None,
-                    updated_at=datetime.fromisoformat(analysis_dict['updated_at']) if analysis_dict['updated_at'] else None
+                    mention_url=analysis_dict.get('mention_url'),
+                    bank_name=analysis_dict.get('bank_name'),
+                    sentiment=analysis_dict.get('sentiment'),
+                    reach_group=analysis_dict.get('reach_group'),
+                    niche_vehicle=analysis_dict.get('niche_vehicle'),
+                    title_mentioned=analysis_dict.get('title_mentioned'),
+                    subtitle_used=analysis_dict.get('subtitle_used'),
+                    subtitle_mentioned=analysis_dict.get('subtitle_mentioned'),
+                    iedi_score=analysis_dict.get('iedi_score'),
+                    created_at=datetime.fromisoformat(analysis_dict['created_at']) if analysis_dict.get('created_at') else None,
+                    updated_at=datetime.fromisoformat(analysis_dict['updated_at']) if analysis_dict.get('updated_at') else None
                 )
                 results.append(analysis)
         
         return results
     
     @classmethod
-    def find_by_mention_id_and_bank_name(cls, mention_id: str, bank_name: str) -> Optional[MentionAnalysis]:
+    def find_by_mention_id_and_bank_name(cls, mention_url: str, bank_name: str) -> Optional[MentionAnalysis]:
         """
         Busca mention_analysis por mention_id e bank_name no batch em memória.
         """
+        bank_name_str = bank_name.name if hasattr(bank_name, 'name') else str(bank_name)
         for analysis_dict in cls._batch_mention_analyses:
-            if analysis_dict['mention_id'] == mention_id and analysis_dict['bank_name'] == bank_name:
+            if analysis_dict.get('mention_url') == mention_url and analysis_dict.get('bank_name') == bank_name_str:
                 # Reconstruir objeto MentionAnalysis (simplificado)
                 analysis = MentionAnalysis(
-                    mention_id=analysis_dict['mention_id'],
-                    bank_name=analysis_dict['bank_name'],
-                    sentiment=analysis_dict['sentiment'],
-                    reach_group=analysis_dict['reach_group'],
-                    niche_vehicle=analysis_dict['niche_vehicle'],
-                    title_mentioned=analysis_dict['title_mentioned'],
-                    subtitle_used=analysis_dict['subtitle_used'],
-                    subtitle_mentioned=analysis_dict['subtitle_mentioned'],
-                    iedi_score=analysis_dict['iedi_score'],
-                    created_at=datetime.fromisoformat(analysis_dict['created_at']) if analysis_dict['created_at'] else None,
-                    updated_at=datetime.fromisoformat(analysis_dict['updated_at']) if analysis_dict['updated_at'] else None
+                    mention_url=analysis_dict.get('mention_url'),
+                    bank_name=analysis_dict.get('bank_name'),
+                    sentiment=analysis_dict.get('sentiment'),
+                    reach_group=analysis_dict.get('reach_group'),
+                    niche_vehicle=analysis_dict.get('niche_vehicle'),
+                    title_mentioned=analysis_dict.get('title_mentioned'),
+                    subtitle_used=analysis_dict.get('subtitle_used'),
+                    subtitle_mentioned=analysis_dict.get('subtitle_mentioned'),
+                    iedi_score=analysis_dict.get('iedi_score'),
+                    created_at=datetime.fromisoformat(analysis_dict['created_at']) if analysis_dict.get('created_at') else None,
+                    updated_at=datetime.fromisoformat(analysis_dict['updated_at']) if analysis_dict.get('updated_at') else None
                 )
                 return analysis
         

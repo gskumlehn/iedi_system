@@ -51,13 +51,9 @@ class BrandwatchService:
                             print(f"Fetched page {page_count} with {len(page)} mentions.")
                         break
                     except Exception as e:
-                        if "rate limit exceeded" in str(e).lower():
-                            retries += 1
-                            wait_time = retry_delay * (2 ** (retries - 1))
-                            print(f"Rate limit exceeded. Retrying in {wait_time} seconds... (Attempt {retries}/{max_retries})")
-                            sleep(wait_time)
-                        else:
-                            raise
+                        retries += 1
+                        wait_time = retry_delay * (2 ** (retries - 1))
+                        sleep(wait_time)
 
             print(f"Total pages fetched: {page_count}")
             return all_mentions
