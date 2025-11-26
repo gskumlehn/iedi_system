@@ -153,21 +153,6 @@ def restart_analysis(analysis_id):
 
 @analysis_bp.route("/api/analyses/<analysis_id>/recalculate", methods=['POST'])
 def recalculate_analysis(analysis_id):
-    """
-    Recalcula scores IEDI de uma análise após correção de media_outlets.
-    
-    Fluxo:
-    1. Carrega mentions do CSV
-    2. Carrega media_outlets atualizados do BigQuery
-    3. Recalcula mention_analysis (scores individuais)
-    4. Recalcula bank_analysis (agregados)
-    5. Salva CSVs atualizados
-    
-    Regras de Negócio:
-    - Apenas análises com status COMPLETED podem ser recalculadas
-    - Media_outlets devem estar atualizados no BigQuery antes de recalcular
-    - Recálculo usa mesma lógica de MentionAnalysisService.create_mention_analysis()
-    """
     try:
         import pandas as pd
         from pathlib import Path
