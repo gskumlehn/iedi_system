@@ -8,8 +8,9 @@
       "Bradesco",
       "Santander"
     ],
-    "metodologia": "IEDI Mean (sem balizamento por positividade)",
-    "data_geracao": "2025-11-26"
+    "metodologia": "IEDI Mean (sem balizamento) + Neutros como Positivos",
+    "data_geracao": "2025-11-26",
+    "observacao": "Positividade inclui menções neutras. Positivo + Negativo = 100%"
   },
   "dados_brutos": {
     "4T24": {
@@ -20,20 +21,23 @@
           "iedi_mean": 5.723496762257169,
           "iedi_median": 5.35,
           "iedi_std": 1.3134105816093067,
-          "positividade": 16.762257169287697,
+          "positividade": 81.20259019426457,
           "negatividade": 18.79740980573543,
-          "neutralidade": 64.44033302497687,
-          "volume_positivo": 906,
+          "volume_positivo": 4389,
           "volume_negativo": 1016,
-          "volume_neutro": 3483,
-          "volume_positivo_titulo": 179,
-          "presenca_positiva_titulo_pct": 19.757174392935983,
-          "media_variaveis_positivas": 0.2571743929359823,
+          "volume_positivo_titulo": 1094,
+          "presenca_positiva_titulo_pct": 24.925951241740716,
+          "media_variaveis_positivas": 0.3287764866712235,
           "reach_groups": {
             "A": 79,
             "B": 199,
             "C": 1071,
             "D": 4056
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 906,
+            "neutro_original": 3483,
+            "negativo_original": 1016
           }
         },
         "Itaú": {
@@ -41,20 +45,23 @@
           "iedi_mean": 5.814357262103505,
           "iedi_median": 5.35,
           "iedi_std": 1.501133532644423,
-          "positividade": 15.812067731934176,
+          "positividade": 74.3381826854281,
           "negatividade": 25.661817314571906,
-          "neutralidade": 58.52611495349392,
-          "volume_positivo": 663,
+          "volume_positivo": 3117,
           "volume_negativo": 1076,
-          "volume_neutro": 2454,
-          "volume_positivo_titulo": 98,
-          "presenca_positiva_titulo_pct": 14.781297134238311,
-          "media_variaveis_positivas": 0.2609351432880845,
+          "volume_positivo_titulo": 1053,
+          "presenca_positiva_titulo_pct": 33.78248315688162,
+          "media_variaveis_positivas": 0.44241257619505936,
           "reach_groups": {
             "A": 65,
             "B": 174,
             "C": 1148,
             "D": 2806
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 663,
+            "neutro_original": 2454,
+            "negativo_original": 1076
           }
         },
         "Bradesco": {
@@ -62,20 +69,23 @@
           "iedi_mean": 5.5225382932166305,
           "iedi_median": 5.35,
           "iedi_std": 1.4385494906255658,
-          "positividade": 14.660831509846828,
+          "positividade": 65.7705532979056,
           "negatividade": 34.22944670209441,
-          "neutralidade": 51.10972178805877,
-          "volume_positivo": 469,
+          "volume_positivo": 2104,
           "volume_negativo": 1095,
-          "volume_neutro": 1635,
-          "volume_positivo_titulo": 73,
-          "presenca_positiva_titulo_pct": 15.56503198294243,
-          "media_variaveis_positivas": 0.2835820895522388,
+          "volume_positivo_titulo": 486,
+          "presenca_positiva_titulo_pct": 23.098859315589355,
+          "media_variaveis_positivas": 0.36406844106463876,
           "reach_groups": {
             "A": 57,
             "B": 159,
             "C": 890,
             "D": 2093
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 469,
+            "neutro_original": 1635,
+            "negativo_original": 1095
           }
         },
         "Santander": {
@@ -83,31 +93,31 @@
           "iedi_mean": 5.723550871503851,
           "iedi_median": 5.35,
           "iedi_std": 1.4635233257057034,
-          "positividade": 16.74098094852047,
+          "positividade": 74.05755978921768,
           "negatividade": 25.942440210782326,
-          "neutralidade": 57.316578840697204,
-          "volume_positivo": 413,
+          "volume_positivo": 1827,
           "volume_negativo": 640,
-          "volume_neutro": 1414,
-          "volume_positivo_titulo": 79,
-          "presenca_positiva_titulo_pct": 19.128329297820823,
-          "media_variaveis_positivas": 0.31476997578692495,
+          "volume_positivo_titulo": 432,
+          "presenca_positiva_titulo_pct": 23.645320197044335,
+          "media_variaveis_positivas": 0.37110016420361247,
           "reach_groups": {
             "A": 70,
             "B": 95,
             "C": 897,
             "D": 1405
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 413,
+            "neutro_original": 1414,
+            "negativo_original": 640
           }
         }
       },
       "media_setor": {
         "iedi_mean": 5.695985797270288,
-        "positividade": 15.994034339897294,
+        "positividade": 73.84222149170398,
         "negatividade": 26.157778508296015,
-        "volume_positivo": 612.75,
-        "volume_positivo_titulo": 107.25,
-        "presenca_positiva_titulo_pct": 17.307958201984388,
-        "media_variaveis_positivas": 0.2791154003908076
+        "volume_positivo": 2859.25
       }
     },
     "1T25": {
@@ -118,20 +128,23 @@
           "iedi_mean": 5.6338513962765955,
           "iedi_median": 5.35,
           "iedi_std": 1.2773617906961803,
-          "positividade": 13.846409574468085,
+          "positividade": 82.28058510638297,
           "negatividade": 17.71941489361702,
-          "neutralidade": 68.4341755319149,
-          "volume_positivo": 833,
+          "volume_positivo": 4950,
           "volume_negativo": 1066,
-          "volume_neutro": 4117,
-          "volume_positivo_titulo": 139,
-          "presenca_positiva_titulo_pct": 16.686674669867948,
-          "media_variaveis_positivas": 0.23169267707082833,
+          "volume_positivo_titulo": 1091,
+          "presenca_positiva_titulo_pct": 22.04040404040404,
+          "media_variaveis_positivas": 0.28525252525252526,
           "reach_groups": {
             "A": 60,
             "B": 167,
             "C": 1128,
             "D": 4661
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 833,
+            "neutro_original": 4117,
+            "negativo_original": 1066
           }
         },
         "Itaú": {
@@ -139,20 +152,23 @@
           "iedi_mean": 5.8527614024201045,
           "iedi_median": 5.35,
           "iedi_std": 1.3456392571573552,
-          "positividade": 20.353707725721378,
+          "positividade": 86.99968973006516,
           "negatividade": 13.000310269934841,
-          "neutralidade": 66.64598200434378,
-          "volume_positivo": 656,
+          "volume_positivo": 2804,
           "volume_negativo": 419,
-          "volume_neutro": 2148,
-          "volume_positivo_titulo": 124,
-          "presenca_positiva_titulo_pct": 18.902439024390244,
-          "media_variaveis_positivas": 0.3094512195121951,
+          "volume_positivo_titulo": 572,
+          "presenca_positiva_titulo_pct": 20.399429386590583,
+          "media_variaveis_positivas": 0.31562054208273893,
           "reach_groups": {
             "A": 40,
             "B": 132,
             "C": 870,
             "D": 2181
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 656,
+            "neutro_original": 2148,
+            "negativo_original": 419
           }
         },
         "Bradesco": {
@@ -160,20 +176,23 @@
           "iedi_mean": 5.744065281899109,
           "iedi_median": 5.35,
           "iedi_std": 1.4597265157370982,
-          "positividade": 19.102373887240358,
+          "positividade": 77.8560830860534,
           "negatividade": 22.143916913946587,
-          "neutralidade": 58.753709198813056,
-          "volume_positivo": 515,
+          "volume_positivo": 2099,
           "volume_negativo": 597,
-          "volume_neutro": 1584,
-          "volume_positivo_titulo": 120,
-          "presenca_positiva_titulo_pct": 23.300970873786408,
-          "media_variaveis_positivas": 0.35145631067961164,
+          "volume_positivo_titulo": 542,
+          "presenca_positiva_titulo_pct": 25.82181991424488,
+          "media_variaveis_positivas": 0.3735111958075274,
           "reach_groups": {
             "A": 36,
             "B": 106,
             "C": 601,
             "D": 1953
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 515,
+            "neutro_original": 1584,
+            "negativo_original": 597
           }
         },
         "Santander": {
@@ -181,31 +200,31 @@
           "iedi_mean": 5.805504796710827,
           "iedi_median": 5.35,
           "iedi_std": 1.4288601405594392,
-          "positividade": 22.33896756509822,
+          "positividade": 84.1936957514847,
           "negatividade": 15.806304248515305,
-          "neutralidade": 61.854728186386474,
-          "volume_positivo": 489,
+          "volume_positivo": 1843,
           "volume_negativo": 346,
-          "volume_neutro": 1354,
-          "volume_positivo_titulo": 71,
-          "presenca_positiva_titulo_pct": 14.519427402862986,
-          "media_variaveis_positivas": 0.2249488752556237,
+          "volume_positivo_titulo": 399,
+          "presenca_positiva_titulo_pct": 21.649484536082475,
+          "media_variaveis_positivas": 0.32230059685295714,
           "reach_groups": {
             "A": 43,
             "B": 73,
             "C": 800,
             "D": 1273
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 489,
+            "neutro_original": 1354,
+            "negativo_original": 346
           }
         }
       },
       "media_setor": {
         "iedi_mean": 5.759045719326659,
-        "positividade": 18.91036468813201,
+        "positividade": 82.83251341849656,
         "negatividade": 17.16748658150344,
-        "volume_positivo": 623.25,
-        "volume_positivo_titulo": 113.5,
-        "presenca_positiva_titulo_pct": 18.352377992726897,
-        "media_variaveis_positivas": 0.2793872706295647
+        "volume_positivo": 2924.0
       }
     },
     "2T25": {
@@ -216,20 +235,23 @@
           "iedi_mean": 5.270366433216609,
           "iedi_median": 5.35,
           "iedi_std": 1.4094251142803977,
-          "positividade": 14.507253626813407,
+          "positividade": 70.07253626813407,
           "negatividade": 29.927463731865934,
-          "neutralidade": 55.56528264132066,
-          "volume_positivo": 1160,
+          "volume_positivo": 5603,
           "volume_negativo": 2393,
-          "volume_neutro": 4443,
-          "volume_positivo_titulo": 173,
-          "presenca_positiva_titulo_pct": 14.913793103448276,
-          "media_variaveis_positivas": 0.23793103448275862,
+          "volume_positivo_titulo": 808,
+          "presenca_positiva_titulo_pct": 14.420845975370336,
+          "media_variaveis_positivas": 0.2255934320899518,
           "reach_groups": {
             "A": 160,
             "B": 231,
             "C": 1417,
             "D": 6188
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 1160,
+            "neutro_original": 4443,
+            "negativo_original": 2393
           }
         },
         "Itaú": {
@@ -237,20 +259,23 @@
           "iedi_mean": 6.015342960288809,
           "iedi_median": 5.35,
           "iedi_std": 1.4254661727017883,
-          "positividade": 17.749699157641395,
+          "positividade": 85.49939831528279,
           "negatividade": 14.500601684717207,
-          "neutralidade": 67.7496991576414,
-          "volume_positivo": 590,
+          "volume_positivo": 2842,
           "volume_negativo": 482,
-          "volume_neutro": 2252,
-          "volume_positivo_titulo": 128,
-          "presenca_positiva_titulo_pct": 21.694915254237287,
-          "media_variaveis_positivas": 0.32033898305084746,
+          "volume_positivo_titulo": 966,
+          "presenca_positiva_titulo_pct": 33.99014778325123,
+          "media_variaveis_positivas": 0.43490499648135117,
           "reach_groups": {
             "A": 41,
             "B": 70,
             "C": 1006,
             "D": 2207
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 590,
+            "neutro_original": 2252,
+            "negativo_original": 482
           }
         },
         "Bradesco": {
@@ -258,20 +283,23 @@
           "iedi_mean": 5.688166268894192,
           "iedi_median": 5.35,
           "iedi_std": 1.3548773292067475,
-          "positividade": 17.70087509944312,
+          "positividade": 79.59427207637232,
           "negatividade": 20.405727923627683,
-          "neutralidade": 61.893396976929196,
-          "volume_positivo": 445,
+          "volume_positivo": 2001,
           "volume_negativo": 513,
-          "volume_neutro": 1556,
-          "volume_positivo_titulo": 68,
-          "presenca_positiva_titulo_pct": 15.280898876404494,
-          "media_variaveis_positivas": 0.2449438202247191,
+          "volume_positivo_titulo": 407,
+          "presenca_positiva_titulo_pct": 20.339830084957523,
+          "media_variaveis_positivas": 0.3073463268365817,
           "reach_groups": {
             "A": 38,
             "B": 44,
             "C": 595,
             "D": 1837
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 445,
+            "neutro_original": 1556,
+            "negativo_original": 513
           }
         },
         "Santander": {
@@ -279,31 +307,31 @@
           "iedi_mean": 5.794453333333332,
           "iedi_median": 5.35,
           "iedi_std": 1.4531003755865268,
-          "positividade": 20.8,
+          "positividade": 84.37333333333333,
           "negatividade": 15.626666666666667,
-          "neutralidade": 63.57333333333334,
-          "volume_positivo": 390,
+          "volume_positivo": 1582,
           "volume_negativo": 293,
-          "volume_neutro": 1192,
-          "volume_positivo_titulo": 111,
-          "presenca_positiva_titulo_pct": 28.46153846153846,
-          "media_variaveis_positivas": 0.4025641025641026,
+          "volume_positivo_titulo": 368,
+          "presenca_positiva_titulo_pct": 23.261694058154237,
+          "media_variaveis_positivas": 0.34829329962073324,
           "reach_groups": {
             "A": 38,
             "B": 52,
             "C": 562,
             "D": 1223
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 390,
+            "neutro_original": 1192,
+            "negativo_original": 293
           }
         }
       },
       "media_setor": {
         "iedi_mean": 5.692082248933236,
-        "positividade": 17.68945697097448,
+        "positividade": 79.88488499828063,
         "negatividade": 20.11511500171937,
-        "volume_positivo": 646.25,
-        "volume_positivo_titulo": 120.0,
-        "presenca_positiva_titulo_pct": 20.08778642390713,
-        "media_variaveis_positivas": 0.30144448508060695
+        "volume_positivo": 3007.0
       }
     },
     "3T25": {
@@ -314,20 +342,23 @@
           "iedi_mean": 5.6213028764805415,
           "iedi_median": 5.35,
           "iedi_std": 1.2569137261775347,
-          "positividade": 16.34517766497462,
+          "positividade": 81.912013536379,
           "negatividade": 18.087986463620982,
-          "neutralidade": 65.5668358714044,
-          "volume_positivo": 966,
+          "volume_positivo": 4841,
           "volume_negativo": 1069,
-          "volume_neutro": 3875,
-          "volume_positivo_titulo": 191,
-          "presenca_positiva_titulo_pct": 19.772256728778466,
-          "media_variaveis_positivas": 0.2546583850931677,
+          "volume_positivo_titulo": 1020,
+          "presenca_positiva_titulo_pct": 21.070026853955795,
+          "media_variaveis_positivas": 0.2701921090683743,
           "reach_groups": {
             "A": 76,
             "B": 139,
             "C": 930,
             "D": 4765
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 966,
+            "neutro_original": 3875,
+            "negativo_original": 1069
           }
         },
         "Itaú": {
@@ -335,20 +366,23 @@
           "iedi_mean": 5.585323417987933,
           "iedi_median": 5.35,
           "iedi_std": 0.9956796815641844,
-          "positividade": 17.24428230672092,
+          "positividade": 86.3055984285113,
           "negatividade": 13.694401571488704,
-          "neutralidade": 69.06131612179037,
-          "volume_positivo": 1229,
+          "volume_positivo": 6151,
           "volume_negativo": 976,
-          "volume_neutro": 4922,
-          "volume_positivo_titulo": 99,
-          "presenca_positiva_titulo_pct": 8.0553295362083,
-          "media_variaveis_positivas": 0.13262815296989422,
+          "volume_positivo_titulo": 780,
+          "presenca_positiva_titulo_pct": 12.680864900016259,
+          "media_variaveis_positivas": 0.1775321086002276,
           "reach_groups": {
             "A": 58,
             "B": 98,
             "C": 900,
             "D": 6071
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 1229,
+            "neutro_original": 4922,
+            "negativo_original": 976
           }
         },
         "Bradesco": {
@@ -356,20 +390,23 @@
           "iedi_mean": 5.757681465821001,
           "iedi_median": 5.35,
           "iedi_std": 1.3333937375638059,
-          "positividade": 20.648343904157855,
+          "positividade": 82.55813953488372,
           "negatividade": 17.441860465116278,
-          "neutralidade": 61.90979563072586,
-          "volume_positivo": 586,
+          "volume_positivo": 2343,
           "volume_negativo": 495,
-          "volume_neutro": 1757,
-          "volume_positivo_titulo": 83,
-          "presenca_positiva_titulo_pct": 14.163822525597269,
-          "media_variaveis_positivas": 0.23037542662116042,
+          "volume_positivo_titulo": 469,
+          "presenca_positiva_titulo_pct": 20.017072129748186,
+          "media_variaveis_positivas": 0.2970550576184379,
           "reach_groups": {
             "A": 43,
             "B": 70,
             "C": 648,
             "D": 2077
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 586,
+            "neutro_original": 1757,
+            "negativo_original": 495
           }
         },
         "Santander": {
@@ -377,31 +414,31 @@
           "iedi_mean": 5.780756655768332,
           "iedi_median": 5.35,
           "iedi_std": 1.3815696366268955,
-          "positividade": 22.0457730032695,
+          "positividade": 84.02615600186829,
           "negatividade": 15.973843998131715,
-          "neutralidade": 61.980382998598785,
-          "volume_positivo": 472,
+          "volume_positivo": 1799,
           "volume_negativo": 342,
-          "volume_neutro": 1327,
-          "volume_positivo_titulo": 70,
-          "presenca_positiva_titulo_pct": 14.83050847457627,
-          "media_variaveis_positivas": 0.2097457627118644,
+          "volume_positivo_titulo": 373,
+          "presenca_positiva_titulo_pct": 20.733740967204003,
+          "media_variaveis_positivas": 0.29961089494163423,
           "reach_groups": {
             "A": 34,
             "B": 48,
             "C": 640,
             "D": 1419
+          },
+          "_detalhes_sentimento_original": {
+            "positivo_original": 472,
+            "neutro_original": 1327,
+            "negativo_original": 342
           }
         }
       },
       "media_setor": {
         "iedi_mean": 5.686266104014452,
-        "positividade": 19.070894219780723,
+        "positividade": 83.70047687541057,
         "negatividade": 16.29952312458942,
-        "volume_positivo": 813.25,
-        "volume_positivo_titulo": 110.75,
-        "presenca_positiva_titulo_pct": 14.205479316290075,
-        "media_variaveis_positivas": 0.20685193184902168
+        "volume_positivo": 3783.5
       }
     }
   },
@@ -414,28 +451,28 @@
           {
             "banco": "Santander",
             "iedi_mean": 5.780756655768332,
-            "positividade": 22.0457730032695,
+            "positividade": 84.02615600186829,
             "negatividade": 15.973843998131715,
             "posicao": 1
           },
           {
             "banco": "Bradesco",
             "iedi_mean": 5.757681465821001,
-            "positividade": 20.648343904157855,
+            "positividade": 82.55813953488372,
             "negatividade": 17.441860465116278,
             "posicao": 2
           },
           {
             "banco": "Banco do Brasil",
             "iedi_mean": 5.6213028764805415,
-            "positividade": 16.34517766497462,
+            "positividade": 81.912013536379,
             "negatividade": 18.087986463620982,
             "posicao": 3
           },
           {
             "banco": "Itaú",
             "iedi_mean": 5.585323417987933,
-            "positividade": 17.24428230672092,
+            "positividade": 86.3055984285113,
             "negatividade": 13.694401571488704,
             "posicao": 4
           },
@@ -443,7 +480,7 @@
             "banco": "Média do Setor",
             "posicao": null,
             "iedi_mean": 5.686266104014452,
-            "positividade": 19.070894219780723,
+            "positividade": 83.70047687541057,
             "negatividade": 16.29952312458942
           }
         ],
@@ -451,25 +488,25 @@
           {
             "trimestre": "4T24",
             "iedi_mean": 5.723496762257169,
-            "positividade": 16.762257169287697,
+            "positividade": 81.20259019426457,
             "negatividade": 18.79740980573543
           },
           {
             "trimestre": "1T25",
             "iedi_mean": 5.6338513962765955,
-            "positividade": 13.846409574468085,
+            "positividade": 82.28058510638297,
             "negatividade": 17.71941489361702
           },
           {
             "trimestre": "2T25",
             "iedi_mean": 5.270366433216609,
-            "positividade": 14.507253626813407,
+            "positividade": 70.07253626813407,
             "negatividade": 29.927463731865934
           },
           {
             "trimestre": "3T25",
             "iedi_mean": 5.6213028764805415,
-            "positividade": 16.34517766497462,
+            "positividade": 81.912013536379,
             "negatividade": 18.087986463620982
           }
         ]
@@ -483,51 +520,51 @@
           "banco": "Santander",
           "trimestre": "3T25",
           "iedi_mean": 5.780756655768332,
-          "volume_positivo": 472,
-          "volume_positivo_titulo": 70,
-          "positividade_pct": 22.0457730032695,
-          "presenca_positiva_titulo_pct": 14.83050847457627,
-          "media_variaveis_positivas": 0.2097457627118644
+          "volume_positivo": 1799,
+          "volume_positivo_titulo": 373,
+          "positividade_pct": 84.02615600186829,
+          "presenca_positiva_titulo_pct": 20.733740967204003,
+          "media_variaveis_positivas": 0.29961089494163423
         },
         {
           "banco": "Bradesco",
           "trimestre": "3T25",
           "iedi_mean": 5.757681465821001,
-          "volume_positivo": 586,
-          "volume_positivo_titulo": 83,
-          "positividade_pct": 20.648343904157855,
-          "presenca_positiva_titulo_pct": 14.163822525597269,
-          "media_variaveis_positivas": 0.23037542662116042
+          "volume_positivo": 2343,
+          "volume_positivo_titulo": 469,
+          "positividade_pct": 82.55813953488372,
+          "presenca_positiva_titulo_pct": 20.017072129748186,
+          "media_variaveis_positivas": 0.2970550576184379
         },
         {
           "banco": "Banco do Brasil",
           "trimestre": "3T25",
           "iedi_mean": 5.6213028764805415,
-          "volume_positivo": 966,
-          "volume_positivo_titulo": 191,
-          "positividade_pct": 16.34517766497462,
-          "presenca_positiva_titulo_pct": 19.772256728778466,
-          "media_variaveis_positivas": 0.2546583850931677
+          "volume_positivo": 4841,
+          "volume_positivo_titulo": 1020,
+          "positividade_pct": 81.912013536379,
+          "presenca_positiva_titulo_pct": 21.070026853955795,
+          "media_variaveis_positivas": 0.2701921090683743
         },
         {
           "banco": "Itaú",
           "trimestre": "3T25",
           "iedi_mean": 5.585323417987933,
-          "volume_positivo": 1229,
-          "volume_positivo_titulo": 99,
-          "positividade_pct": 17.24428230672092,
-          "presenca_positiva_titulo_pct": 8.0553295362083,
-          "media_variaveis_positivas": 0.13262815296989422
+          "volume_positivo": 6151,
+          "volume_positivo_titulo": 780,
+          "positividade_pct": 86.3055984285113,
+          "presenca_positiva_titulo_pct": 12.680864900016259,
+          "media_variaveis_positivas": 0.1775321086002276
         },
         {
           "banco": "Média 3T25",
           "trimestre": "3T25",
           "iedi_mean": 5.686266104014452,
-          "volume_positivo": 813.25,
-          "volume_positivo_titulo": 110.75,
-          "positividade_pct": 19.070894219780723,
-          "presenca_positiva_titulo_pct": 14.205479316290075,
-          "media_variaveis_positivas": 0.20685193184902168
+          "volume_positivo": 3783.5,
+          "volume_positivo_titulo": 660.5,
+          "positividade_pct": 83.70047687541057,
+          "presenca_positiva_titulo_pct": 18.62542621273106,
+          "media_variaveis_positivas": 0.26109754255716855
         }
       ]
     },
@@ -622,48 +659,60 @@
         {
           "posicao": 1,
           "banco": "Santander",
-          "iedi": 5.78
+          "iedi": 5.78,
+          "positividade": 84.0,
+          "negatividade": 16.0
         },
         {
           "posicao": 2,
           "banco": "Bradesco",
-          "iedi": 5.76
+          "iedi": 5.76,
+          "positividade": 82.6,
+          "negatividade": 17.4
         },
         {
           "posicao": 3,
           "banco": "Banco do Brasil",
-          "iedi": 5.62
+          "iedi": 5.62,
+          "positividade": 81.9,
+          "negatividade": 18.1
         },
         {
           "posicao": 4,
           "banco": "Itaú",
-          "iedi": 5.59
+          "iedi": 5.59,
+          "positividade": 86.3,
+          "negatividade": 13.7
         }
       ],
-      "media_setor": 5.69,
+      "media_setor": {
+        "iedi": 5.69,
+        "positividade": 83.7,
+        "negatividade": 16.3
+      },
       "bb_posicao": 3,
       "bb_gap_vs_lider": 0.16,
       "bb_gap_vs_media": -0.07
     },
     "evolucao_bb": {
       "4T24": {
-        "iedi": 5.72,
-        "positividade": 16.8,
-        "negatividade": 18.8
+        "iedi": 5.63,
+        "positividade": 82.3,
+        "negatividade": 17.7
       },
       "1T25": {
         "iedi": 5.63,
-        "positividade": 13.8,
+        "positividade": 82.3,
         "negatividade": 17.7
       },
       "2T25": {
         "iedi": 5.27,
-        "positividade": 14.5,
+        "positividade": 70.1,
         "negatividade": 29.9
       },
       "3T25": {
         "iedi": 5.62,
-        "positividade": 16.3,
+        "positividade": 81.9,
         "negatividade": 18.1
       }
     }

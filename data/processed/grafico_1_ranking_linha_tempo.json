@@ -3,28 +3,28 @@
     {
       "banco": "Santander",
       "iedi_mean": 5.780756655768332,
-      "positividade": 22.0457730032695,
+      "positividade": 84.02615600186829,
       "negatividade": 15.973843998131715,
       "posicao": 1
     },
     {
       "banco": "Bradesco",
       "iedi_mean": 5.757681465821001,
-      "positividade": 20.648343904157855,
+      "positividade": 82.55813953488372,
       "negatividade": 17.441860465116278,
       "posicao": 2
     },
     {
       "banco": "Banco do Brasil",
       "iedi_mean": 5.6213028764805415,
-      "positividade": 16.34517766497462,
+      "positividade": 81.912013536379,
       "negatividade": 18.087986463620982,
       "posicao": 3
     },
     {
       "banco": "Ita\u00fa",
       "iedi_mean": 5.585323417987933,
-      "positividade": 17.24428230672092,
+      "positividade": 86.3055984285113,
       "negatividade": 13.694401571488704,
       "posicao": 4
     },
@@ -32,7 +32,7 @@
       "banco": "M\u00e9dia do Setor",
       "posicao": null,
       "iedi_mean": 5.686266104014452,
-      "positividade": 19.070894219780723,
+      "positividade": 83.70047687541057,
       "negatividade": 16.29952312458942
     }
   ],
@@ -40,25 +40,25 @@
     {
       "trimestre": "4T24",
       "iedi_mean": 5.723496762257169,
-      "positividade": 16.762257169287697,
+      "positividade": 81.20259019426457,
       "negatividade": 18.79740980573543
     },
     {
       "trimestre": "1T25",
       "iedi_mean": 5.6338513962765955,
-      "positividade": 13.846409574468085,
+      "positividade": 82.28058510638297,
       "negatividade": 17.71941489361702
     },
     {
       "trimestre": "2T25",
       "iedi_mean": 5.270366433216609,
-      "positividade": 14.507253626813407,
+      "positividade": 70.07253626813407,
       "negatividade": 29.927463731865934
     },
     {
       "trimestre": "3T25",
       "iedi_mean": 5.6213028764805415,
-      "positividade": 16.34517766497462,
+      "positividade": 81.912013536379,
       "negatividade": 18.087986463620982
     }
   ]
