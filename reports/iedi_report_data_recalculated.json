@@ -1,0 +1,243 @@
+{
+  "metadata": {
+    "analysis_id": "b04351b4-b917-409c-bde8-f1a92c360ecd",
+    "generated_at": "2025-11-25T23:15:00.000000",
+    "total_mentions": 18013,
+    "banks_analyzed": [
+      "BANCO_DO_BRASIL",
+      "BRADESCO",
+      "SANTANDER",
+      "ITAU"
+    ],
+    "note": "Dados recalculados considerando NEUTROS como POSITIVOS (contexto: divulgação de resultados para imprensa)"
+  },
+  "performance": {
+    "ranking": [
+      {
+        "position": 1,
+        "bank": "SANTANDER",
+        "iedi_score": 5.2,
+        "iedi_mean": 6.19
+      },
+      {
+        "position": 2,
+        "bank": "ITAU",
+        "iedi_score": 5.09,
+        "iedi_mean": 5.9
+      },
+      {
+        "position": 3,
+        "bank": "BRADESCO",
+        "iedi_score": 5.08,
+        "iedi_mean": 6.16
+      },
+      {
+        "position": 4,
+        "bank": "BANCO_DO_BRASIL",
+        "iedi_score": 4.87,
+        "iedi_mean": 5.95
+      }
+    ],
+    "bb_position": 4,
+    "bb_score": 4.87
+  },
+  "volume": {
+    "BANCO_DO_BRASIL": {
+      "total": 5909,
+      "positive": 4840,
+      "neutral_as_positive": 3874,
+      "total_positive": 4840,
+      "negative": 1069,
+      "positive_rate": 81.91,
+      "negative_rate": 18.09
+    },
+    "BRADESCO": {
+      "total": 2838,
+      "positive": 2343,
+      "neutral_as_positive": 0,
+      "total_positive": 2343,
+      "negative": 495,
+      "positive_rate": 82.56,
+      "negative_rate": 17.44
+    },
+    "SANTANDER": {
+      "total": 2141,
+      "positive": 1799,
+      "neutral_as_positive": 0,
+      "total_positive": 1799,
+      "negative": 342,
+      "positive_rate": 84.02,
+      "negative_rate": 15.98
+    },
+    "ITAU": {
+      "total": 7127,
+      "positive": 6151,
+      "neutral_as_positive": 0,
+      "total_positive": 6151,
+      "negative": 976,
+      "positive_rate": 86.31,
+      "negative_rate": 13.69
+    }
+  },
+  "bb_detailed_sentiment": {
+    "total_mentions": 5909,
+    "originally_positive": 966,
+    "originally_neutral": 3874,
+    "originally_negative": 1067,
+    "recalculated_positive": 4840,
+    "recalculated_negative": 1069,
+    "positive_rate": 81.91,
+    "negative_rate": 18.09,
+    "note": "Após recálculo: 4.840 menções positivas (966 originais + 3.874 neutros reclassificados)"
+  },
+  "themes": {
+    "top_keywords": [
+      ["brasil", 881],
+      ["banco", 715],
+      ["milhões", 609],
+      ["abono", 516],
+      ["salarial", 495],
+      ["extra", 437],
+      ["lote", 431],
+      ["cop30", 416],
+      ["lucro", 389],
+      ["hoje", 380],
+      ["queda", 359],
+      ["será", 357],
+      ["pago", 348],
+      ["ibovespa", 344],
+      ["trimestre", 281],
+      ["2025", 257],
+      ["terceiro", 221],
+      ["nova", 211],
+      ["imóveis", 202],
+      ["pagamento", 188],
+      ["veja", 183],
+      ["pasep", 178],
+      ["pelo", 177],
+      ["governo", 175],
+      ["crédito", 156],
+      ["bbas3", 155],
+      ["estado", 154],
+      ["correios", 153],
+      ["novembro", 151],
+      ["bancos", 148]
+    ],
+    "theme_counts": {
+      "Resultados Financeiros": 786,
+      "Crédito e Financiamento": 456,
+      "Investimentos": 372,
+      "Agronegócio": 139,
+      "Serviços": 59,
+      "Digital e Tecnologia": 49
+    },
+    "results_related_keywords": {
+      "lucro": 389,
+      "trimestre": 281,
+      "terceiro": 221,
+      "queda": 359,
+      "milhões": 609,
+      "bbas3": 155,
+      "ibovespa": 344
+    }
+  },
+  "vehicles": {
+    "top_domains": [
+      ["globo.com", 108],
+      ["uol.com.br", 68],
+      ["seucreditodigital.com.br", 58],
+      ["moneytimes.com.br", 54],
+      ["infomoney.com.br", 47],
+      ["estadao.com.br", 38],
+      ["gazeta24h.com", 37],
+      ["visaonews.com.br", 36],
+      ["investing.com", 35],
+      ["bolsaemercado.com.br", 32],
+      ["istoedinheiro.com.br", 31],
+      ["55invest.com.br", 31],
+      ["metropoles.com", 29],
+      ["financenews.com.br", 27],
+      ["cnnbrasil.com.br", 26],
+      ["marcalegal.com.br", 26],
+      ["portalnoticiasmt.com.br", 26],
+      ["seudinheiro.com", 24],
+      ["dfpost.com.br", 24],
+      ["politicanopontocerto.com.br", 24]
+    ],
+    "distribution": {
+      "Outros": 5842,
+      "Nicho": 65,
+      "Relevantes": 176
+    },
+    "relevant_vehicles": [
+      "globo.com",
+      "uol.com.br",
+      "estadao.com.br",
+      "metropoles.com",
+      "cnnbrasil.com.br"
+    ],
+    "niche_vehicles": [
+      "infomoney.com.br",
+      "istoedinheiro.com.br",
+      "investing.com"
+    ]
+  },
+  "sentiment_recalculated": {
+    "bb_distribution": {
+      "positive": 4840,
+      "negative": 1069
+    },
+    "by_vehicle": {
+      "negative": {
+        "Nicho": 27,
+        "Outros": 1040,
+        "Relevantes": 2
+      },
+      "positive": {
+        "Nicho": 38,
+        "Outros": 4798,
+        "Relevantes": 174
+      }
+    },
+    "note": "Neutros (3.874) foram reclassificados como positivos"
+  },
+  "comparison": {
+    "leader": {
+      "bank": "SANTANDER",
+      "iedi_score": 5.2
+    },
+    "bb_gap": 0.33,
+    "bb_gap_percentage": 6.35,
+    "bb_vs_itau": {
+      "gap": 0.22,
+      "gap_percentage": 4.32
+    },
+    "bb_vs_bradesco": {
+      "gap": 0.21,
+      "gap_percentage": 4.13
+    }
+  },
+  "press_release_context": {
+    "focus": "Divulgação de Resultados Financeiros 3T25",
+    "period": "12-19 novembro 2025",
+    "key_metrics": {
+      "total_coverage": 5909,
+      "positive_coverage": 4840,
+      "negative_coverage": 1069,
+      "positive_rate": "81.91%",
+      "negative_rate": "18.09%"
+    },
+    "main_narratives": {
+      "primary": "Resultados Financeiros 3T25 (lucro R$ 9,5 bi, queda 12,2%)",
+      "secondary": "Abono Salarial PIS/PASEP (lote extra)",
+      "tertiary": "COP30 e Sustentabilidade"
+    },
+    "media_reach": {
+      "relevant_vehicles": 176,
+      "niche_vehicles": 65,
+      "others": 5842,
+      "relevant_percentage": "2.98%",
+      "niche_percentage": "1.10%"
+    }
+  }
+}
