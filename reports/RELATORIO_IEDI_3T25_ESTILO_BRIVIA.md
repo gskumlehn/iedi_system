@@ -100,13 +100,13 @@ As notas finais variam entre 0 e 10 e são formadas por parâmetros de qualidade
 
 O Banco do Brasil apresentou recuperação significativa no 3T25 após a queda crítica registrada no 2T25. O IEDI Mean subiu de 5,27 para 5,62 (+0,35 pontos), enquanto a positividade recuperou-se de 70,1% para 81,9% (+11,8 pontos percentuais). A negatividade também retornou a patamares mais saudáveis, caindo de 29,9% para 18,1% (-11,8 pontos percentuais).
 
-Apesar da recuperação, o BB permanece em 3º lugar no ranking, atrás de Santander (1º) e Bradesco (2º). O desafio principal continua sendo a qualidade das menções, não o volume: o BB possui o maior número de menções positivas (4.841), mas o terceiro menor IEDI Mean, indicando que as menções têm baixa presença em títulos e veículos de menor alcance.
+No entanto, o 3T25 ainda não recuperou o nível do **4T24, que foi o melhor trimestre do período analisado** (IEDI 5,72). A trajetória do BB mostra: 4T24 (5,72) → 1T25 (5,63, queda de -0,09) → 2T25 (5,27, queda crítica de -0,36) → 3T25 (5,62, recuperação de +0,35). Apesar da recuperação, o BB permanece em 3º lugar no ranking, atrás de Santander (1º) e Bradesco (2º). O desafio principal continua sendo a qualidade das menções, não o volume: o BB possui o maior número de menções positivas (4.841), mas o terceiro menor IEDI Mean, indicando que as menções têm baixa presença em títulos e veículos de menor alcance.
 
 #### Tabela de Dados: Linha do Tempo BB (4T24 a 3T25)
 
 | Trimestre | IEDI Mean | Positividade (%) | Negatividade (%) | Volume Total | Volume Positivo |
 | --- | --- | --- | --- | --- | --- |
-| 4T24 | 5,63 | 82,3 | 17,7 | 6.016 | 4.950 |
+| 4T24 | 5,72 | 81,2 | 18,8 | 5.405 | 4.389 |
 | 1T25 | 5,63 | 82,3 | 17,7 | 6.016 | 4.950 |
 | 2T25 | 5,27 | 70,1 | 29,9 | 7.996 | 5.603 |
 | 3T25 | 5,62 | 81,9 | 18,1 | 5.910 | 4.841 |
@@ -115,9 +115,13 @@ Apesar da recuperação, o BB permanece em 3º lugar no ranking, atrás de Santa
 
 **Observações**:
 
+- **4T24** foi o **melhor trimestre** (5,72), com 81,2% de positividade e 5.405 menções
+
+- **1T25** teve queda leve (-0,09 pontos), mas aumento de volume para 6.016 menções
+
 - **2T25** foi o trimestre mais crítico, com queda de -0,36 pontos no IEDI e negatividade de 29,9%
 
-- **3T25** apresentou recuperação, mas ainda não atingiu os níveis do 4T24 e 1T25
+- **3T25** apresentou recuperação (+0,35 pontos), mas ainda não atingiu o nível do 4T24
 
 - **Volume** não é o problema: BB tem o maior volume de menções entre os 4 bancos
 
@@ -131,13 +135,13 @@ Apesar da recuperação, o BB permanece em 3º lugar no ranking, atrás de Santa
 
 O Santander alcançou o lucro líquido gerencial de R$ 3,85 bilhões no 4T24, alta de 75% em relação ao ano anterior, superando as projeções do mercado. O resultado foi impulsionado pela expansão da margem financeira, melhora na rentabilidade, crescimento das receitas e aumento das comissões, além da queda na inadimplência e nas provisões de crédito.
 
-No 3T25, o Santander manteve a liderança no IEDI (5,78), com positividade de 84,0%. Apesar de ter o menor volume de menções positivas entre os 4 bancos (1.799), o Santander demonstra eficiência em qualidade, focando em veículos de maior alcance e presença em títulos.
+No 4T24, BB e Santander **empataram** no IEDI Mean (ambos 5,72), mas o Santander tinha positividade menor (74,1% vs. 81,2% do BB). A partir do 1T25, o Santander passou a liderar consistentemente, mantendo IEDI acima de 5,78 e positividade acima de 84%. No 3T25, o Santander lidera com IEDI 5,78 e positividade de 84,0%. Apesar de ter o menor volume de menções positivas entre os 4 bancos (1.799), o Santander demonstra eficiência em qualidade, focando em veículos de maior alcance e presença em títulos.
 
 ##### Tabela de Dados: BB vs. Santander (4T24 a 3T25)
 
 | Trimestre | BB IEDI | Santander IEDI | Média Setor | BB Positividade (%) | Santander Positividade (%) |
 | --- | --- | --- | --- | --- | --- |
-| 4T24 | 5,63 | 5,72 | 5,70 | 82,3 | 84,2 |
+| 4T24 | 5,72 | 5,72 | 5,69 | 81,2 | 74,1 |
 | 1T25 | 5,63 | 5,81 | 5,76 | 82,3 | 84,2 |
 | 2T25 | 5,27 | 5,79 | 5,69 | 70,1 | 84,4 |
 | 3T25 | 5,62 | 5,78 | 5,69 | 81,9 | 84,0 |
@@ -148,15 +152,15 @@ No 3T25, o Santander manteve a liderança no IEDI (5,78), com positividade de 84
 
 #### BB vs. Bradesco
 
-O Bradesco registrou um lucro líquido recorrente de R$ 5,4 bilhões no 4T24, alta de 87,7% em relação ao mesmo período de 2023 e 3,4% ao trimestre anterior, superando levemente as projeções do mercado. Segundo o presidente, a estratégia adotada tem sido "mais conservadora". O IEDI do banco teve a menor variação entre os bancos no período analisado.
+O Bradesco registrou um lucro líquido recorrente de R$ 5,4 bilhões no 4T24, alta de 87,7% em relação ao mesmo período de 2023 e 3,4% ao trimestre anterior, superando levemente as projeções do mercado. Segundo o presidente, a estratégia adotada tem sido "mais conservadora".
 
-No 3T25, o Bradesco alcançou o 2º lugar no ranking (5,76), superando o BB (5,62) pela primeira vez no período analisado. O Bradesco apresentou crescimento contínuo em todos os trimestres (5,52 → 5,74 → 5,69 → 5,76), demonstrando consistência na estratégia de comunicação.
+No 4T24, o BB superou o Bradesco por 0,20 pontos (5,72 vs. 5,52). No entanto, a partir do **1T25, o Bradesco passou a superar o BB consistentemente**: 1T25 (5,74 vs. 5,63), 2T25 (5,69 vs. 5,27) e 3T25 (5,76 vs. 5,62). O Bradesco apresentou crescimento contínuo em todos os trimestres (5,52 → 5,74 → 5,69 → 5,76), demonstrando consistência na estratégia de comunicação, enquanto o BB teve trajetória mais volátil.
 
 ##### Tabela de Dados: BB vs. Bradesco (4T24 a 3T25)
 
 | Trimestre | BB IEDI | Bradesco IEDI | Média Setor | BB Positividade (%) | Bradesco Positividade (%) |
 | --- | --- | --- | --- | --- | --- |
-| 4T24 | 5,63 | 5,52 | 5,70 | 82,3 | 77,9 |
+| 4T24 | 5,72 | 5,52 | 5,69 | 81,2 | 65,8 |
 | 1T25 | 5,63 | 5,74 | 5,76 | 82,3 | 77,9 |
 | 2T25 | 5,27 | 5,69 | 5,69 | 70,1 | 79,6 |
 | 3T25 | 5,62 | 5,76 | 5,69 | 81,9 | 82,6 |
@@ -167,15 +171,15 @@ No 3T25, o Bradesco alcançou o 2º lugar no ranking (5,76), superando o BB (5,6
 
 #### BB vs. Itaú
 
-O Itaú alcançou um lucro recorde de R$ 41,4 bilhões em 2024 (+16,2%), com R$ 10,88 bilhões no 1T24, resultado em linha com as expectativas. Apesar dos bons resultados, houve queda de ações, com projeções conservadoras e alerta sobre crédito. O IEDI do banco caiu 0,4 pontos no período.
+O Itaú alcançou um lucro recorde de R$ 41,4 bilhões em 2024 (+16,2%), com R$ 10,88 bilhões no 1T24, resultado em linha com as expectativas. Apesar dos bons resultados, houve queda de ações, com projeções conservadoras e alerta sobre crédito.
 
-No 3T25, o Itaú registrou o 4º lugar no ranking (5,59), apesar de ter a maior positividade entre os 4 bancos (86,3%). Este paradoxo indica que o Itaú tem alto volume de menções positivas (6.151), mas com baixa qualidade (poucos títulos, baixo alcance). O Itaú teve queda significativa no 2T25 (6,02) para 3T25 (5,59), a maior queda entre os bancos (-0,43 pontos).
+O Itaú **liderou o ranking no 4T24** (5,81) e manteve-se em 1º lugar até o 2T25 (6,02, o maior IEDI do período analisado). No entanto, sofreu queda drástica no 3T25, caindo para 5,59 (-0,43 pontos, a maior queda entre os bancos) e passando para o 4º lugar. O BB **sempre ficou atrás do Itaú** nos 4 trimestres analisados, exceto no 3T25, quando finalmente superou o Itaú por 0,03 pontos (5,62 vs. 5,59). O paradoxo do Itaú no 3T25 é ter a maior positividade (86,3%) e o maior volume de menções positivas (6.151), mas o menor IEDI Mean, indicando baixa qualidade (poucos títulos, baixo alcance).
 
 ##### Tabela de Dados: BB vs. Itaú (4T24 a 3T25)
 
 | Trimestre | BB IEDI | Itaú IEDI | Média Setor | BB Positividade (%) | Itaú Positividade (%) |
 | --- | --- | --- | --- | --- | --- |
-| 4T24 | 5,63 | 5,81 | 5,70 | 82,3 | 87,0 |
+| 4T24 | 5,72 | 5,81 | 5,69 | 81,2 | 74,3 |
 | 1T25 | 5,63 | 5,85 | 5,76 | 82,3 | 87,0 |
 | 2T25 | 5,27 | 6,02 | 5,69 | 70,1 | 85,5 |
 | 3T25 | 5,62 | 5,59 | 5,69 | 81,9 | 86,3 |
@@ -401,9 +405,11 @@ O Santander mantém a liderança com estratégia de eficiência: menor volume de
 
 ### Análise da Evolução Histórica (4T24 a 3T25)
 
-A análise dos 4 trimestres revela padrões importantes na evolução do IEDI dos bancos. O 4T24 e 1T25 apresentaram estabilidade, com o BB mantendo IEDI de 5,63 e positividade de 82,3%. O 2T25 foi marcado por quedas generalizadas: todos os bancos, exceto o Itaú (que subiu de 5,85 para 6,02), registraram declínio no IEDI. O BB teve a maior queda (-0,36 pontos), com negatividade disparando para 29,9%, o maior índice entre os 4 bancos no período analisado.
+A análise dos 4 trimestres revela padrões importantes na evolução do IEDI dos bancos. O **4T24 foi o melhor trimestre do BB** (IEDI 5,72), quando empatou tecnicamente com o Santander (5,72) e ficou em 2º lugar, atrás apenas do Itaú (5,81). No 1T25, o BB sofreu queda leve (-0,09 pontos) para 5,63 e caiu para o 4º lugar, sendo superado por Itaú (5,85), Santander (5,81) e Bradesco (5,74).
 
-O 3T25 trouxe recuperação para o BB, mas também revelou mudanças no ranking: o Itaú caiu de 1º (6,02 no 2T25) para 4º lugar (5,59 no 3T25), a maior queda entre os bancos (-0,43 pontos). O Santander assumiu a liderança (5,78), seguido pelo Bradesco (5,76), que ultrapassou o BB pela primeira vez no período. Esta inversão indica que o Bradesco vem executando estratégia mais consistente de comunicação, enquanto o BB enfrenta desafios de qualidade nas menções.
+O 2T25 foi marcado por quedas generalizadas: todos os bancos, exceto o Itaú (que subiu de 5,85 para 6,02), registraram declínio no IEDI. O BB teve a maior queda (-0,36 pontos), caindo para 5,27, com negatividade disparando para 29,9%, o maior índice entre os 4 bancos no período analisado. O BB permaneceu em 4º lugar.
+
+O 3T25 trouxe recuperação para o BB (+0,35 pontos, para 5,62) e mudanças no ranking: o Itaú caiu de 1º (6,02 no 2T25) para 4º lugar (5,59 no 3T25), a maior queda entre os bancos (-0,43 pontos). O Santander assumiu a liderança (5,78), seguido pelo Bradesco (5,76), que manteve a superação sobre o BB iniciada no 1T25. O BB subiu para 3º lugar, superando o Itaú pela primeira vez no período. Esta dinâmica indica que o Bradesco vem executando estratégia mais consistente de comunicação, enquanto o BB enfrenta desafios de qualidade nas menções.
 
 A média do setor manteve-se estável entre 5,69 e 5,76 nos 4 trimestres, indicando que as variações individuais dos bancos refletem estratégias específicas de comunicação, não mudanças estruturais no mercado. O BB está 0,07 pontos abaixo da média (5,62 vs. 5,69), um gap pequeno mas significativo que pode ser fechado com foco em qualidade das menções.
 
